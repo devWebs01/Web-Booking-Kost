@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('ota_source')->nullable();
             $table->string('customer_name')->nullable(); // Nama pelanggan untuk offline
             $table->string('customer_contact')->nullable(); // Kontak pelanggan untuk offline
-            $table->string('status');
+            $table->enum('status', ['pending', 'confirmed', 'canceled'])->default('pending');
             $table->timestamps();
         });
     }
