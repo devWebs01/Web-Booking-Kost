@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{{ asset('/admin/css/styles.min.css') }}" />
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
@@ -20,12 +22,14 @@
             font-family: "DM Sans", sans-serif;
             font-optical-sizing: auto;
         }
+
         .btn-danger {
             --bs-btn-bg: #fc3a4e;
         }
+        
     </style>
 
-    @stack('css')
+    @stack('styles')
 
     @vite([])
 </head>
@@ -97,8 +101,10 @@
 
     @stack('scripts')
 
-    @livewireChartsScripts
     @livewireScripts
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <x-livewire-alert::scripts />
 </body>
 
 </html>
