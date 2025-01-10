@@ -13,7 +13,7 @@ class Facility extends Model
     protected $fillable = [
         'room_id',
         'name',
-        'description',
+        // 'description',
     ];
 
     public function room(): BelongsTo

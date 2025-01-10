@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('amount');
             $table->string('payment_method');
             $table->string('receipt')->nullable();
-            $table->string('status');
+            $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');
             $table->timestamps();
         });
     }
