@@ -41,10 +41,9 @@ $login = function () {
         <div class="row justify-content-center align-items-center">
             <div class="col-lg-6 mb-5 mb-lg-0">
                 <div class="pe-lg-3">
-                    <h1 id="font-custom" class="display-3 fw-bold mb-2 mb-md-3">Temukan Perawatan Kulit Terbaik untuk kamu
-                    </h1>
-                    <p class="lead mb-4">Di sini, kamu dapat mengakses informasi lengkap tentang produk, melihat riwayat
-                        pemesanan, dan menikmati dukungan pelanggan kami 24/7.</p>
+                    <h1 id="font-custom" class="display-4 fw-bold mb-3">Selamat Datang Kembali!</h1>
+                    <p class="lead">Login untuk melanjutkan pencarian kamar kost idamanmu. Temukan kenyamanan dan
+                        kemudahan hanya dengan beberapa klik.</p>
                 </div>
                 <div class="row">
                     <div class="col-sm-6 mb-3 mb-sm-0">
@@ -60,7 +59,7 @@ $login = function () {
                                 </div>
                             </div>
                             <div class="ms-3">
-                                <p>Dukungan <br> Pelanggan</p>
+                                <p>Akses cepat ke pemesanan</p>
                             </div>
                         </div>
                     </div>
@@ -75,7 +74,7 @@ $login = function () {
                                 </svg>
                             </div>
                             <div class="ms-3">
-                                <p>Produk <br> Berkualitas</p>
+                                <p>Pantau status booking kapan saja</p>
                             </div>
                         </div>
                     </div>

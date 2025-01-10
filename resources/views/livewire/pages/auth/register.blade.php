@@ -11,6 +11,7 @@ use function Livewire\Volt\layout;
 use function Livewire\Volt\rules;
 use function Livewire\Volt\state;
 use function Laravel\Folio\name;
+use App\Models\Setting;
 
 name('register');
 
@@ -22,6 +23,7 @@ state([
     'password' => '',
     'password_confirmation' => '',
     'role' => 'customer',
+    'setting' => fn() => Setting::first('name'),
 ]);
 
 rules([
@@ -54,12 +56,12 @@ $register = function () {
         <div class="row justify-content-center align-items-center">
             <div class="col-lg-6 mb-5 mb-lg-0">
                 <div class="pe-lg-3">
-                    <h1 id="font-custom" class="display-3 fw-bold mb-2 mb-md-3">Mulailah menemukan produk skincare terbaik
-                        untuk kamu.
+                    <h1 id="font-custom" class="display-3 fw-bold mb-2 mb-md-3">
+                        {{ $setting->name }}
                     </h1>
                     <p class="lead mb-4">
-                        Dengan jaminan ketersediaan 99,99%, kamu dapat yakin bahwa kebutuhan perawatan kulit kamu akan
-                        terpenuhi tanpa kendala.
+                        Daftar untuk menemukan kamar kost yang sesuai dengan kebutuhanmu. Dapatkan kemudahan dan
+                        kenyamanan dalam satu platform.
                     </p>
                 </div>
                 <div class="row">
@@ -76,7 +78,7 @@ $register = function () {
                                 </div>
                             </div>
                             <div class="ms-3">
-                                <p>Dukungan <br> Pelanggan</p>
+                                <p>Akses banyak kamar kost</p>
                             </div>
                         </div>
                     </div>
@@ -91,7 +93,7 @@ $register = function () {
                                 </svg>
                             </div>
                             <div class="ms-3">
-                                <p>Produk <br> Berkualitas</p>
+                                <p>Proses pemesanan mudah dan cepat</p>
                             </div>
                         </div>
                     </div>

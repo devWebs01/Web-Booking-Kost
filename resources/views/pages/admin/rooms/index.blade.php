@@ -28,6 +28,14 @@ $rooms = computed(function () {
 
 $destroy = function (room $room) {
     try {
+        foreach ($room->images as $image) {
+            if (Storage::disk('public')->exists($image->image_path)) {
+                Storage::disk('public')->delete($image->image_path);
+            }
+        }
+
+        // Hapus room beserta relasi
+        $room->images()->delete();
         $room->delete();
         $this->alert('success', 'Data room berhasil dihapus!', [
             'position' => 'center',
@@ -47,7 +55,7 @@ $destroy = function (room $room) {
 
 <x-admin-layout>
     <div>
-        <x-slot name="title">Data room</x-slot>
+        <x-slot name="title">Data kamar</x-slot>
 
 
         @volt
@@ -57,7 +65,7 @@ $destroy = function (room $room) {
                         <div class="row">
                             <div class="col">
                                 <a href="{{ route('rooms.create') }}" class="btn btn-primary">Tambah
-                                    room</a>
+                                    Kamar</a>
                             </div>
                             <div class="col">
                                 <input wire:model.live="search" type="search" class="form-control" name="search"
@@ -73,22 +81,22 @@ $destroy = function (room $room) {
                                 <thead>
                                     <tr>
                                         <th>No.</th>
-                                        <th>Harga</th>
-                                        <th>Katerangan</th>
+                                        <th>Harga Perhari</th>
+                                        <th>Harga Perbulan</th>
                                         <th>Status</th>
+                                        <th>Opsi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($this->rooms as $no => $item)
                                         <tr>
                                             <td>{{ ++$no }}</td>
-                                            <td>{{ formatRupiah($item->price) }}</td>
-                                            <td>{{ $item->description }}</td>
+                                            <td>{{ formatRupiah($item->daily_price) }}</td>
+                                            <td>{{ formatRupiah($item->monthly_price) }}</td>
                                             <td>
                                                 <button class="btn btn-primary btn-sm">
-                                                    {{ $item->room_status }}
+                                                    {{ __('room.' . $item->room_status) }}
                                                 </button>
-
                                             </td>
                                             <td>
                                                 <div>

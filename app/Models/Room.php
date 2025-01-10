@@ -11,7 +11,8 @@ class Room extends Model
     use HasFactory;
 
     protected $fillable = [
-        'price',
+        'daily_price',
+        'monthly_price',
         'description',
         'room_status',
     ];

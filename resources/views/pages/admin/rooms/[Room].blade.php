@@ -20,19 +20,21 @@ state([
     'previmages',
 
     // Room Models
-    'price' => fn() => $this->room->price,
+    'daily_price' => fn() => $this->room->daily_price,
+    'monthly_price' => fn() => $this->room->monthly_price,
     'description' => fn() => $this->room->description,
     'room_status' => fn() => $this->room->room_status,
     'room',
 ]);
 
 rules([
-    'price' => 'required|numeric|min:0', // Harga harus ada, berupa angka, dan tidak negatif
+    'daily_price' => 'required|numeric|min:0', // Harga harus ada, berupa angka, dan tidak negatif
+    'monthly_price' => 'required|numeric|min:0', // Harga harus ada, berupa angka, dan tidak negatif
     'description' => 'required|string|max:255', // Deskripsi harus ada, berupa string, dan maksimal 255 karakter
     'room_status' => 'required|in:available,booked,maintenance', // Status kamar harus ada dan salah satu dari nilai yang ditentukan
     'facilities' => 'required', // Validasi array
-    'facilities.*' => 'required|string|min:5', // Validasi setiap item
-    'images.*' => 'image|max:2048', // Validasi file gambar
+    'facilities.*' => 'required|string|min:2', // Validasi setiap item
+    'images.*' => 'image', // Validasi file gambar
 ]);
 
 $updatingImages = function ($value) {
@@ -62,7 +64,8 @@ $edit = function () {
 
         // Update room
         $room->update([
-            'price' => $validateData['price'],
+            'daily_price' => $validateData['daily_price'],
+            'monthly_price' => $validateData['monthly_price'],
             'description' => $validateData['description'],
             'room_status' => $validateData['room_status'],
         ]);
@@ -130,24 +133,27 @@ $edit = function () {
 ?>
 
 <x-admin-layout>
-    <x-slot name="title">Edit room</x-slot>
+    <x-slot name="title">Edit Kamar</x-slot>
     @include('layouts.tom-select')
 
     @volt
         <div>
+
+            {{-- @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach --}}
+
             <div class="card">
                 <div class="card-header">
                     <div class="alert alert-primary" role="alert">
-                        <strong>Edit room</strong>
-                        <p>Pada halaman edit room, kamu dapat mengubah informasi room yang sudah ada.
+                        <strong>Edit Kamar</strong>
+                        <p>Pada halaman edit kamar, kamu dapat mengubah informasi kamar yang sudah ada.
                         </p>
                     </div>
                 </div>
 
-                {{-- @dd($room->facilities->pluck('name')->toArray()); --}}
-
                 @if ($images)
-                    <div class="card-body">
+                    <div class="card-body py-0">
                         <div class="d-flex flex-nowrap gap-3 overflow-auto" style="white-space: nowrap;">
                             @foreach ($images as $key => $image)
                                 <div class="position-relative" style="width: 200px; flex: 0 0 auto;">
@@ -172,10 +178,10 @@ $edit = function () {
                         </small>
                         <div class="d-flex flex-nowrap gap-3 overflow-auto" style="white-space: nowrap;">
                             @foreach ($room->images as $key => $image)
-                                <div class="card position-relative" style="width: 200px;">
-                                    <div class="card-img-top">
-                                        <img src="{{ Storage::url($image->image_path) }}" class="img"
-                                            style="object-fit: cover;" width="200px" height="200px" alt="preview">
+                                <div class="position-relative" style="width: 200px; flex: 0 0 auto;">
+                                    <div class="card mt-3">
+                                        <img src="{{ Storage::url($image->image_path) }}" class="card-img-top"
+                                            style="object-fit: cover; width: 200px; height: 200px;" alt="preview">
                                     </div>
                                 </div>
                             @endforeach
@@ -192,7 +198,7 @@ $edit = function () {
                                 <div class="mb-3">
                                     <label for="images" class="form-label">Gambar Kamar
                                         <span wire:target='images' wire:loading.class.remove="d-none"
-                                            class="d-none spinner-border spinner-border-sm" role="status">
+                                            class="d-none spinner-border text-primary spinner-border-sm" role="status">
                                         </span>
                                     </label>
                                     <input type="file" class="form-control @error('images') is-invalid @enderror"
@@ -205,16 +211,27 @@ $edit = function () {
                             </div>
                             <div class="col-md">
                                 <div class="mb-3">
-                                    <label for="price" class="form-label">Harga</label>
-                                    <input type="number" class="form-control @error('price') is-invalid @enderror"
-                                        wire:model="price" id="price" aria-describedby="priceId"
-                                        placeholder="Enter room price" autofocus autocomplete="price" />
-                                    @error('price')
-                                        <small id="priceId" class="form-text text-danger">{{ $message }}</small>
+                                    <label for="daily_price" class="form-label">Harga Perhari</label>
+                                    <input type="number" class="form-control @error('daily_price') is-invalid @enderror"
+                                        wire:model="daily_price" id="daily_price" aria-describedby="daily_priceId"
+                                        placeholder="Enter room daily_price" autofocus autocomplete="daily_price" />
+                                    @error('daily_price')
+                                        <small id="daily_priceId" class="form-text text-danger">{{ $message }}</small>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-md">
+                                <div class="mb-3">
+                                    <label for="monthly_price" class="form-label">Harga Perbulan</label>
+                                    <input type="number" class="form-control @error('monthly_price') is-invalid @enderror"
+                                        wire:model="monthly_price" id="monthly_price" aria-describedby="monthly_priceId"
+                                        placeholder="Enter room monthly_price" autofocus autocomplete="monthly_price" />
+                                    @error('monthly_price')
+                                        <small id="monthly_priceId" class="form-text text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12">
                                 <div class="mb-3">
                                     <label for="room_status" class="form-label">Status</label>
                                     <select wire:model='room_status' class="form-select" name="room_status"
@@ -268,7 +285,8 @@ $edit = function () {
                                 </button>
                             </div>
                             <div class="col-md align-self-center text-end">
-                                <span wire:loading class="spinner-border spinner-border-sm"></span>
+                                <span wire:loading wire:target='edit'
+                                    class="spinner-border text-primary spinner-border-sm"></span>
                             </div>
                         </div>
                     </form>

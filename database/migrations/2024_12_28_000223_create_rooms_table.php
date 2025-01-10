@@ -8,12 +8,17 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *  'daily_price',
+     *  'monthly_price',
+     *  'description',
+     *  'room_status',
      */
     public function up(): void
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->string('price');
+            $table->string('daily_price');
+            $table->string('monthly_price');
             $table->text('description')->nullable();
             $table->enum('room_status', ['available', 'booked', 'maintenance'])->default('available');
             $table->timestamps();

@@ -18,19 +18,21 @@ state([
     'previmages',
 
     // Room Models
-    'price',
+    'daily_price',
+    'monthly_price',
     'description',
     'room_status',
 ]);
 
 rules([
-    'price' => 'required|numeric|min:0', // Harga harus ada, berupa angka, dan tidak negatif
+    'daily_price' => 'required|numeric|min:0', // Harga harus ada, berupa angka, dan tidak negatif
+    'monthly_price' => 'required|numeric|min:0', // Harga harus ada, berupa angka, dan tidak negatif
     'description' => 'required|string|max:255', // Deskripsi harus ada, berupa string, dan maksimal 255 karakter
     'room_status' => 'required|in:available,booked,maintenance', // Status kamar harus ada dan salah satu dari nilai yang ditentukan
     'facilities' => 'required', // Validasi array
-    'facilities.*' => 'required|string|min:5', // Validasi setiap item
+    'facilities.*' => 'required|string|min:2', // Validasi setiap item
     'images' => 'required', // Validasi file gambar
-    'images.*' => 'image|max:2048', // Validasi file gambar
+    'images.*' => 'image', // Validasi file gambar
 ]);
 
 $updatingImages = function ($value) {
@@ -108,7 +110,7 @@ $create = function () {
 ?>
 
 <x-admin-layout>
-    <x-slot name="title">Tambah room Baru</x-slot>
+    <x-slot name="title">Tambah Kamar Baru</x-slot>
     @include('layouts.tom-select')
 
     @volt
@@ -116,15 +118,15 @@ $create = function () {
             <div class="card">
                 <div class="card-header">
                     <div class="alert alert-primary" role="alert">
-                        <strong>Tambah room</strong>
-                        <p>Pada halaman tambah room, kamu dapat memasukkan informasi dari room baru yang akan disimpan ke
+                        <strong>Tambah Kamar</strong>
+                        <p>Pada halaman tambah kamar, kamu dapat memasukkan informasi dari kamar baru yang akan disimpan ke
                             sistem.
                         </p>
                     </div>
                 </div>
 
                 @if ($images)
-                    <div class="card-body">
+                    <div class="card-body py-0">
                         <div class="d-flex flex-nowrap gap-3 overflow-auto" style="white-space: nowrap;">
                             @foreach ($images as $key => $image)
                                 <div class="position-relative" style="width: 200px; flex: 0 0 auto;">
@@ -164,16 +166,27 @@ $create = function () {
                             </div>
                             <div class="col-md">
                                 <div class="mb-3">
-                                    <label for="price" class="form-label">Harga</label>
-                                    <input type="number" class="form-control @error('price') is-invalid @enderror"
-                                        wire:model="price" id="price" aria-describedby="priceId"
-                                        placeholder="Enter room price" autofocus autocomplete="price" />
-                                    @error('price')
-                                        <small id="priceId" class="form-text text-danger">{{ $message }}</small>
+                                    <label for="daily_price" class="form-label">Harga Perhari</label>
+                                    <input type="number" class="form-control @error('daily_price') is-invalid @enderror"
+                                        wire:model="daily_price" id="daily_price" aria-describedby="daily_priceId"
+                                        placeholder="Enter room daily_price" autofocus autocomplete="daily_price" />
+                                    @error('daily_price')
+                                        <small id="daily_priceId" class="form-text text-danger">{{ $message }}</small>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-md">
+                                <div class="mb-3">
+                                    <label for="monthly_price" class="form-label">Harga Perhari</label>
+                                    <input type="number" class="form-control @error('monthly_price') is-invalid @enderror"
+                                        wire:model="monthly_price" id="monthly_price" aria-describedby="monthly_priceId"
+                                        placeholder="Enter room monthly_price" autofocus autocomplete="monthly_price" />
+                                    @error('monthly_price')
+                                        <small id="monthly_priceId" class="form-text text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12">
                                 <div class="mb-3">
                                     <label for="room_status" class="form-label">Status</label>
                                     <select wire:model='room_status' class="form-select" name="room_status"
