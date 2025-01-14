@@ -31,9 +31,7 @@ class FolioServiceProvider extends ServiceProvider
                 'payments/*' => [
                     'auth', 'checkRole:customer',
                 ],
-                'user/*' => [
-                    'auth', 'checkRole:customer',
-                ],
+                
             ]);
     }
 }

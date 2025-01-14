@@ -16,8 +16,6 @@ name('rooms.edit');
 
 state([
     'facilities' => fn() => $this->room->facilities->pluck('name')->toArray(), // Muat facilities sebagai array
-    'images' => [], // Image models
-    'previmages',
 
     // Room Models
     'daily_price' => fn() => $this->room->daily_price,
@@ -34,26 +32,7 @@ rules([
     'room_status' => 'required|in:available,booked,maintenance', // Status kamar harus ada dan salah satu dari nilai yang ditentukan
     'facilities' => 'required', // Validasi array
     'facilities.*' => 'required|string|min:2', // Validasi setiap item
-    'images.*' => 'image', // Validasi file gambar
 ]);
-
-$updatingImages = function ($value) {
-    $this->previmages = $this->images;
-};
-
-$updatedImages = function ($value) {
-    $this->images = array_merge($this->previmages, $value);
-};
-
-$removeItem = function ($key) {
-    if (isset($this->images[$key])) {
-        $file = $this->images[$key];
-        $file->delete();
-        unset($this->images[$key]);
-    }
-
-    $this->images = array_values($this->images);
-};
 
 $edit = function () {
     $room = $this->room;
@@ -80,31 +59,6 @@ $edit = function () {
             $room->facilities()->create([
                 'name' => $facility,
             ]);
-        }
-
-        if (count($this->images) > 0) {
-            $images = Image::where('room_id', $room->id)->get();
-
-            if ($images->isNotEmpty()) {
-                // Cek apakah koleksi tidak kosong
-                foreach ($images as $image) {
-                    // Hapus file dari penyimpanan
-                    Storage::delete($image->image_path);
-
-                    // Hapus data dari database
-                    $image->delete();
-                }
-            }
-
-            foreach ($this->images as $image) {
-                $path = $image->store('rooms', 'public'); // Simpan ke folder "rooms" di storage
-                Image::create([
-                    'room_id' => $room->id,
-                    'image_path' => $path,
-                ]);
-
-                $image->delete();
-            }
         }
 
         // Commit transaksi
@@ -152,63 +106,11 @@ $edit = function () {
                     </div>
                 </div>
 
-                @if ($images)
-                    <div class="card-body py-0">
-                        <div class="d-flex flex-nowrap gap-3 overflow-auto" style="white-space: nowrap;">
-                            @foreach ($images as $key => $image)
-                                <div class="position-relative" style="width: 200px; flex: 0 0 auto;">
-                                    <div class="card mt-3">
-                                        <img src="{{ $image->temporaryUrl() }}" class="card-img-top"
-                                            style="object-fit: cover; width: 200px; height: 200px;" alt="preview">
-                                        <a type="button" class="position-absolute top-0 start-100 translate-middle p-2"
-                                            wire:click.prevent='removeItem({{ json_encode($key) }})'>
-                                            <i class='bx bx-x p-2 rounded-circle ri-20px text-white bg-danger'></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @elseif($room->images->isNotEmpty())
-                    <div class="card-body">
-                        <small>Gambar tersimpan
-                            <span class="text-danger">(Jika tidak mengubah gambar, tidak perlu melakukan
-                                input gambar)</span>
-                            .
-                        </small>
-                        <div class="d-flex flex-nowrap gap-3 overflow-auto" style="white-space: nowrap;">
-                            @foreach ($room->images as $key => $image)
-                                <div class="position-relative" style="width: 200px; flex: 0 0 auto;">
-                                    <div class="card mt-3">
-                                        <img src="{{ Storage::url($image->image_path) }}" class="card-img-top"
-                                            style="object-fit: cover; width: 200px; height: 200px;" alt="preview">
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-
-
                 <div class="card-body">
                     <form wire:submit="edit">
                         @csrf
                         <div class="row">
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label for="images" class="form-label">Gambar Kamar
-                                        <span wire:target='images' wire:loading.class.remove="d-none"
-                                            class="d-none spinner-border text-primary spinner-border-sm" role="status">
-                                        </span>
-                                    </label>
-                                    <input type="file" class="form-control @error('images') is-invalid @enderror"
-                                        wire:model="images" id="images" aria-describedby="imagesId" autocomplete="images"
-                                        accept="image/*" multiple />
-                                    @error('images')
-                                        <small id="imagesId" class="form-text text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
-                            </div>
+
                             <div class="col-md">
                                 <div class="mb-3">
                                     <label for="daily_price" class="form-label">Harga Perhari</label>

@@ -1,41 +1,42 @@
 <?php
 
-use App\Models\Room;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
-use function Laravel\Folio\name;
+use App\Models\User;
 use function Livewire\Volt\{computed, state, usesPagination, uses};
+use function Laravel\Folio\name;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 uses([LivewireAlert::class]);
 
-name('rooms.index');
+name('users.index');
 
 state(['search'])->url();
 usesPagination(theme: 'bootstrap');
 
-$rooms = computed(function () {
+$users = computed(function () {
     if ($this->search == null) {
-        return Room::query()->latest()->paginate(10);
+        return User::query()->where('role', 'admin')->latest()->paginate(10);
     } else {
-        return Room::query()
+        return User::query()
+            ->where('role', 'admin')
             ->where(function ($query) {
                 // isi
-                $query->whereAny(['price', 'description', 'room_status'], 'LIKE', "%{$this->search}%");
+                $query->whereAny(['name', 'email', 'password', 'telp', 'role'], 'LIKE', "%{$this->search}%");
             })
             ->latest()
             ->paginate(10);
     }
 });
 
-$destroy = function (room $room) {
+$destroy = function (User $user) {
     try {
-        $room->delete();
-        $this->alert('success', 'Data room berhasil dihapus!', [
+        $user->delete();
+        $this->alert('success', 'Data user berhasil di hapus!', [
             'position' => 'center',
             'timer' => 3000,
             'toast' => true,
         ]);
     } catch (\Throwable $th) {
-        $this->alert('error', 'Data room gagal dihapus!', [
+        $this->alert('error', 'Data user gagal di hapus!', [
             'position' => 'center',
             'timer' => 3000,
             'toast' => true,
@@ -44,10 +45,9 @@ $destroy = function (room $room) {
 };
 
 ?>
-
 <x-admin-layout>
     <div>
-        <x-slot name="title">Data kamar</x-slot>
+        <x-slot name="title">Admin</x-slot>
 
 
         @volt
@@ -56,47 +56,41 @@ $destroy = function (room $room) {
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                <a href="{{ route('rooms.create') }}" class="btn btn-primary">Tambah
-                                    Kamar</a>
+                                <a href="{{ route('users.create') }}" class="btn btn-primary">Tambah
+                                    Admin</a>
                             </div>
                             <div class="col">
-                                <input wire:model.live="search" type="search" class="form-control" name="search"
-                                    id="search" aria-describedby="searchId"
-                                    placeholder="Masukkan kata kunci pencarian" />
+                                <input wire:model.live="search" type="search" class="form-control" name=""
+                                    id="" aria-describedby="helpId" placeholder="Masukkan nama pengguna" />
                             </div>
                         </div>
                     </div>
 
                     <div class="card-body">
-                        <div class="table-responsive border rounded">
-                            <table class="table table-striped text-center text-nowrap">
+                        <div class="table-responsive border rounded px-3">
+                            <table class="table text-center text-nowrap">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
-                                        <th>Harga Perhari</th>
-                                        <th>Harga Perbulan</th>
-                                        <th>Status</th>
+                                        <th>Nama</th>
+                                        <th>Email</th>
+                                        <th>Telp</th>
                                         <th>Opsi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($this->rooms as $no => $item)
+                                    @foreach ($this->users as $no => $user)
                                         <tr>
                                             <td>{{ ++$no }}</td>
-                                            <td>{{ formatRupiah($item->daily_price) }}</td>
-                                            <td>{{ formatRupiah($item->monthly_price) }}</td>
+                                            <td>{{ $user->name }}</td>
+                                            <td>{{ $user->email }}</td>
+                                            <td>{{ $user->telp }}</td>
                                             <td>
-                                                <button class="btn btn-primary btn-sm">
-                                                    {{ __('room.' . $item->room_status) }}
-                                                </button>
-                                            </td>
-                                            <td>
-                                                <div>
-                                                    <a href="{{ route('rooms.edit', ['room' => $item->id]) }}"
+                                                <div class="">
+                                                    <a href="{{ route('users.edit', ['user' => $user->id]) }}"
                                                         class="btn btn-sm btn-warning">Edit</a>
                                                     <button wire:loading.attr='disabled'
-                                                        wire:click='destroy({{ $item->id }})'
-                                                        wire:confirm="Apakah kamu yakin ingin menghapus data ini?"
+                                                        wire:click='destroy({{ $user->id }})'
                                                         class="btn btn-sm btn-danger">
                                                         {{ __('Hapus') }}
                                                     </button>
@@ -108,7 +102,9 @@ $destroy = function (room $room) {
                                 </tbody>
                             </table>
 
-                            {{ $this->rooms->links() }}
+                            <div class="container d-flex justify-content-center">
+                                {{ $this->users->links() }}
+                            </div>
                         </div>
 
                     </div>

@@ -17,8 +17,8 @@ class SettingSeeder extends Seeder
             [
                 'name' => 'Kost Gala Residence',
                 'description' => 'Kost Gala Residence berlokasi Jambi. penginapan bintang 2 ini memiliki WiFi gratis dan kamar ber-AC dengan kamar mandi pribadi.',
-                'location' => 'Payo Lebar, Jambi, Danau Sipin, Jambi, Indonesia, Jambi
-',
+                'location' => 'Payo Lebar, Jambi, Danau Sipin, Jambi, Indonesia, Jambi',
+                'phone' => '628978301766'
             ]
         );
     }

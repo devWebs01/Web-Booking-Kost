@@ -68,7 +68,7 @@ $register = function () {
                     <div class="col-sm-6 mb-3 mb-sm-0">
                         <div class="d-flex">
                             <div class="flex-shrink-0">
-                                <div style="color: #9c9259;">
+                                <div style="color: #D16806;">
                                     <svg class="bi bi-chat-right-fill" fill="currentColor" height="32"
                                         viewbox="0 0 16 16" width="32" xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -84,7 +84,7 @@ $register = function () {
                     </div>
                     <div class="col-sm-6">
                         <div class="d-flex">
-                            <div style="color: #9c9259;">
+                            <div style="color: #D16806;">
                                 <svg class="bi bi-shield-fill-check" fill="currentColor" height="32"
                                     viewbox="0 0 16 16" width="32" xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -102,7 +102,7 @@ $register = function () {
             <div class="col-lg-6">
                 <div class="ps-lg-5">
                     <div class="card shadow-lg text-white text-left h-100">
-                        <div class="card-body rounded p-4 p-xl-5" style="background-color: #9c9259;">
+                        <div class="card-body rounded p-4 p-xl-5" style="background-color: #D16806;">
                             <form wire:submit="register">
                                 <input type="hidden" wire:model="role" value="customer">
                                 <div class="mb-3">

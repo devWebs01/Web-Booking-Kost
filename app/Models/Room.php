@@ -27,8 +27,5 @@ class Room extends Model
         return $this->hasMany(Facility::class);
     }
 
-    public function images(): HasMany
-    {
-        return $this->hasMany(Image::class);
-    }
+  
 }

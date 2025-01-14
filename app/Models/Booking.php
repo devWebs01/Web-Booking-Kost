@@ -13,15 +13,12 @@ class Booking extends Model
 
     protected $fillable = [
         'user_id',
-        'room_id',
         'check_in_date',
         'check_out_date',
-        'booking_source',
-        'session',
-        'ota_source',
         'customer_name',
         'customer_contact',
         'status',
+        'type',
     ];
 
     public function user(): BelongsTo
