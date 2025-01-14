@@ -61,7 +61,8 @@ $destroy = function (model $model) {
                             </div>
                             <div class="col">
                                 <input wire:model.live="search" type="search" class="form-control" name="search"
-                                id="search" aria-describedby="searchId" placeholder="Masukkan kata kunci pencarian" />
+                                    id="search" aria-describedby="searchId"
+                                    placeholder="Masukkan kata kunci pencarian" />
                             </div>
                         </div>
                     </div>
@@ -103,7 +104,9 @@ $destroy = function (model $model) {
                                 </tbody>
                             </table>
 
-                            {{ $this->models->links() }}
+                            <div class="container d-flex justify-content-center">
+                                {{ $this->models->links() }}
+                            </div>
                         </div>
 
                     </div>

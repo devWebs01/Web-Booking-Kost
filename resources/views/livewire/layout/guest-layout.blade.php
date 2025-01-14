@@ -13,19 +13,19 @@
     <meta name="description" content="">
 
     <!--Bootstrap ================================================== -->
-    <link rel="stylesheet" type="text/css" href="/guest/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/guest/css/bootstrap.min.css') }}">
 
     <!--vendor css ================================================== -->
-    <link rel="stylesheet" type="text/css" href="/guest/css/vendor.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/guest/css/vendor.css') }}">
 
     <!--Link Swiper's CSS ================================================== -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
 
     <!--Link AOS's CSS ================================================== -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    {{-- <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"> --}}
 
     <!-- Style Sheet ================================================== -->
-    <link rel="stylesheet" type="text/css" href="/guest/style.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/guest/style.css') }}">
 
     <!-- Google Fonts ================================================== -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,8 @@
         href="https://fonts.googleapis.com/css2?family=Cormorant+Upright:wght@300;400;500;600;700&family=Sora:wght@100..800&display=swap"
         rel="stylesheet">
     @livewireStyles
-    @stack('css')
+
+    @stack('styles')
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Reddit+Sans:ital,wght@0,200..900;1,200..900&display=swap');
@@ -216,7 +217,7 @@
         <div class="container">
             <div class="d-lg-flex justify-content-between py-3 py-lg-2">
                 <div class="small mb-2 mb-lg-0">
-                    <p class="text-muted mb-0 me-5">© 2023 FreeFrontend.dev. All rights reserved.</p>
+                    <p class="text-muted mb-0 me-5">© {{ date('Y') }} Kost Website Application.</p>
                 </div>
                 <div class="d-flex small align-items-end justify-content-between">
                     <div>
@@ -273,13 +274,14 @@
         </div>
     </footer>
 
-    <script src="/guest/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="/guest/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="/guest/js/plugins.js"></script>
+    <script src="{{ asset('/guest/js/jquery-1.11.0.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/guest/js/bootstrap.bundle.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/guest/js/plugins.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/guest/js/script.js') }}"></script>
+    
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script type="text/javascript" src="/guest/js/script.js"></script>
-    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 
     @stack('scripts')
     @livewireScripts

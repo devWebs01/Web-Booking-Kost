@@ -13,5 +13,6 @@ class Setting extends Model
         'name',
         'description',
         'location',
+        'phone'
     ];
 }

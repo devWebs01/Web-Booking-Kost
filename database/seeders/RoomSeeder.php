@@ -74,15 +74,6 @@ class RoomSeeder extends Seeder
             // Tambahkan 7 data lainnya dengan variasi deskripsi
         ];
 
-        $imageUrls = [
-            'https://images.oyoroomscdn.com/uploads/hotel_image/199499/medium/cbb917481eb9fcc5.jpg',
-            'https://images.oyoroomscdn.com/uploads/hotel_image/199499/medium/fbb6e1841f3c77e1.jpg',
-            'https://images.oyoroomscdn.com/uploads/hotel_image/199499/medium/ef0cf0c2ba614bc6.jpg',
-            'https://images.oyoroomscdn.com/uploads/hotel_image/199499/medium/4feb0abef9423dd5.jpg',
-            'https://images.oyoroomscdn.com/uploads/hotel_image/199499/medium/74fa41eef0df8984.jpg',
-            'https://images.oyoroomscdn.com/uploads/hotel_image/199499/medium/bb05307240a70e6e.jpg',
-        ];
-
         $facilities = [
             'Wi-Fi Gratis',
             'Kamar Mandi Dalam',
@@ -100,23 +91,6 @@ class RoomSeeder extends Seeder
                 Facility::create([
                     'room_id' => $room->id,
                     'name' => $facility,
-                ]);
-            }
-
-            // Tambahkan gambar ke kamar
-
-            foreach ($imageUrls as $imageUrl) {
-                $imageContents = file_get_contents($imageUrl);
-                $imageName = basename($room->id.$imageUrl);
-                $storagePath = 'rooms/' . $imageName;
-
-                // Simpan gambar ke folder public storage
-                Storage::disk('public')->put($storagePath, $imageContents);
-
-                // Simpan path gambar ke database
-                Image::create([
-                    'room_id' => $room->id,
-                    'image_path' => $storagePath,
                 ]);
             }
 

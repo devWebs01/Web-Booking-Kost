@@ -21,6 +21,6 @@ class GuestNav extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('layouts.guest-nav');
+        return view('livewire.layout.guest-nav');
     }
 }

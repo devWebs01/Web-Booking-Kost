@@ -26,7 +26,6 @@
         .btn-danger {
             --bs-btn-bg: #fc3a4e;
         }
-        
     </style>
 
     @stack('styles')
@@ -63,7 +62,7 @@
                                 <a class="nav-link " href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
                                     aria-expanded="false">
                                     <img src="https://api.dicebear.com/9.x/adventurer/svg?seed={{ auth()->user()->name }}"
-                                        alt="" width="50" height="50" class="rounded-circle border">
+                                        alt="profile" width="50" height="50" class="rounded-circle border">
                                 </a>
                                 @livewire('layout.admin-header')
                             </li>
