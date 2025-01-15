@@ -49,7 +49,7 @@ $login = function () {
                     <div class="col-sm-6 mb-3 mb-sm-0">
                         <div class="d-flex">
                             <div class="flex-shrink-0">
-                                <div style="color: #D16806;">
+                                <div style="color: #000000;">
                                     <svg class="bi bi-chat-right-fill" fill="currentColor" height="32"
                                         viewbox="0 0 16 16" width="32" xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -65,7 +65,7 @@ $login = function () {
                     </div>
                     <div class="col-sm-6">
                         <div class="d-flex">
-                            <div style="color: #D16806;">
+                            <div style="color: #000000;">
                                 <svg class="bi bi-shield-fill-check" fill="currentColor" height="32"
                                     viewBox="0 0 16 16" width="32" xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -82,21 +82,21 @@ $login = function () {
             </div>
             <div class="col-lg-6">
                 <div class="ps-lg-5">
-                    <div class="card shadow-lg text-white text-left h-100">
-                        <div class="card-body rounded p-4 p-xl-5" style="background-color: #D16806;">
-                            <h2 id="font-custom" class="pb-3 text-center text-white fw-bold">Masuk Ke Akun kamu</h2>
+                    <div class="card shadow-lg text-dark text-left h-100">
+                        <div class="card-body rounded p-4 p-xl-5" style="background-color: #F9F6F3;">
+                            <h2 id="font-custom" class="pb-3 text-center text-dark fw-bold">Masuk Ke Akunmu</h2>
                             <form wire:submit="login">
                                 <div class="mb-3">
-                                    <label for="email" class="form-label text-white">Email</label>
-                                    <input type="email" wire:model="form.email" class="form-control text-white"
+                                    <label for="email" class="form-label text-dark">Email</label>
+                                    <input type="email" wire:model="form.email" class="form-control text-dark"
                                         id="email" aria-describedby="emailHelp">
                                     @error('email')
                                         <small id="emailHelp" class="form-text text-dark">{{ $message }}</small>
                                     @enderror
                                 </div>
                                 <div class="mb-4">
-                                    <label for="password" class="form-label text-white">Kata Sandi</label>
-                                    <input type="password" wire:model="form.password" class="form-control text-white"
+                                    <label for="password" class="form-label text-dark">Kata Sandi</label>
+                                    <input type="password" wire:model="form.password" class="form-control text-dark"
                                         id="password">
                                     @error('password')
                                         <small id="password" class="form-text text-dark">{{ $message }}</small>
@@ -106,7 +106,7 @@ $login = function () {
                                     <div class="form-check ">
                                         <input class="form-check-input dark" type="checkbox" wire:model="form.remember"
                                             value="" id="flexCheckChecked" checked="">
-                                        <label class="form-check-label text-dark text-white" for="flexCheckChecked">
+                                        <label class="form-check-label text-dark text-dark" for="flexCheckChecked">
                                             Ingat saya
                                         </label>
                                     </div>
@@ -116,7 +116,7 @@ $login = function () {
                                 </button>
                                 <div class="d-flex align-items-center justify-content-center">
                                     <p class="fs-4 mb-0 fw-bold">Belum punya akun?</p>
-                                    <a class="text-white fs-4 fw-bold ms-2" href="{{ route('register') }}">Buat akun</a>
+                                    <a class="text-dark fs-4 fw-bold ms-2" href="{{ route('register') }}">Buat akun</a>
                                 </div>
                             </form>
                         </div>

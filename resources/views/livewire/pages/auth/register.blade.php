@@ -68,7 +68,7 @@ $register = function () {
                     <div class="col-sm-6 mb-3 mb-sm-0">
                         <div class="d-flex">
                             <div class="flex-shrink-0">
-                                <div style="color: #D16806;">
+                                <div style="color: #000000;">
                                     <svg class="bi bi-chat-right-fill" fill="currentColor" height="32"
                                         viewbox="0 0 16 16" width="32" xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -84,7 +84,7 @@ $register = function () {
                     </div>
                     <div class="col-sm-6">
                         <div class="d-flex">
-                            <div style="color: #D16806;">
+                            <div style="color: #000000;">
                                 <svg class="bi bi-shield-fill-check" fill="currentColor" height="32"
                                     viewbox="0 0 16 16" width="32" xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -101,39 +101,40 @@ $register = function () {
             </div>
             <div class="col-lg-6">
                 <div class="ps-lg-5">
-                    <div class="card shadow-lg text-white text-left h-100">
-                        <div class="card-body rounded p-4 p-xl-5" style="background-color: #D16806;">
+                    <div class="card shadow-lg text-dark text-left h-100">
+                        <div class="card-body rounded p-4 p-xl-5" style="background-color: #F9F6F3;">
+                            <h2 id="font-custom" class="pb-3 text-center text-dark fw-bold">Buat Akunmu</h2>
                             <form wire:submit="register">
                                 <input type="hidden" wire:model="role" value="customer">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label text-white">Nama Lengkap</label>
-                                    <input type="text" wire:model="name" class="form-control text-white"
+                                    <label for="name" class="form-label text-dark">Nama Lengkap</label>
+                                    <input type="text" wire:model="name" class="form-control text-dark"
                                         id="name" aria-describedby="nameHelp">
                                     @error('name')
                                         <small id="nameHelp" class="form-text text-dark">{{ $message }}</small>
                                     @enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label for="email" class="form-label text-white">Email</label>
-                                    <input type="email" wire:model="email" class="form-control text-white"
+                                    <label for="email" class="form-label text-dark">Email</label>
+                                    <input type="email" wire:model="email" class="form-control text-dark"
                                         id="email" aria-describedby="emailHelp">
                                     @error('email')
                                         <small id="emailHelp" class="form-text text-dark">{{ $message }}</small>
                                     @enderror
                                 </div>
                                 <div class="mb-4">
-                                    <label for="password" class="form-label text-white">Kata Sandi</label>
-                                    <input type="password" wire:model="password" class="form-control text-white"
+                                    <label for="password" class="form-label text-dark">Kata Sandi</label>
+                                    <input type="password" wire:model="password" class="form-control text-dark"
                                         id="password">
                                     @error('password')
                                         <small id="password" class="form-text text-dark">{{ $message }}</small>
                                     @enderror
                                 </div>
                                 <div class="mb-4">
-                                    <label for="password_confirmation" class="form-label text-white">Ulangi Kata
+                                    <label for="password_confirmation" class="form-label text-dark">Ulangi Kata
                                         sandi</label>
                                     <input type="password" wire:model="password_confirmation"
-                                        class="form-control text-white" id="password_confirmation">
+                                        class="form-control text-dark" id="password_confirmation">
                                     @error('password_confirmation')
                                         <small id="password_confirmation"
                                             class="form-text text-dark">{{ $message }}</small>
@@ -145,7 +146,7 @@ $register = function () {
                                 </button>
                                 <div class="d-flex align-items-center justify-content-center">
                                     <p class="fs-4 mb-0 fw-bold">Sudah punya akun?</p>
-                                    <a class="text-white fs-4 fw-bold ms-2" href="{{ route('login') }}">Masuk
+                                    <a class="text-dark fs-4 fw-bold ms-2" href="{{ route('login') }}">Masuk
                                         Sekarang</a>
                                 </div>
                             </form>

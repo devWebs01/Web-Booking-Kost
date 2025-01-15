@@ -3,8 +3,11 @@
 use App\Models\Room;
 use App\Models\Image;
 use App\Models\Setting;
-use function Livewire\Volt\{state, rules, computed};
+use function Livewire\Volt\{state, uses, computed};
 use function Laravel\Folio\name;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
+
+uses([LivewireAlert::class]);
 
 name('bookings.index');
 
@@ -21,9 +24,9 @@ state([
 
     @volt
         <div>
-            <x-slot name="title">Reservasi Kamar {{ $setting->name }}</x-slot>
+            <x-slot name="title">Pemesanan Kamar {{ $setting->name }}</x-slot>
 
-            
+
             <section class="pb-5">
                 <div class="container">
                     <div class="row gx-2">
