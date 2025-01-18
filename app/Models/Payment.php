@@ -14,7 +14,6 @@ class Payment extends Model
         'booking_id',
         'payment_date',
         'amount',
-        'payment_method',
         'receipt',
         'status',
     ];

@@ -1,11 +1,10 @@
 <?php
 
-use App\Livewire\Actions\Logout;
 use App\Models\Order;
 use function Livewire\Volt\{computed, state, on};
 
-$logout = function (Logout $logout) {
-    $logout();
+$logout = function () {
+    Auth::logout();
     $this->redirect('/');
 };
 ?>

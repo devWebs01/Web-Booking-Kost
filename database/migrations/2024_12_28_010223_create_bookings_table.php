@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete(); // Nullable untuk pelanggan yang tidak terdaftar
-            $table->foreignId('room_id')->nullOnDelete()->constrained()->cascadeOnDelete();
             $table->date('check_in_date');
             $table->date('check_out_date');
             $table->enum('type', [
                 'daily',
                 'monthly',
             ]);
+            $table->string('order_id')->unique(); // Nama pelanggan untuk offline
+            $table->string('totalRooms')->nullable(); // Nama pelanggan untuk offline
             $table->string('customer_name')->nullable(); // Nama pelanggan untuk offline
             $table->string('customer_contact')->nullable(); // Kontak pelanggan untuk offline
             $table->enum('status', ['pending', 'confirmed', 'canceled'])->default('pending');

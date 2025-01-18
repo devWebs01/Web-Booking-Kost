@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('booking_id')->constrained('bookings');
             $table->date('payment_date');
             $table->string('amount');
-            $table->string('payment_method');
             $table->string('receipt')->nullable();
             $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');
             $table->timestamps();

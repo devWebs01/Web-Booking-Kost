@@ -1,16 +1,9 @@
 <?php
 
-if (!function_exists('formatRupiah')) {
-    /**
-     * Format angka menjadi format Rupiah
-     *
-     * @param float|int $amount
-     * @param bool $prefix
-     * @return string
-     */
-    function formatRupiah($amount, $prefix = true)
+// app/helpers.php
+if (! function_exists('formatRupiah')) {
+    function formatRupiah($amount)
     {
-        $formatted = number_format($amount, 0, ',', '.');
-        return $prefix ? 'Rp ' . $formatted : $formatted;
+        return 'Rp '.number_format($amount, 0, ',', '.');
     }
 }

@@ -17,15 +17,18 @@ class Room extends Model
         'room_status',
     ];
 
-    public function bookings(): HasMany
-    {
-        return $this->hasMany(booking::class);
-    }
-
     public function facilities(): HasMany
     {
         return $this->hasMany(Facility::class);
     }
 
-  
+    /**
+     * Get all of the bookingRooms for the Booking
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function bookingRooms(): HasMany
+    {
+        return $this->hasMany(BookingRoom::class);
+    }
 }

@@ -15,7 +15,7 @@ class SettingSeeder extends Seeder
     {
         Setting::insert(
             [
-                'name' => 'Kost Gala Residence',
+                'name' => 'Gala Residence',
                 'description' => 'Kost Gala Residence berlokasi Jambi. penginapan bintang 2 ini memiliki WiFi gratis dan kamar ber-AC dengan kamar mandi pribadi.',
                 'location' => 'Payo Lebar, Jambi, Danau Sipin, Jambi, Indonesia, Jambi',
                 'phone' => '628978301766'

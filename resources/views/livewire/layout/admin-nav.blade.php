@@ -26,12 +26,12 @@ state([
         <ul id="sidebarnav">
             <li class="nav-small-cap">
                 <iconify-icon icon="solar:shield-user-outline" class="nav-small-cap-icon fs-4"></iconify-icon>
-                <span class="hide-menu">Dashboard</span>
+                <span class="hide-menu">Home</span>
             </li>
 
             <li class="sidebar-item">
-                <a wire:navigate class="sidebar-link" href="{{ route('dashboard') }}" aria-expanded="false"
-                    {{ request()->routeIs('dashboard') }}>
+                <a wire:navigate class="sidebar-link" href="{{ route('home') }}" aria-expanded="false"
+                    {{ request()->routeIs('home') }}>
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">Beranda
                     </span>
@@ -91,7 +91,7 @@ state([
                     {{ request()->routeIs('admin/galleries') }}>
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">
-                        Galleri 
+                        Galleri
                     </span>
                 </a>
             </li>

@@ -20,18 +20,25 @@ class FolioServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Folio::path(resource_path('views/pages'))
-            ->middleware([
-                'admin/*' => [
-                    'auth', 'checkRole:admin,superadmin',
-                ],
-                'orders/*' => [
-                    'auth', 'checkRole:customer',
-                ],
-                'payments/*' => [
-                    'auth', 'checkRole:customer',
-                ],
-                
-            ]);
+        Folio::path(resource_path('views/pages'))->middleware([
+
+            'admin/*' => [
+                'auth',
+                'verified',
+                'checkRole:admin,dev',
+            ],
+
+            'guest/bookings/*' => [
+                'auth',
+                'verified',
+                'checkRole:customer,dev',
+            ],
+
+            'guest/payment-records/*' => [
+                'auth',
+                'verified',
+                'checkRole:customer,dev',
+            ],
+        ]);
     }
 }

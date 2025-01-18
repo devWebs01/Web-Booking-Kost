@@ -9,7 +9,7 @@ name('account.auth');
 <x-admin-layout>
     <x-slot name="title">Akun Profile</x-slot>
     <x-slot name="header">
-        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Beranda</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('home') }}">Beranda</a></li>
         <li class="breadcrumb-item"><a href="{{ route('account.auth') }}">Akun Profile</a></li>
     </x-slot>
 

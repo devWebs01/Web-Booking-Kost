@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,14 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'welcome');
+Route::get('/', function () {
+    return view('pages.welcome');
+});
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified', 'checkRole:admin,superadmin'])
-    ->name('dashboard');
+Auth::routes([
+    'verify' => 'true',
+]);
 
-Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
-
-require __DIR__.'/auth.php';
+Route::get('/home', [HomeController::class, 'index'])
+    ->middleware(['verified', 'checkRole:dev,admin'])
+    ->name('home');
