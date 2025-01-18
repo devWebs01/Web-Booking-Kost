@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
 {
@@ -14,17 +13,15 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        $roles = array_slice(func_get_args(), 2);
+        $user = Auth::user();
 
-        foreach ($roles as $role) {
-            $user = Auth::user()->role;
-            if ($user == $role) {
-                return $next($request);
-            }
+        if (! $user || ! in_array($user->role, $roles)) {
+            // Redirect or abort if the user doesn't have the required role
+            return abort(403, 'Unauthorized action.');
         }
 
-        return redirect('/');
+        return $next($request);
     }
 }

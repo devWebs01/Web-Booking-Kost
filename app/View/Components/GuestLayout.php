@@ -2,16 +2,27 @@
 
 namespace App\View\Components;
 
+use App\Models\Setting;
+use Closure;
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use Illuminate\View\View;
 
 class GuestLayout extends Component
 {
     /**
-     * Get the view / contents that represents the component.
+     * Create a new component instance.
      */
-    public function render(): View
+    public function __construct()
     {
-        return view('livewire.layout.guest-layout');
+        //
+    }
+
+    /**
+     * Get the view / contents that represent the component.
+     */
+    public function render(): View|Closure|string
+    {
+        $setting = Setting::first();
+        return view('components.guest-layout', compact('setting'));
     }
 }

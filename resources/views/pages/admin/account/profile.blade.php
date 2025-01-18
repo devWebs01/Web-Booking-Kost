@@ -88,8 +88,6 @@ $sendVerification = function () {
                 </div>
                 <div class="col-md align-self-center text-end">
                     <span wire:loading class="spinner-border spinner-border-sm"></span>
-                    <x-action-message on="profile-updated">
-                    </x-action-message>
                 </div>
             </div>
         </form>
