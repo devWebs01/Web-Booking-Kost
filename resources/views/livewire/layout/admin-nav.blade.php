@@ -77,6 +77,16 @@ state([
                 <span class="hide-menu">Ruangan</span>
             </li>
 
+             <li class="sidebar-item">
+                <a wire:navigate class="sidebar-link" href="{{ route('settings.index') }}" aria-expanded="false"
+                    {{ request()->routeIs('admin/customers') }}>
+                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
+                    <span class="hide-menu">
+                        Pengaturan Kost
+                    </span>
+                </a>
+            </li>
+
             <li class="sidebar-item">
                 <a wire:navigate class="sidebar-link" href="{{ route('rooms.index') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/rooms') }}>
@@ -92,6 +102,35 @@ state([
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">
                         Galleri
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <span class="sidebar-divider lg"></span>
+            </li>
+
+            <li class="nav-small-cap">
+                <iconify-icon icon="solar:shield-user-outline" class="nav-small-cap-icon fs-4"></iconify-icon>
+                <span class="hide-menu">Transaksi</span>
+            </li>
+
+            <li class="sidebar-item">
+                <a wire:navigate class="sidebar-link" href="{{ route('transactions.index') }}" aria-expanded="false"
+                    {{ request()->routeIs(['admin/transactions', 'admin/transactions/*']) }}>
+                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
+                    <span class="hide-menu">
+                        Pemesanan
+                    </span>
+                </a>
+            </li>
+              
+            <li class="sidebar-item">
+                <a wire:navigate class="sidebar-link" href="{{ route('reports.bookings') }}" aria-expanded="false"
+                    {{ request()->routeIs('admin/reports') }}>
+                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
+                    <span class="hide-menu">
+                        Laporan Pemesanan
                     </span>
                 </a>
             </li>

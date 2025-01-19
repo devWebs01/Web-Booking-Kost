@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'STUDENT' => 'Pelajar',
-    'GENERAL' => 'Umum',
-    'TOURNAMENT' => 'Turnamen',
+    'daily' => 'Perhari',
+    'monthly' => 'Perbulan',
 ];

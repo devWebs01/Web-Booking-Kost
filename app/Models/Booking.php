@@ -38,6 +38,7 @@ class Booking extends Model
     {
         $timestamp = now()->format('YmdHis'); // Format waktu sebagai bagian dari ID
         $randomNumber = mt_rand(1000, 9999); // Tambahkan angka acak untuk memastikan keunikan
+
         return "INV-{$timestamp}-{$randomNumber}";
     }
 
@@ -50,6 +51,7 @@ class Booking extends Model
     {
         return $this->hasOne(Payment::class);
     }
+
     public function bookingRooms(): HasMany
     {
         return $this->hasMany(BookingRoom::class);

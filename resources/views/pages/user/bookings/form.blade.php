@@ -3,6 +3,7 @@
 use App\Models\Room;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use function Livewire\Volt\{state, rules, mount, uses};
@@ -24,9 +25,10 @@ state([
 
     // booking
     'type' => 'daily',
+    'check_out_date',
+    'setting' => fn () => Setting::first(),
     'rooms' => fn() => Room::where('room_status', 'available')->get(),
     'check_in_date' => fn() => now()->format('Y-m-d'),
-    'check_out_date',
     'paymentAmount' => 0, // Tambahkan variabel untuk menyimpan jumlah pembayaran
 
     // function variabel
@@ -85,15 +87,15 @@ $updated = function ($property) {
 
 // Fungsi untuk menghitung jumlah pembayaran
 $calculatePaymentAmount = function () {
-    $room = $this->rooms->first();
+    $setting = $this->setting;
 
-    if (!$room) {
+    if (!$setting) {
         $this->paymentAmount = 0;
         return;
     }
 
-    $dailyRate = $room->daily_price;
-    $monthlyRate = $room->monthly_price;
+    $dailyRate = $setting->daily_price;
+    $monthlyRate = $setting->monthly_price;
 
     $totalRooms = $this->totalRooms ?? 1;
 
@@ -117,6 +119,7 @@ rules([
 ]);
 
 $bookingForm = function () {
+
     try {
         if (Auth::check() === true) {
             $validate = $this->validate();
@@ -205,6 +208,7 @@ $bookingForm = function () {
             <div class="mb-3 col-12">
                 <label for="rooms" class="form-label">Jumlah Kamar</label>
                 <select wire:model.live="totalRooms" class="form-select" id="rooms" name="rooms" required>
+                    <option selected>Pilih Jumlah Kamar</option>
                     @foreach ($rooms as $no => $room)
                         <option value="{{ ++$no }}">{{ $no }} Kamar</option>
                     @endforeach
@@ -212,7 +216,7 @@ $bookingForm = function () {
             </div>
 
             <div class="mb-3">
-                <button type="submit" class="btn btn-primary w-100">Pesan Sekarang</button>
+                <button type="submit" class="btn btn-light btn-lg w-100">Pesan Sekarang</button>
             </div>
         </form>
     </div>

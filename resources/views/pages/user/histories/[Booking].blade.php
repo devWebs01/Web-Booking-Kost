@@ -10,7 +10,7 @@ use function Laravel\Folio\{middleware};
 
 middleware(['auth']);
 
-name('bookings.payment');
+name('histories.show');
 
 state([
     'setting' => fn() => Setting::first(['name', 'location', 'description']),
