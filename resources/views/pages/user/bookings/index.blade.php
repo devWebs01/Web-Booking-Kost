@@ -12,7 +12,7 @@ uses([LivewireAlert::class]);
 name('bookings.index');
 
 state([
-    'setting' => fn() => Setting::first(['name', 'location', 'description']),
+    'setting' => fn() => Setting::first(),
     'images' => fn() => Image::get(),
 ]);
 
@@ -60,12 +60,6 @@ state([
                                     {{ $setting->name }}
                                 </h2>
                                 <div class="pb-5">
-                                    <p>
-                                        <span class="fs-4 fw-bold">
-                                            {{ formatRupiah($setting->daily_price) }}
-                                        </span>
-                                    </p>
-
                                     <div class="my-3">
                                         <div class="mb-4">
                                             <h5>Perhari:</h5>
@@ -78,13 +72,13 @@ state([
                                         <div class="mb-4">
                                             <h5>Fasilitas:</h5>
                                             <p>
-                                                @foreach ($room->facilities as $facility)
+                                                @foreach ($setting->facilities as $facility)
                                                     {{ $facility->name }}
                                                 @endforeach
                                             </p>
                                         </div>
                                         <p class="mb-3">
-                                            {{ $room->description }}
+                                            {{ $setting->description }}
                                         </p>
                                     </div>
                                 </div>

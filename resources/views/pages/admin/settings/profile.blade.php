@@ -64,14 +64,7 @@ $save = function () {
 @volt
 <div>
     @include('layouts.tom-select')
-    <div class="alert alert-primary mt-3" role="alert">
-        <i class='bx bxs-bell-ring pr-2'></i> <strong>Pemberitahuan Penting</strong>
-        <p>
-            Sebagai admin, Anda memiliki akses penuh untuk mengelola pengguna
-            dan konten. Harap pastikan bahwa semua tindakan yang Anda lakukan sesuai dengan kebijakan dan prosedur yang
-            berlaku. Jika Anda menemukan masalah atau memerlukan bantuan, silakan hubungi tim dukungan.
-        </p>
-    </div>
+    
 
     <form wire:submit="save">
         @csrf

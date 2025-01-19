@@ -34,8 +34,12 @@
     @livewireStyles
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
         * {
-            font-family: "Inter", sans-serif;
+            font-family: "DM Sans", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
         }
     </style>
     @stack('styles')

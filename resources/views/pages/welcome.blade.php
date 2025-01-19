@@ -135,7 +135,7 @@ state([
         <div class="container-fluid bg-light about pb-5">
             <div class="container pb-5">
                 <div class="row g-5">
-                    <div class="col-xl-6 wow fadeInLeft" data-wow-delay="0.2s">
+                    <div class="col-12 wow fadeInLeft" data-wow-delay="0.2s">
                         <div class="about-item-content bg-white rounded p-5 h-100">
                             <h4 class="text-primary">Tentang Kami</h4>
                             <h1 class="display-4 mb-4">Kost yang Nyaman dan Aman</h1>
@@ -155,53 +155,7 @@ state([
                             <a class="btn btn-primary rounded-pill py-3 px-5" href="#">Informasi Lebih Lanjut</a>
                         </div>
                     </div>
-                    <div class="col-xl-6 wow fadeInRight" data-wow-delay="0.2s">
-                        <div class="bg-white rounded p-5 h-100">
-                            <div class="row g-4 justify-content-center">
-                                <div class="col-12">
-                                    <div class="rounded bg-light">
-                                        <img src="/guest/img/about-1.png" class="img-fluid rounded w-100" alt="">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">129</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Kamar Kost Tersedia</h4>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">99</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Penghargaan Diterima</h4>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">556</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Agen Terampil</h4>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">967</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Anggota Tim</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -228,8 +182,8 @@ state([
                             </div>
                             <div class="service-content p-4">
                                 <div class="service-content-inner">
-                                    <a href="#" class="d-inline-block h4 mb-4">Kamar Kost Pribadi</a>
-                                    <p class="mb-4">Kamar kost pribadi dengan fasilitas lengkap untuk kenyamanan Anda.
+                                    <a href="#" class="d-inline-block h4 mb-4">Kamar Kost Nyaman</a>
+                                    <p class="mb-4">Kamar kost nyaman dengan fasilitas lengkap.
                                     </p>
                                     <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Baca Selengkapnya</a>
                                 </div>
@@ -246,7 +200,7 @@ state([
                             </div>
                             <div class="service-content p-4">
                                 <div class="service-content-inner">
-                                    <a href="#" class="d-inline-block h4 mb-4">Kamar Kost Bersih dan Sehat</a>
+                                    <a href="#" class="d-inline-block h4 mb-4">Kamar Kost Bersih </a>
                                     <p class="mb-4">Kami menjaga kebersihan dan kesehatan kamar kost untuk kenyamanan
                                         Anda.</p>
                                     <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Baca Selengkapnya</a>

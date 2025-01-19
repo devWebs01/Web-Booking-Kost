@@ -109,7 +109,9 @@ $destroy = function (room $room) {
                             </tbody>
                         </table>
 
-                        {{ $this->rooms->links() }}
+                        <div class="container">
+                            {{ $this->rooms->links() }}
+                        </div>
                     </div>
 
                 </div>
