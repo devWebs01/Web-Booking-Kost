@@ -3,6 +3,7 @@
 use App\Models\Room;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use function Livewire\Volt\{state, rules, mount, uses};
@@ -24,9 +25,10 @@ state([
 
     // booking
     'type' => 'daily',
+    'check_out_date',
+    'setting' => fn () => Setting::first(),
     'rooms' => fn() => Room::where('room_status', 'available')->get(),
     'check_in_date' => fn() => now()->format('Y-m-d'),
-    'check_out_date',
     'paymentAmount' => 0, // Tambahkan variabel untuk menyimpan jumlah pembayaran
 
     // function variabel
@@ -85,15 +87,15 @@ $updated = function ($property) {
 
 // Fungsi untuk menghitung jumlah pembayaran
 $calculatePaymentAmount = function () {
-    $room = $this->rooms->first();
+    $setting = $this->setting;
 
-    if (!$room) {
+    if (!$setting) {
         $this->paymentAmount = 0;
         return;
     }
 
-    $dailyRate = $room->daily_price;
-    $monthlyRate = $room->monthly_price;
+    $dailyRate = $setting->daily_price;
+    $monthlyRate = $setting->monthly_price;
 
     $totalRooms = $this->totalRooms ?? 1;
 

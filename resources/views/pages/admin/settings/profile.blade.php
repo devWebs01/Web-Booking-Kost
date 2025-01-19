@@ -12,26 +12,46 @@ $getSetting = computed(function () {
 
 state([
     'name' => fn() => $this->getSetting->name ?? '',
-    'telp' => fn() => $this->getSetting->telp ?? '',
-    'whatsApp' => fn() => $this->getSetting->whatsApp ?? '',
-    'address' => fn() => $this->getSetting->address ?? '',
+    'description' => fn() => $this->getSetting->description ?? '',
+    'location' => fn() => $this->getSetting->location ?? '',
+    'phone' => fn() => $this->getSetting->phone ?? '',
+    'daily_price' => fn() => $this->getSetting->daily_price ?? '',
+    'monthly_price' => fn() => $this->getSetting->monthly_price ?? '',
+    'facilities' => fn() => $this->getSetting->facilities->pluck('name')->toArray(), // Muat facilities sebagai array
 ]);
 
 rules([
     'name' => 'required|min:5',
-    'telp' => 'required|numeric',
-    'whatsApp' => 'required|numeric',
-    'address' => 'required|min:5',
+    'phone' => 'required|numeric',
+    'location' => 'required|min:5',
+    'description' => 'required|min:5',
+    'daily_price' => 'required|numeric',
+    'monthly_price' => 'required|numeric',
+    'facilities' => 'required', // Validasi array
+    'facilities.*' => 'required|string|min:2', // Validasi setiap item
 ]);
 
 $save = function () {
     $validate = $this->validate();
 
     // Menggunakan updateOrCreate untuk memperbarui atau membuat Setting
-    Setting::updateOrCreate(
+    $setting = Setting::updateOrCreate(
         ['id' => $this->getSetting ? Setting::first()->id : null], // Kondisi pencarian
         $validate, // Data yang akan diperbarui atau dibuat
     );
+
+    // Pastikan facilities berupa array
+    $facilities = is_array($this->facilities) ? $this->facilities : explode(',', $this->facilities);
+
+    // Hapus fasilitas lama dan tambahkan yang baru
+    $setting->facilities()->delete();
+
+    foreach ($facilities as $facility) {
+        $setting->facilities()->create([
+            'name' => $facility,
+        ]);
+    }
+
 
     $this->alert('success', 'Data berhasil diupdate!', [
         'position' => 'center',
@@ -42,72 +62,134 @@ $save = function () {
 
 ?>
 @volt
-    <div>
-        <div class="alert alert-primary mt-3" role="alert">
-            <i class='bx bxs-bell-ring pr-2' ></i> <strong>Pemberitahuan Penting</strong>
-            <p>
-                Sebagai admin, Anda memiliki akses penuh untuk mengelola pengguna
-                dan konten. Harap pastikan bahwa semua tindakan yang Anda lakukan sesuai dengan kebijakan dan prosedur yang
-                berlaku. Jika Anda menemukan masalah atau memerlukan bantuan, silakan hubungi tim dukungan.
-            </p>
+<div>
+    @include('layouts.tom-select')
+    <div class="alert alert-primary mt-3" role="alert">
+        <i class='bx bxs-bell-ring pr-2'></i> <strong>Pemberitahuan Penting</strong>
+        <p>
+            Sebagai admin, Anda memiliki akses penuh untuk mengelola pengguna
+            dan konten. Harap pastikan bahwa semua tindakan yang Anda lakukan sesuai dengan kebijakan dan prosedur yang
+            berlaku. Jika Anda menemukan masalah atau memerlukan bantuan, silakan hubungi tim dukungan.
+        </p>
+    </div>
+
+    <form wire:submit="save">
+        @csrf
+
+        <div class="row mb-3">
+
+            <div class="col-md">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nama Lengkap</label>
+                    <input type="text" class="form-control @error('name') is-invalid @enderror" wire:model="name"
+                        id="name" aria-describedby="nameId" placeholder="Enter name" />
+                    @error('name')
+                        <small id="nameId" class="form-text text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+            </div>
+
+
+            <div class="col-md">
+                <div class="mb-3">
+                    <label for="phone" class="form-label">No. Telp</label>
+                    <input type="number" class="form-control @error('phone') is-invalid @enderror" wire:model="phone"
+                        id="phone" aria-describedby="phoneId" placeholder="Enter phone" />
+                    @error('phone')
+                        <small id="phoneId" class="form-text text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="mb-3">
+                    <label for="location" class="form-label">Alamat Lengkap</label>
+                    <textarea class="form-control @error('location') is-invalid @enderror" wire:model="location"
+                        id="location" aria-describedby="locationId" placeholder=" Enter Alamat Lengkap"
+                        rows="4"></textarea>
+
+                    @error('location')
+                        <small id="locationId" class="form-text text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-md">
+                <div class="mb-3">
+                    <label for="daily_price" class="form-label">Harga Perhari</label>
+                    <input type="number" class="form-control @error('daily_price') is-invalid @enderror"
+                        wire:model="daily_price" id="daily_price" aria-describedby="daily_priceId"
+                        placeholder="Enter daily_price" />
+                    @error('daily_price')
+                        <small id="daily_priceId" class="form-text text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-md">
+                <div class="mb-3">
+                    <label for="monthly_price" class="form-label">Harga Perbulan</label>
+                    <input type="number" class="form-control @error('monthly_price') is-invalid @enderror"
+                        wire:model="monthly_price" id="monthly_price" aria-describedby="monthly_priceId"
+                        placeholder="Enter monthly_price" />
+                    @error('monthly_price')
+                        <small id="monthly_priceId" class="form-text text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="mb-3">
+                    <label for="facilities" class="form-label">Fasilitas</label>
+                    <div wire:ignore>
+                        <input type="text" wire:model="facilities" id="input-tags" aria-describedby="facilitiesId"
+                            value="{{ implode(',', $facilities) }}" autocomplete="facilities" />
+                    </div>
+                    @error('facilities')
+                        <small id="facilitiesId" class="form-text text-danger">{{ $message }}</small>
+                    @enderror
+                    <br>
+                    @error('facilities.*')
+                        <small id="facilitiesId" class="form-text text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="mb-3">
+                    <label for="description" class="form-label">Keterangan Kost</label>
+                    <textarea class="form-control @error('description') is-invalid @enderror" wire:model="description"
+                        id="description" aria-describedby="descriptionId" placeholder=" Enter Alamat Lengkap"
+                        rows="4"></textarea>
+
+                    @error('description')
+                        <small id="descriptionId" class="form-text text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+            </div>
+
+
+
+
+            <div class="col-12 ">
+                <div class="row mb-3">
+                    <div class="col-md">
+                        <button type="submit" class="btn btn-primary">
+                            Submit
+                        </button>
+                    </div>
+                    <div class="col-md align-self-center text-end">
+                        <span wire:loading class="spinner-border spinner-border-sm"></span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <form wire:submit="save">
-            @csrf
-            <div class="mb-3">
-                <label for="name" class="form-label">Nama Lengkap</label>
-                <input type="text" class="form-control @error('name') is-invalid @enderror" wire:model="name" id="name"
-                    aria-describedby="nameId" placeholder="Enter name" />
-                @error('name')
-                    <small id="nameId" class="form-text text-danger">{{ $message }}</small>
-                @enderror
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md">
-                    <div class="mb-3">
-                        <label for="telp" class="form-label">Telp</label>
-                        <input type="number" class="form-control @error('telp') is-invalid @enderror" wire:model="telp"
-                            id="telp" aria-describedby="telpId" placeholder="Enter telp" />
-                        @error('telp')
-                            <small id="telpId" class="form-text text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
-                </div>
-                <div class="col-md">
-                    <div class="mb-3">
-                        <label for="whatsApp" class="form-label">WhatsApp</label>
-                        <input type="number" class="form-control @error('whatsApp') is-invalid @enderror"
-                            wire:model="whatsApp" id="whatsApp" aria-describedby="whatsAppId"
-                            placeholder="Enter whatsApp" />
-                        @error('whatsApp')
-                            <small id="whatsAppId" class="form-text text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
-                </div>
-            </div>
 
 
+        <div class="row mb-3">
 
-            <div class="mb-3">
-                <label for="address" class="form-label">Alamat Lengkap</label>
-                <textarea class="form-control @error('address') is-invalid @enderror" wire:model="address" id="address"
-                    aria-describedby="addressId" placeholder="Enter Alamat Lengkap" rows="8"></textarea>
-
-                @error('address')
-                    <small id="addressId" class="form-text text-danger">{{ $message }}</small>
-                @enderror
-            </div>
-            <div class="row mb-3">
-                <div class="col-md">
-                    <button type="submit" class="btn btn-primary">
-                        Submit
-                    </button>
-                </div>
-                <div class="col-md align-self-center text-end">
-                    <span wire:loading class="spinner-border spinner-border-sm"></span>
-                </div>
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
+</div>
 @endvolt

@@ -62,7 +62,7 @@ state([
                                     <p class="mb-5 fs-5">Temukan kamar kost terbaik yang sesuai dengan kebutuhan Anda.
                                         Kami menyediakan berbagai pilihan dengan harga terjangkau dan fasilitas lengkap.
                                     </p>
-                                   
+
                                 </div>
                             </div>
                         </div>

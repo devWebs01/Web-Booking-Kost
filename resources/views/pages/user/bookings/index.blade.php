@@ -14,7 +14,6 @@ name('bookings.index');
 state([
     'setting' => fn() => Setting::first(['name', 'location', 'description']),
     'images' => fn() => Image::get(),
-    'room' => fn() => Room::first(),
 ]);
 
 ?>
@@ -63,18 +62,18 @@ state([
                                 <div class="pb-5">
                                     <p>
                                         <span class="fs-4 fw-bold">
-                                            {{ formatRupiah($room->daily_price) }}
+                                            {{ formatRupiah($setting->daily_price) }}
                                         </span>
                                     </p>
 
                                     <div class="my-3">
                                         <div class="mb-4">
                                             <h5>Perhari:</h5>
-                                            <p> {{ formatRupiah($room->daily_price) }} /Perhari</p>
+                                            <p> {{ formatRupiah($setting->daily_price) }} /Perhari</p>
                                         </div>
                                         <div class="mb-4">
                                             <h5>Perbulan:</h5>
-                                            <p> {{ formatRupiah($room->monthly_price) }} /Perhari</p>
+                                            <p> {{ formatRupiah($setting->monthly_price) }} /Perhari</p>
                                         </div>
                                         <div class="mb-4">
                                             <h5>Fasilitas:</h5>

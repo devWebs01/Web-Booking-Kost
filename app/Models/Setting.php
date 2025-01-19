@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Setting extends Model
 {
@@ -13,6 +14,13 @@ class Setting extends Model
         'name',
         'description',
         'location',
-        'phone'
+        'phone',
+        'daily_price',
+        'monthly_price',
     ];
+
+    public function facilities(): HasMany
+    {
+        return $this->hasMany(Facility::class);
+    }
 }

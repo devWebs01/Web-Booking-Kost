@@ -17,8 +17,6 @@ class BookingRoom extends Model
 
     /**
      * Get the room that owns the BookingRoom
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function room(): BelongsTo
     {
@@ -27,8 +25,6 @@ class BookingRoom extends Model
 
     /**
      * Get the booking that owns the BookingRoom
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function booking(): BelongsTo
     {

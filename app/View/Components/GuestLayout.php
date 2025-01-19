@@ -23,6 +23,7 @@ class GuestLayout extends Component
     public function render(): View|Closure|string
     {
         $setting = Setting::first();
+
         return view('components.guest-layout', compact('setting'));
     }
 }

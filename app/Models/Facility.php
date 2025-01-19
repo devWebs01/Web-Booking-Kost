@@ -16,8 +16,8 @@ class Facility extends Model
         // 'description',
     ];
 
-    public function room(): BelongsTo
+    public function setting(): BelongsTo
     {
-        return $this->belongsTo(room::class);
+        return $this->belongsTo(Setting::class);
     }
 }
