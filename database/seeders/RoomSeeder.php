@@ -20,7 +20,7 @@ class RoomSeeder extends Seeder
                 'room_status' => 'available',
             ]);
 
-            $this->command->info('Tambah Kamar ' . $room->id);
+            $this->command->info('Tambah Kamar '.$room->id);
         }
     }
 }

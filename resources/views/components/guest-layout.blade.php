@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>LifeSure - Life Insurance Website Template</title>
+    <title>{{ $title ?? '' }} - Kamar Kost</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -109,11 +109,13 @@
     <!-- Navbar & Hero End -->
 
     <!-- Navbar & Hero Start -->
-    {{ $slot }}
+    <div class="mb-5">
+        {{ $slot }}
+    </div>
     <!-- Navbar & Hero End -->
 
     <!-- Copyright Start -->
-    <div class="container-fluid copyright py-4 text-center">
+    <div class="container-fluid copyright py-4 text-center ">
         <span class="text-body">
             <a href="#" class="border-bottom text-white text-decoration-none">
                 <i class="fas fa-copyright text-light me-2">

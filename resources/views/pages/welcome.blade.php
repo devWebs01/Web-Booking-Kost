@@ -152,7 +152,7 @@ state([
                             <p class="text-dark mb-4">
                                 <i class="fa fa-check text-primary me-3"></i>Kost kami fleksibel
                             </p>
-                            <a class="btn btn-primary rounded-pill py-3 px-5" href="#">Informasi Lebih Lanjut</a>
+                           
                         </div>
                     </div>
 
@@ -185,7 +185,7 @@ state([
                                     <a href="#" class="d-inline-block h4 mb-4">Kamar Kost Nyaman</a>
                                     <p class="mb-4">Kamar kost nyaman dengan fasilitas lengkap.
                                     </p>
-                                    <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Baca Selengkapnya</a>
+
                                 </div>
                             </div>
                         </div>
@@ -203,7 +203,7 @@ state([
                                     <a href="#" class="d-inline-block h4 mb-4">Kamar Kost Bersih </a>
                                     <p class="mb-4">Kami menjaga kebersihan dan kesehatan kamar kost untuk kenyamanan
                                         Anda.</p>
-                                    <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Baca Selengkapnya</a>
+
                                 </div>
                             </div>
                         </div>
@@ -220,7 +220,7 @@ state([
                                 <div class="service-content-inner">
                                     <a href="#" class="d-inline-block h4 mb-4">Akses Mudah ke Transportasi</a>
                                     <p class="mb-4">Kost kami dekat dengan berbagai akses transportasi umum.</p>
-                                    <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Baca Selengkapnya</a>
+
                                 </div>
                             </div>
                         </div>
@@ -238,7 +238,7 @@ state([
                                     <a href="#" class="d-inline-block h4 mb-4">Lingkungan Aman dan Nyaman</a>
                                     <p class="mb-4">Kami menjamin lingkungan yang aman dan nyaman untuk semua penghuni.
                                     </p>
-                                    <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Baca Selengkapnya</a>
+
                                 </div>
                             </div>
                         </div>

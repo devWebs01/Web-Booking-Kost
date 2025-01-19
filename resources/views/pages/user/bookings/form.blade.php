@@ -119,6 +119,7 @@ rules([
 ]);
 
 $bookingForm = function () {
+
     try {
         if (Auth::check() === true) {
             $validate = $this->validate();
@@ -207,6 +208,7 @@ $bookingForm = function () {
             <div class="mb-3 col-12">
                 <label for="rooms" class="form-label">Jumlah Kamar</label>
                 <select wire:model.live="totalRooms" class="form-select" id="rooms" name="rooms" required>
+                    <option selected>Pilih Jumlah Kamar</option>
                     @foreach ($rooms as $no => $room)
                         <option value="{{ ++$no }}">{{ $no }} Kamar</option>
                     @endforeach
@@ -214,7 +216,7 @@ $bookingForm = function () {
             </div>
 
             <div class="mb-3">
-                <button type="submit" class="btn btn-primary w-100">Pesan Sekarang</button>
+                <button type="submit" class="btn btn-light btn-lg w-100">Pesan Sekarang</button>
             </div>
         </form>
     </div>
