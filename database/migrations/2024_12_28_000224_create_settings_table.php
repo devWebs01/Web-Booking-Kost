@@ -8,17 +8,19 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *   'name',
+     *   'description',
+     *   'location',
+     *   'phone',
      */
     public function up(): void
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');
+            $table->longText('description');
             $table->string('location');
             $table->string('phone');
-            $table->string('daily_price');
-            $table->string('monthly_price');
             $table->timestamps();
         });
     }

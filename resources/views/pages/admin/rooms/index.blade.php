@@ -22,7 +22,6 @@ $rooms = computed(function () {
     } else {
         return Room::query()
             ->where(function ($query) {
-                // isi
                 $query->whereAny(['number', 'room_status'], 'LIKE', "%{$this->search}%");
             })
             ->latest()
@@ -32,14 +31,21 @@ $rooms = computed(function () {
 
 $destroy = function (room $room) {
     try {
+        foreach ($room->images as $image) {
+            if (Storage::disk('public')->exists($image->image_path)) {
+                Storage::disk('public')->delete($image->image_path);
+            }
+        }
+
+        $room->images()->delete();
         $room->delete();
-        $this->alert('success', 'Data room berhasil dihapus!', [
+        $this->alert('success', 'Proses berhasil!', [
             'position' => 'center',
             'timer' => 3000,
             'toast' => true,
         ]);
     } catch (\Throwable $th) {
-        $this->alert('error', 'Data room gagal dihapus!', [
+        $this->alert('error', 'Proses gagal!', [
             'position' => 'center',
             'timer' => 3000,
             'toast' => true,

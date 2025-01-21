@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Booking extends Model
 {
@@ -14,15 +13,9 @@ class Booking extends Model
 
     protected $fillable = [
         'user_id',
-        'check_in_date',
-        'check_out_date',
-        'totalRooms',
-        'customer_name',
-        'customer_contact',
         'status',
-        'type',
-        'order_id', // Menambahkan order_id ke dalam fillable
-
+        'order_id',
+        'total',
     ];
 
     public static function boot()
@@ -47,13 +40,16 @@ class Booking extends Model
         return $this->belongsTo(user::class);
     }
 
-    public function payment(): HasOne
+    public function payment(): HasMany
     {
-        return $this->hasOne(Payment::class);
+        return $this->hasMany(Payment::class);
     }
 
-    public function bookingRooms(): HasMany
+    /**
+     * Get all of the items for the Booking
+     */
+    public function items(): HasMany
     {
-        return $this->hasMany(BookingRoom::class);
+        return $this->hasMany(Item::class);
     }
 }

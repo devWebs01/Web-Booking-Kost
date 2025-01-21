@@ -8,12 +8,14 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *  'room_id',
+     *  'name',
      */
     public function up(): void
     {
         Schema::create('facilities', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('setting_id')->constrained('settings')->cascadeOnDelete();
+            $table->foreignId('room_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->timestamps();
         });
