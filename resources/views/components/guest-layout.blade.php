@@ -8,6 +8,9 @@
     <meta content="" name="keywords">
     <meta content="" name="description">
 
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -117,7 +120,7 @@
     <!-- Copyright Start -->
     <div class="container-fluid copyright py-4 text-center ">
         <span class="text-body">
-            <a href="#" class="border-bottom text-white text-decoration-none">
+            <a href="#" class="text-white text-decoration-none">
                 <i class="fas fa-copyright text-light me-2">
                 </i>{{ $setting->description }}
         </span>

@@ -40,4 +40,9 @@ class Room extends Model
     {
         return $this->hasMany(Cart::class);
     }
+
+    public function items()
+    {
+        return $this->hasMany(Item::class);
+    }
 }

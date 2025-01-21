@@ -77,16 +77,6 @@ state([
                 <span class="hide-menu">Ruangan</span>
             </li>
 
-             <li class="sidebar-item">
-                <a wire:navigate class="sidebar-link" href="{{ route('settings.index') }}" aria-expanded="false"
-                    {{ request()->routeIs('admin/customers') }}>
-                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
-                    <span class="hide-menu">
-                        Pengaturan Kost
-                    </span>
-                </a>
-            </li>
-
             <li class="sidebar-item">
                 <a wire:navigate class="sidebar-link" href="{{ route('rooms.index') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/rooms') }}>
@@ -96,12 +86,12 @@ state([
                 </a>
             </li>
 
-            <li class="sidebar-item">
-                <a wire:navigate class="sidebar-link" href="{{ route('images.index') }}" aria-expanded="false"
-                    {{ request()->routeIs('admin/galleries') }}>
+             <li class="sidebar-item">
+                <a wire:navigate class="sidebar-link" href="{{ route('settings.index') }}" aria-expanded="false"
+                    {{ request()->routeIs('admin/customers') }}>
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">
-                        Galleri
+                        Pengaturan Kost
                     </span>
                 </a>
             </li>
@@ -124,7 +114,7 @@ state([
                     </span>
                 </a>
             </li>
-              
+
             <li class="sidebar-item">
                 <a wire:navigate class="sidebar-link" href="{{ route('reports.bookings') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/reports') }}>
