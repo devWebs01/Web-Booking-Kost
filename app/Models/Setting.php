@@ -15,8 +15,6 @@ class Setting extends Model
         'description',
         'location',
         'phone',
-        'daily_price',
-        'monthly_price',
     ];
 
     public function facilities(): HasMany

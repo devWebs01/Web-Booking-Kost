@@ -8,11 +8,14 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *  'room_id',
+     *  'image_path',
      */
     public function up(): void
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('room_id')->constrained()->cascadeOnDelete();
             $table->string('image_path');
             $table->timestamps();
         });

@@ -9,18 +9,25 @@ return new class extends Migration
     /**
      * Run the migrations.
      *  'user_id',
-     *  'status',
-     *  'order_id',
-     *  'total'
+     *  'room_id',
+     *  'check_in_date',
+     *  'check_out_date',
+     *  'type',
+     *  'price',
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
+        Schema::create('carts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('order_id')->nullable()->unique();
-            $table->string('total')->nullable();
-            $table->enum('status', ['pending', 'confirmed', 'canceled'])->default('pending');
+            $table->foreignId('room_id')->constrained()->cascadeOnDelete();
+            $table->date('check_in_date');
+            $table->date('check_out_date');
+            $table->enum('type', [
+                'daily',
+                'monthly',
+            ]);
+            $table->string('price');
             $table->timestamps();
         });
     }
@@ -30,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bookings');
+        Schema::dropIfExists('carts');
     }
 };
