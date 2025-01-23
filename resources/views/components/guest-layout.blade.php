@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="/guest/lib/animate/animate.min.css" />
     <link href="/guest/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
     <link href="/guest/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 
     <!-- Customized Bootstrap Stylesheet -->
@@ -33,6 +34,7 @@
 
     <!-- Template Stylesheet -->
     <link href="/guest/css/style.css" rel="stylesheet">
+
 
     @livewireStyles
 

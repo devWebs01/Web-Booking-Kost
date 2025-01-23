@@ -13,8 +13,8 @@ middleware(['auth']);
 name('histories.show');
 
 state([
-    'setting' => fn() => Setting::first(['name', 'location', 'description']),
-    'payment' => fn() => $this->booking->payment,
+    'setting' => fn() => Setting::first(),
+    'user' => fn() => Auth()->user(),
     'booking',
 ]);
 
@@ -24,78 +24,99 @@ state([
     <x-slot name="title">Pembayaran</x-slot>
 
     @volt
-        <div>
+    <div>
 
-            <div class="container">
-                <!-- Menampilkan Detail Pemesanan Kamar -->
+        <div class="container">
+            <!-- Menampilkan Detail Pemesanan Kamar -->
 
-                <div class=" text-dark w-100 h-100 py-4">
-                    <div class="container-fluid">
-                        <!-- Header -->
-                        <div class="row align-items-center mb-4">
-                            <div class="col">
-                                <a href="#" class="text-primary">
-                                    <span class="display-5 fw-bold">
-                                        {{ $setting->name }}
-                                    </span>
-                                </a>
-                            </div>
-                            <div class="col text-end text-muted small">
-                                <div>{{ $booking->customer_name }}</div>
-                                <div>{{ $booking->customer_contact }}</div>
-                                <div>{{ $booking->order_id }}</div>
-                                <div>{{ $booking->created_at }}</div>
-                            </div>
+            <div class="text-dark w-100 h-100 py-4">
+                <div class="container-fluid">
+                    <!-- Header -->
+                    <div class="row align-items-center mb-4">
+                        <div class="col">
+                            <a href="#" class="text-primary">
+                                <span class="display-5 fw-bold">
+                                    {{ $setting->name }}
+                                </span>
+                                <div class="d-none spinner-border" wire:loading.class.remove="d-none" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </a>
                         </div>
-
-                        <!-- Invoice Summary -->
-                        <div class="card border-dark mb-4">
-                            <div class="card-body bg-light d-flex justify-content-between">
-                                <strong class="text-dark fs-4">
-                                    {{ formatRupiah($payment->amount) }}
-                                </strong>
-                                <span class="text-muted text-uppercase">{{ $payment->status }}</span>
-                            </div>
+                        <div class="col text-end text-muted small">
+                            <div>{{ $user->name }}</div>
+                            <div>{{ $user->email }}</div>
+                            <div>{{ $user->telp }}</div>
                         </div>
+                    </div>
 
-                        <!-- Invoice Details -->
-                        <div class="card border-dark">
-                            <div class="card-body">
-                                <h3 class="border-bottom pb-2 mb-4 fw-bold">Detail Pemesanan Kamar</h3>
-                                <table class="table table-borderless">
-                                    <tbody>
+                    <!-- Invoice Details -->
+                    <div class="card border-dark bg-light">
+                        <div class="card-body">
+                            <h3 class="border-bottom pb-2 mb-4 fw-bold">Detail Pemesanan Kamar</h3>
+                            <div class="table-responsive">
+                                <table class="table text-center rounded text-nowrap">
+                                    <thead>
                                         <tr>
-                                            <td>Check-in:</td>
-                                            <td class="text-end">
-                                                {{ Carbon::parse($booking->check_in_date)->format('d M Y') }}</td>
+                                            <th>Check-in</th>
+                                            <th>Check-out</th>
+                                            <th>Jumlah Kamar</th>
+                                            <th>Tipe Pemesanan</th>
+                                            <th>Jumlah yang dibayarkan</th>
                                         </tr>
-                                        <tr>
-                                            <td>Check-out:</td>
-                                            <td class="text-end">
-                                                {{ Carbon::parse($booking->check_out_date)->format('d M Y') }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Jumlah Kamar:</td>
-                                            <td class="text-end">
-                                                {{ $booking->totalRooms }} Kamar</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tipe Pemesanan</td>
-                                            <td class="text-end">{{ __('type.'. $booking->type) }}</td>
-                                        </tr>
-                                        <tr class="fw-bold border-top border-bottom">
-                                            <td>Jumlah yang dibayarkan</td>
-                                            <td class="text-end"> {{ formatRupiah($payment->amount) }}</td>
-                                        </tr>
+                                    </thead>
+                                    <tbody style="vertical-align: middle">
+                                        @foreach ($booking->items as $item)
+                                            <tr>
+
+                                                <td>
+                                                    {{ Carbon::parse($item->check_in_date)->format('d M Y') }}
+                                                </td>
+
+                                                <td>
+                                                    {{ Carbon::parse($item->check_out_date)->format('d M Y') }}
+                                                </td>
+
+                                                <td>
+                                                    Kamar {{ $item->room->number }}
+                                                </td>
+
+                                                <td>{{ __('type.' . $item->type) }}</td>
+
+                                                <td>
+                                                    {{ formatRupiah($item->price) }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-                </div>
 
+                    <!-- Invoice Summary -->
+                    <div class="card border-dark my-4">
+                        <div class="card-body bg-light d-flex justify-content-between">
+                            <strong class="text-dark fs-4">
+                                Total Pembayaran
+                            </strong>
+                            <strong class="text-dark fs-4">
+                                {{ formatRupiah($booking->total) }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-primary btn-lg">
+                            Lakukan Pembayaran
+                        </button>
+                    </div>
+
+                </div>
             </div>
+
         </div>
+    </div>
     @endvolt
 
 

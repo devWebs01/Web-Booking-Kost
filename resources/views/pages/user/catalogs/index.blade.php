@@ -134,13 +134,14 @@ $addToCart = function ($room) {
 
     } catch (\Throwable $th) {
 
-        $this->alert('error', 'Proses gagal! Terjadi kesalahan pada data pemesanan', [
+        $errorMessages = implode('<br>', $th->validator->errors()->all());
+
+        $this->alert('error', 'Proses gagal! ' . '<br>' . $errorMessages, [
             'position' => 'center',
-            'timer' => 2000,
+            'timer' => 4000,
             'toast' => true,
             'timerProgressBar' => true,
         ]);
-
         $this->redirect('#form-input');
     }
 };
@@ -172,14 +173,16 @@ $addToCart = function ($room) {
                 <div class="mt-4 row bg-light px-2 py-5 rounded-3 wow fadeInUp" data-wow-dela y="0.2s">
                     <div class="mb-4 col-md">
                         <label for="check_in_date" class="form-label">Tanggal Check-In</label>
-                        <input wire:model.live="check_in_date" type="date" class="form-control" id="check_in_date">
+                        <input wire:model.live="check_in_date" type="date" class="form-control" id="check_in_date"
+                            min="{{ now()->format('Y-m-d') }}">
                         @error('check_in_date')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="mb-4 col-md">
                         <label for="check_out_date" class="form-label">Tanggal Check-Out</label>
-                        <input wire:model.live="check_out_date" type="date" class="form-control" id="check_out_date">
+                        <input wire:model.live="check_out_date" type="date" class="form-control" id="check_out_date"
+                            min="{{ Carbon::parse($check_in_date)->format('Y-m-d') }}">
                         @error('check_out_date')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -196,7 +199,13 @@ $addToCart = function ($room) {
                         @enderror
                     </div>
 
-
+                    <div class="mt-3 text-center">
+                        <span class="text-center">
+                            <div class="d-none spinner-border" wire:loading.class.remove="d-none" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </span>
+                    </div>
                 </div>
 
                 <div class="row g-4 justify-content-center py-5">

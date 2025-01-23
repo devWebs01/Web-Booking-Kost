@@ -1,101 +1,210 @@
 <?php
 
+use function Livewire\Volt\{state, rules, on, uses};
+use Carbon\Carbon;
 use App\Models\Cart;
+use App\Models\Setting;
+use App\Models\Booking;
+use App\Models\Item;
 use function Laravel\Folio\name;
-use function Livewire\Volt\{computed, state, usesPagination, uses};
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 uses([LivewireAlert::class]);
 
-name('catalogs.carts');
+name('catalogs.cart');
 
-state(['search'])->url();
-usesPagination(theme: 'bootstrap');
+state([
+    'carts' => fn() => Cart::where('user_id', auth()->id())->get(),
+    'setting' => fn() => Setting::first(),
+    'user' => fn() => Auth()->user(),
+]);
 
-$carts = computed(function () {
-    if ($this->search == null) {
-        return cart::query()->latest()->paginate(10);
-    } else {
-        return cart::query()
-            ->where(function ($query) {
-                // isi
-                $query->whereAny([' '], 'LIKE', "%{$this->search}%");
-            })
-            ->latest()
-            ->paginate(10);
+on([
+    'cart-updated' => function () {
+        $this->cart = $this->carts;
+    },
+]);
+
+$calculateTotal = function () {
+    $total = 0;
+    foreach ($this->carts as $cart) {
+        $total += $cart->price;
     }
-});
+    return $total;
+};
 
 
+$deleteRoom = function ($cartId) {
+    $cart = Cart::find($cartId);
+    $cart->delete();
+    $this->dispatch('cart-updated');
+};
+
+$ConfirmBooking = function () {
+
+    DB::beginTransaction();
+
+    try {
+
+        $booking = Booking::create([
+            'user_id' => Auth::user()->id,
+            'total' => $this->calculateTotal(),
+        ]);
+
+        foreach ($this->carts as $cart) {
+            Item::create([
+                'booking_id' => $booking->id,
+                'room_id' => $cart->room->id,
+                'check_in_date' => $cart->check_in_date,
+                'check_out_date' => $cart->check_out_date,
+                'type' => $cart->type,
+                'price' => $cart->price,
+            ]);
+        }
+
+        Cart::where('user_id', Auth()->user()->id)->delete();
+
+        $this->dispatch('cart-updated');
+
+        $this->alert('success', 'Proses berhasil! Silahkan lanjut untuk proses pembayaran', [
+            'position' => 'center',
+            'timer' => 2000,
+            'toast' => true,
+            'timerProgressBar' => true,
+        ]);
+
+        $this->redirectRoute('histories.show', [
+            'booking' => $booking
+        ]);
+
+        DB::commit();
+
+    } catch (\Exception $e) {
+        // Jika ada yang gagal, rollback transaksi
+        DB::rollback();
+
+        Log::error('Booking error: ' . $e->getMessage());
+
+        $this->alert('error', 'Proses gagal! Terjadi kesalahan dalam proses konfirmasi', [
+            'position' => 'center',
+            'timer' => 2000,
+            'toast' => true,
+            'timerProgressBar' => true,
+        ]);
+    }
+
+
+};
 
 ?>
 
-<x-admin-layout>
+<x-guest-layout>
+    <x-slot name="title">Keranjang Belanja</x-slot>
+
+    @volt
     <div>
-        <x-slot name="title">Data cart</x-slot>
+        <div class="container">
+            <!-- Menampilkan Detail Pemesanan Kamar -->
 
-
-        @volt
-        <div>
-            <div class="card">
-                <div class="card-header">
-                    <div class="row">
+            <div class="text-dark w-100 h-100 py-4">
+                <div class="container-fluid">
+                    <!-- Header -->
+                    <div class="row align-items-center mb-4">
                         <div class="col">
-                            <a href="{{ route('carts.create') }}" class="btn btn-primary">Tambah
-                                cart</a>
+                            <a href="#" class="text-primary">
+                                <span class="display-5 fw-bold">
+                                    {{ $setting->name }}
+                                </span>
+                                <div class="d-none spinner-border" wire:loading.class.remove="d-none" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </a>
                         </div>
-                        <div class="col">
-                            <input wire:cart.live="search" type="search" class="form-control" name="search" id="search"
-                                aria-describedby="searchId" placeholder="Masukkan kata kunci pencarian" />
+                        <div class="col text-end text-muted small">
+                            <div>{{ $user->name }}</div>
+                            <div>{{ $user->email }}</div>
+                            <div>{{ $user->telp }}</div>
                         </div>
                     </div>
-                </div>
 
-                <div class="card-body">
-                    <div class="table-responsive border rounded">
-                        <table class="table table-striped text-center text-nowrap">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Nama</th>
-                                    <th>Email</th>
-                                    <th>Telp</th>
-                                    <th>Opsi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($this->carts as $no => $item)
-                                    <tr>
-                                        <td>{{ ++$no }}</td>
-                                        <td>{{ $item->name }}</td>
-                                        <td>{{ $item->email }}</td>
-                                        <td>{{ $item->telp }}</td>
-                                        <td>
-                                            <div>
-                                                <a href="{{ route('carts.edit', ['cart' => $item->id]) }}"
-                                                    class="btn btn-sm btn-warning">Edit</a>
-                                                <button wire:loading.attr='disabled' wire:click='destroy({{ $item->id }})'
-                                                    wire:confirm="Apakah kamu yakin ingin menghapus data ini?"
-                                                    class="btn btn-sm btn-danger">
-                                                    {{ __('Hapus') }}
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                    <!-- Invoice Details -->
+                    <div class="card border-dark bg-light">
+                        <div class="card-body">
+                            <h3 class="border-bottom pb-2 mb-4 fw-bold">Detail Pemesanan Kamar</h3>
+                            <div class="table-responsive">
+                                <table class="table text-center rounded text-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>Check-in</th>
+                                            <th>Check-out</th>
+                                            <th>Jumlah Kamar</th>
+                                            <th>Tipe Pemesanan</th>
+                                            <th>Jumlah yang dibayarkan</th>
+                                            <th>Opsi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="vertical-align: middle">
+                                        @foreach ($carts as $cart)
+                                            <tr>
 
-                            </tbody>
-                        </table>
+                                                <td>
+                                                    {{ Carbon::parse($cart->check_in_date)->format('d M Y') }}
+                                                </td>
 
-                        <div class="container d-flex justify-content-center">
-                            {{ $this->carts->links() }}
+                                                <td>
+                                                    {{ Carbon::parse($cart->check_out_date)->format('d M Y') }}
+                                                </td>
+
+                                                <td>
+                                                    Kamar {{ $cart->room->number }}
+                                                </td>
+
+                                                <td>{{ __('type.' . $cart->type) }}</td>
+
+                                                <td>
+                                                    {{ formatRupiah($cart->price) }}
+                                                </td>
+                                                <td>
+                                                    <button wire:click="deleteRoom('{{ $cart->id }}')" type="button"
+                                                        class="border-0">
+                                                        <i class='bx bx-x fs-3 rounded bg-danger text-white'></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Invoice Summary -->
+                    <div class="card border-dark my-4">
+                        <div class="card-body bg-light d-flex justify-content-between">
+                            <strong class="text-dark fs-4">
+                                Total Pembayaran
+                            </strong>
+                            <strong class="text-dark fs-4">
+                                {{ formatRupiah($this->calculateTotal()) }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="row gap-3">
+                        <a class="col-md mb-3 btn btn-outline-primary" href="{{ route('catalogs.index') }}">
+                            Cek Kamar Lain
+                        </a>
+                        <button wire:click='ConfirmBooking' class="col-md mb-3 btn btn-primary btn-lg" {{ $carts->count() > 0 ?: 'disabled' }}>
+                            Konfirmasi
+                        </button>
                     </div>
 
                 </div>
             </div>
-        </div>
-        @endvolt
 
+        </div>
     </div>
-</x-admin-layout>
+
+
+    @endvolt
+</x-guest-layout>
