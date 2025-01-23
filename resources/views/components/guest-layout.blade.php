@@ -8,6 +8,9 @@
     <meta content="" name="keywords">
     <meta content="" name="description">
 
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +26,7 @@
     <link rel="stylesheet" href="/guest/lib/animate/animate.min.css" />
     <link href="/guest/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
     <link href="/guest/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 
     <!-- Customized Bootstrap Stylesheet -->
@@ -30,6 +34,7 @@
 
     <!-- Template Stylesheet -->
     <link href="/guest/css/style.css" rel="stylesheet">
+
 
     @livewireStyles
 
@@ -117,7 +122,7 @@
     <!-- Copyright Start -->
     <div class="container-fluid copyright py-4 text-center ">
         <span class="text-body">
-            <a href="#" class="border-bottom text-white text-decoration-none">
+            <a href="#" class="text-white text-decoration-none">
                 <i class="fas fa-copyright text-light me-2">
                 </i>{{ $setting->description }}
         </span>
