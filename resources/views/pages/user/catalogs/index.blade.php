@@ -3,7 +3,7 @@
 use App\Models\Room;
 use App\Models\Cart;
 use Carbon\Carbon;
-use function Livewire\Volt\{state, uses, computed, rules};
+use function Livewire\Volt\{state, uses, computed};
 use function Laravel\Folio\name;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
@@ -13,7 +13,7 @@ name('catalogs.index');
 
 state([
     'type' => 'daily',
-    'check_in_date' => fn() => Carbon::parse(now())->format('Y-m-d'),
+    'check_in_date' ,
     'check_out_date',
 ])->url();
 

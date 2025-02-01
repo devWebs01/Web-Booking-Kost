@@ -3,13 +3,13 @@
 use Midtrans\Snap;
 use Midtrans\Config;
 use App\Models\Setting;
+use App\Models\Booking;
+use App\Models\Payment;
 use Carbon\Carbon;
-use function Livewire\Volt\{state, on, uses};
+use function Livewire\Volt\{state, on};
 use function Laravel\Folio\name;
 use function Laravel\Folio\{middleware};
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
-uses([LivewireAlert::class]);
 middleware(['auth']);
 
 name('histories.show');
@@ -71,7 +71,7 @@ $cancelBooking = function () {
         'status' => 'CANCEL',
     ]);
 
-    $booking->payment->update([
+    $booking->payment([
         'status' => 'FAILED',
     ]);
 
@@ -102,8 +102,6 @@ $checkStatus = function () {
     try {
         $response = \Midtrans\Transaction::status($this->booking->order_id);
 
-        // dd($response);
-
         // Temukan Booking dan Payment berdasarkan order_id
         $booking = $this->booking;
         $payment = $this->booking->payment;
@@ -128,11 +126,11 @@ $checkStatus = function () {
         $paymentStatusMapping = [
             'capture' => 'PAID', // Pembayaran berhasil
             'settlement' => 'PAID', // Sudah lunas
-            'pending' => 'PROCESS', // Menunggu pembayaran
+            'pending' => 'UNPAID', // Menunggu pembayaran
             'deny' => 'FAILED', // Pembayaran gagal
             'cancel' => 'FAILED', // Pembatalan pembayaran
             'expire' => 'FAILED', // Pembayaran kadaluarsa
-            'challenge' => 'VERIFICATION', // Masih dalam pengecekan
+            'challenge' => 'PROCESS', // Masih dalam pengecekan
         ];
 
         // Tentukan status berdasarkan response Midtrans
@@ -172,13 +170,9 @@ $checkStatus = function () {
     } catch (\Exception $e) {
         Log::error('Error dalam pengecekan status Midtrans: ' . $e->getMessage());
 
-        if ($e instanceof ValidationException) {
-            $errorMessages = implode('<br>', $e->validator->errors()->all());
-        } else {
-            $errorMessages = 'Terjadi kesalahan pada sistem. Silakan coba lagi.';
-        }
+        $errorMessages = implode('<br>', $e->validator->errors()->all());
 
-        $this->alert('error', 'Error dalam pengecekan status Midtrans! <br>' . $errorMessages, [
+        $this->alert('error', 'Error dalam pengecekan status Midtrans! ' . '<br>' . $errorMessages, [
             'position' => 'center',
             'timer' => 4000,
             'toast' => true,
@@ -221,93 +215,51 @@ $getPaymentStatusLabel = function ($status) {
     <x-slot name="title">Pembayaran</x-slot>
 
     @volt
-        <div class="container-fluid">
+        <div>
 
             <div class="container">
                 <!-- Menampilkan Detail Pemesanan Kamar -->
 
-                <div class="alert alert-danger {{ $booking->payment->status === 'UNPAID' ?: 'd-none' }}" role="alert">
-                    <strong>
-                        Mohon untuk menyelesaikan pembayaran sebelum waktu habis dalam
-                        {{ $this->getTimeRemainingAttribute() }}
-                    </strong>
-                </div>
-
-
-                <div class="card py-4">
-                    <section class="card-header bg-body border-0 mb-3">
-                        <button type="button" class="btn btn-dark w-100 btn-lg d-print-none" id="printInvoiceBtn">Download
-                            Invoice</button>
-
-                        <script>
-                            document.getElementById('printInvoiceBtn').addEventListener('click', function() {
-                                window.print(); // Fungsi bawaan browser untuk mencetak halaman
-                            });
-                        </script>
-                    </section>
-
-                    <div class="card-body">
-
-                        <section class="row align-items-center mb-4">
+                <div class="text-dark w-100 h-100 py-4">
+                    <div class="container-fluid">
+                        <!-- Header -->
+                        <div class="row align-items-center mb-4">
                             <div class="col">
-                                <span class="display-6 fw-bold text-primary">
-                                    INV-{{ $booking->order_id }}
-                                </span>
-                                <div class="d-none spinner-border" wire:loading.class.remove="d-none"
-                                    wire:target='processPayment, cancelBooking, checkStatus' role="status">
-                                    <span class="sr-only">Loading...</span>
-                                </div>
+                                <a href="#" class="text-primary">
+                                    <span class="display-5 fw-bold">
+                                        {{ $setting->name }}
+                                    </span>
+                                    <div class="d-none spinner-border" wire:loading.class.remove="d-none"
+                                        wire:target='processPayment, cancelBooking, checkStatus' role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </a>
                             </div>
                             <div class="col text-end">
+                                <button type="button" class="btn btn-dark mb-3 d-print-none" id="printInvoiceBtn">Download
+                                    Invoice</button>
 
-                                <button class="btn btn-light">
-                                    <span class="display-6 fw-bold">
-                                        {{ $booking->status }}
-                                    </span>
-                                </button>
-
+                                <script>
+                                    document.getElementById('printInvoiceBtn').addEventListener('click', function() {
+                                        window.print(); // Fungsi bawaan browser untuk mencetak halaman
+                                    });
+                                </script>
                             </div>
-                        </section>
-
-                        <section class="mb-5">
-                            <div class="row">
-                                <div class="col">
-                                    <h5 class="fw-bold">
-                                        Pemesanan
-                                    </h5>
-
-                                    <div>{{ $user->name }}</div>
-                                    <div class="text-uppercase">{{ __('booking.' . $booking->status) }}</div>
-                                    <div>{{ Carbon::parse($booking->created_at)->format('d-m-Y h:i:s') }}</div>
-                                    <div class="text-uppercase">{{ $booking->payment->status_message }}</div>
-                                </div>
-                                <div class="col text-end">
-                                    <h5 class="fw-bold">
-                                        Pembayaran
-                                    </h5>
-
-                                    <div class="text-uppercase">{{ __('payment.' . $booking->payment->status) }}</div>
-                                    <div class="text-uppercase">{{ formatRupiah($booking->payment->gross_amount) }}
-                                    </div>
-                                    <div class="text-uppercase">{{ $booking->payment->payment_type }}</div>
-                                    <div class="text-uppercase">{{ $booking->payment->payment_detail }}</div>
-                                </div>
-                            </div>
-                        </section>
+                        </div>
 
                         <!-- Invoice Details -->
-                        <section class="mb-5">
-                            <h5 class="fw-bold">
-                                Detail Pemesanan Kamar</h3>
+                        <div class="card border-dark bg-light">
+
+                            <div class="card-body">
+                                <h3 class="border-bottom pb-2 mb-4 fw-bold">Detail Pemesanan Kamar</h3>
                                 <div class="table-responsive">
                                     <table class="table text-center rounded text-nowrap">
                                         <thead>
-                                            <tr class="text-dark">
+                                            <tr>
                                                 <th class="text-start">Check-in</th>
                                                 <th>Check-out</th>
                                                 <th>Kamar</th>
                                                 <th>Tipe Pemesanan</th>
-                                                <th>Lama Menginap</th>
                                                 <th class="text-end">Jumlah</th>
                                             </tr>
                                         </thead>
@@ -329,109 +281,141 @@ $getPaymentStatusLabel = function ($status) {
 
                                                     <td>{{ __('type.' . $item->type) }}</td>
 
-                                                    <td>
-                                                        {{ Carbon::parse($item->check_in_date)->diffInDays(Carbon::parse($item->check_out_date)) }}
-                                                        malam
-                                                    </td>
-
                                                     <td class="text-end">
                                                         {{ formatRupiah($item->price) }}
                                                     </td>
                                                 </tr>
                                             @endforeach
-
-                                            <tr>
-                                                <td colspan="4"></td>
-                                                <td class="h5 fw-bold">
-                                                    Total
-                                                </td>
-                                                <td class="h5 fw-bold text-end">
-                                                    {{ formatRupiah($booking->total) }}
-                                                </td>
-                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
-                        </section>
+                            </div>
+                        </div>
+
+                        <div @if (now()->lessThan(\Carbon\Carbon::parse($expired_at))) wire:poll.1s @endif>
+
+                            <!-- Invoice Summary -->
+                            <div class="card border-dark my-4">
+                                <div class="card-body bg-light">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h5 class="fw-bold">
+                                                Pemesanan
+                                            </h5>
+
+                                            <div>{{ $user->name }}</div>
+                                            <div>{{ Carbon::parse($booking->created_at)->format('d-m-Y h:i:s') }}</div>
+                                            <div class="text-uppercase">{{ $booking->status }}</div>
+                                            <div class="text-uppercase">{{ $booking->payment->status_message }}</div>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h5 class="fw-bold">
+                                                Pembayaran
+                                            </h5>
+                                            <div
+                                                class="text-uppercase {{ $booking->payment->status === 'UNPAID' ?: 'd-none' }}">
+                                                {{ $this->getTimeRemainingAttribute() }}</div>
+                                            <div class="text-uppercase">{{ $booking->payment->status }}</div>
+                                            <div class="text-uppercase">{{ formatRupiah($booking->payment->gross_amount) }}
+                                            </div>
+                                            <div class="text-uppercase">{{ $booking->payment->payment_type }}</div>
+                                            <div class="text-uppercase">{{ $booking->payment->payment_detail }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body bg-light d-flex justify-content-between">
+
+                                    <strong class="text-dark fs-4">
+                                        Total Pembayaran
+                                    </strong>
+                                    <strong class="text-dark fs-4">
+                                        {{ formatRupiah($booking->total) }}
+                                    </strong>
+                                </div>
+                            </div>
+
+                            <div
+                                class="gap-4
+                            {{ $booking->status !== 'CANCEL' ?: 'd-none' }}
+                            ">
+                                <div class="row mb-3 {{ empty($snapToken) ?: 'd-none' }}">
+                                    <div class="col-md">
+                                        <button wire:click='cancelBooking'
+                                            class="btn w-100 btn-danger btn-lg {{ empty($snapToken) ?: 'disabled' }}">Batalkan</button>
+                                    </div>
+                                    <div class="col-md">
+                                        <button class="btn w-100 btn-primary btn-lg {{ empty($snapToken) ?: 'disabled' }}"
+                                            wire:click="processPayment">Proses Pembayaran</button>
+                                    </div>
+                                </div>
+
+                                <div class="col {{ !empty($snapToken) ?: 'd-none' }}">
+                                    <div class="row">
+                                        <div class="col-md">
+                                            <button type="button" id="pay-button" href="{{ $snapToken }}"
+                                                class="btn btn-light border btn-lg w-100 {{ $booking->status === 'PENDING' ?: 'disabled' }}">Lanjutkan
+                                                Pembayaran</button>
+                                        </div>
+                                        <div class="col-md">
+                                            <button
+                                                class="btn btn-outline-dark btn-lg w-100 {{ $booking->payment->status === 'UNPAID' ?: 'disabled' }}"
+                                                wire:click='checkStatus'>
+                                                Check Status
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
 
                     </div>
                 </div>
             </div>
 
-            <section class="container my-5" @if (now()->lessThan(\Carbon\Carbon::parse($expired_at))) wire:poll.5s @endif>
+            <div class="{{ !empty($snapToken) ?: 'd-none' }}">
 
-                <div
-                    class="gap-4
-                            {{ $booking->status !== 'CANCEL' ?: 'd-none' }}
-                            ">
-                    <div class="row mb-3 {{ empty($snapToken) ?: 'd-none' }}">
-                        <div class="col-md">
-                            <button wire:click='cancelBooking'
-                                class="btn w-100 btn-outline-danger btn-lg {{ empty($snapToken) ?: 'disabled' }}">Batalkan</button>
-                        </div>
-                        <div class="col-md">
-                            <button class="btn w-100 btn-outline-success btn-lg {{ empty($snapToken) ?: 'disabled' }}"
-                                wire:click="processPayment">Proses Pembayaran</button>
-                        </div>
-                    </div>
+                @push('styles')
+                    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+                        data-client-key="SB-Mid-server-yh7So1dkVPwD99Z4icKqvCX4"></script>
+                @endpush
 
-                    <div class="col {{ !empty($snapToken) ?: 'd-none' }}">
-                        <div class="row">
-                            <div class="col-md">
-                                <button type="button" id="pay-button" href="{{ $snapToken }}"
-                                    class="btn btn-light border btn-lg w-100 {{ $booking->status === 'PENDING' ?: 'd-none' }}">Lanjutkan
-                                    Pembayaran</button>
-                            </div>
-                            <div class="col-md">
-                                <button
-                                    class="btn btn-outline-dark btn-lg w-100 {{ $booking->payment->status === 'UNPAID' ?: 'd-none' }}"
-                                    wire:click='checkStatus'>
-                                    Check Status
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </section>
-
-            @push('styles')
-                <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
-                    data-client-key="SB-Mid-server-yh7So1dkVPwD99Z4icKqvCX4"></script>
-            @endpush
-
-            @push('scripts')
-                <script type="text/javascript">
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var payButton = document.getElementById('pay-button');
-                        if (payButton) {
-                            payButton.addEventListener('click', function() {
-                                window.snap.pay(@json($snapToken), {
-                                    onSuccess: function(result) {
-                                        alert("Payment success!");
-                                        console.log(result);
-                                        location.reload(); // Refresh halaman setelah sukses
-                                    },
-                                    onPending: function(result) {
-                                        alert("Waiting for your payment!");
-                                        console.log(result);
-                                        location.reload(); // Refresh halaman setelah pending
-                                    },
-                                    onError: function(result) {
-                                        alert("Payment failed!");
-                                        console.log(result);
-                                        location.reload(); // Refresh halaman setelah gagal
-                                    },
-                                    onClose: function() {
-                                        alert('You closed the popup without finishing the payment');
-                                    }
+                @if (!empty($snapToken))
+                    <script type="text/javascript">
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var payButton = document.getElementById('pay-button');
+                            if (payButton) {
+                                payButton.addEventListener('click', function() {
+                                    window.snap.pay(@json($snapToken), {
+                                        onSuccess: function(result) {
+                                            alert("Payment success!");
+                                            console.log(result);
+                                            location.reload(); // Refresh halaman setelah sukses
+                                        },
+                                        onPending: function(result) {
+                                            alert("Waiting for your payment!");
+                                            console.log(result);
+                                            location.reload(); // Refresh halaman setelah pending
+                                        },
+                                        onError: function(result) {
+                                            alert("Payment failed!");
+                                            console.log(result);
+                                            location.reload(); // Refresh halaman setelah gagal
+                                        },
+                                        onClose: function() {
+                                            alert('You closed the popup without finishing the payment');
+                                        }
+                                    });
                                 });
-                            });
-                        }
-                    });
-                </script>
-            @endpush
+                            }
+                        });
+                    </script>
+                @endif
+
+            </div>
 
         </div>
     @endvolt

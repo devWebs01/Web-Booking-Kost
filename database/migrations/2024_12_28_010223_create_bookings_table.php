@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('order_id')->nullable()->unique();
             $table->string('total')->nullable();
             $table->string('snapToken')->nullable();
-            $table->enum('status', ['PENDING', 'CANCEL', 'PROCESS', 'CONFIRM', 'COMPLETE', 'VERIFICATION'])->default('PENDING');
+            $table->enum('status', allowed: ['PENDING', 'CANCEL', 'PROCESS', 'CONFIRM', 'COMPLETE', 'VERIFICATION'])->default('PENDING');
             $table->dateTime('expired_at');
             $table->timestamps();
         });

@@ -11,7 +11,7 @@ class AutoCancelBooking
 {
     public function handle(Request $request, Closure $next)
     {
-        $expire_time = 2;
+        $expire_time = 5;
         // Cari booking yang statusnya pending dan sudah melewati batas waktu (misalnya 1 menit untuk testing, ubah sesuai kebutuhan)
         $expiredBookings = Booking::where('status', 'PENDING')
             ->where('created_at', '<=', now()->subMinutes($expire_time))
