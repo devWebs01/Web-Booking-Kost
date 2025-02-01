@@ -25,11 +25,12 @@ class Booking extends Model
     protected static function boot()
     {
         parent::boot();
+        $expire_time = 2; // Waktu kadaluarsa dalam menit
 
         // Set expired_at otomatis saat booking dibuat
-        static::creating(function ($booking) {
+        static::creating(function ($booking) use ($expire_time) {
             if (! $booking->expired_at) {
-                $booking->expired_at = now()->addMinutes(1);
+                $booking->expired_at = now()->addMinutes($expire_time);
             }
         });
     }

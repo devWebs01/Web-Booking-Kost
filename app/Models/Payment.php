@@ -12,8 +12,11 @@ class Payment extends Model
 
     protected $fillable = [
         'booking_id',
-        'amount',
-        'receipt',
+        'gross_amount',
+        'payment_time',
+        'payment_type',
+        'payment_detail',
+        'status_message',
         'status',
     ];
 

@@ -13,7 +13,7 @@ name('catalogs.index');
 
 state([
     'type' => 'daily',
-    'check_in_date',
+    'check_in_date' => fn() => Carbon::parse(now())->format('Y-m-d'),
     'check_out_date',
 ])->url();
 
@@ -95,9 +95,7 @@ $addToCart = function ($room) {
             'check_out_date' => 'required|date|after:check_in_date',
         ]);
 
-        $checkCart = Cart::where('user_id', Auth::id())
-        ->where('room_id', $room['id'])
-        ->exists();
+        $checkCart = Cart::where('user_id', Auth::id())->where('room_id', $room['id'])->exists();
 
         if ($checkCart) {
             $this->alert('warning', 'Kamar sudah ada di keranjang!', [
@@ -159,7 +157,6 @@ $addToCart = function ($room) {
 
     @volt
         <div class="container">
-
             @foreach ($errors->all() as $item)
                 <p>{{ $item }}</p>
             @endforeach
