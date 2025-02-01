@@ -8,15 +8,19 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * 'gross_amount',
+     *  'payment_time',
+     *  'payment_type',
      */
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('booking_id')->constrained('bookings');
-            $table->string('amount');
-            $table->string('receipt')->nullable();
-            $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');
+            $table->string('gross_amount')->nullable();
+            $table->string('payment_time')->nullable();
+            $table->string('payment_type')->nullable();
+            $table->enum('status', ['PAID', 'UNPAID', 'FAILED', 'PROCESS'])->default('UNPAID');
             $table->timestamps();
         });
     }

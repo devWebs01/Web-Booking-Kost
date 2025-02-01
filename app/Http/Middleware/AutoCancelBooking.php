@@ -11,20 +11,21 @@ class AutoCancelBooking
 {
     public function handle(Request $request, Closure $next)
     {
+        $expire_time = 2;
         // Cari booking yang statusnya pending dan sudah melewati batas waktu (misalnya 1 menit untuk testing, ubah sesuai kebutuhan)
-        $expiredBookings = Booking::where('status', 'pending')
-            ->where('created_at', '<=', now()->subMinutes(1))
+        $expiredBookings = Booking::where('status', 'PENDING')
+            ->where('created_at', '<=', now()->subMinutes($expire_time))
             ->get();
 
         $canceledCount = 0;
 
         foreach ($expiredBookings as $booking) {
             // Update status booking menjadi 'canceled'
-            $booking->update(['status' => 'canceled']);
+            $booking->update(['status' => 'CANCEL']);
 
             // Jika booking memiliki payment, update status payment juga menjadi 'canceled'
             if ($booking->payment) {
-                $booking->payment()->update(['status' => 'failed']);
+                $booking->payment()->update(['status' => 'FAILED']);
             }
 
             $canceledCount++;

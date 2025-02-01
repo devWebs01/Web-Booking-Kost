@@ -3,6 +3,8 @@
 use Midtrans\Snap;
 use Midtrans\Config;
 use App\Models\Setting;
+use App\Models\Booking;
+use App\Models\Payment;
 use Carbon\Carbon;
 use function Livewire\Volt\{state, on};
 use function Laravel\Folio\name;
@@ -35,7 +37,7 @@ $processPayment = function () {
     // Data transaksi
     $params = [
         'transaction_details' => [
-            'order_id' => rand(),
+            'order_id' => $this->booking->order_id,
             'gross_amount' => $this->booking->total,
         ],
         'customer_details' => [
@@ -66,11 +68,11 @@ $cancelBooking = function () {
     $booking = $this->booking;
 
     $booking->update([
-        'status' => 'canceled',
+        'status' => 'CANCEL',
     ]);
 
     $booking->payment([
-        'status' => 'failed',
+        'status' => 'FAILED',
     ]);
 
     $this->redirectRoute('histories.index');
@@ -89,6 +91,108 @@ $getTimeRemainingAttribute = function () {
     $seconds = $diffInSeconds % 60;
 
     return "{$minutes}m {$seconds}s";
+};
+
+$checkStatus = function () {
+    Config::$serverKey = config('midtrans.server_key');
+    Config::$isProduction = config('midtrans.is_production');
+    Config::$isSanitized = true;
+    Config::$is3ds = true;
+
+    try {
+        $response = \Midtrans\Transaction::status($this->booking->order_id);
+
+        // Temukan Booking dan Payment berdasarkan order_id
+        $booking = $this->booking;
+        $payment = $this->booking->payment;
+
+        if (!$booking) {
+            Log::warning("Booking tidak ditemukan untuk order_id: {$response->order_id}");
+            return;
+        }
+
+        // Mapping status Midtrans ke status Booking
+        $bookingStatusMapping = [
+            'capture' => 'PROCESS', // Pembayaran berhasil, siap diproses
+            'settlement' => 'PROCESS', // Sudah lunas, booking selesai
+            'pending' => 'PENDING', // Menunggu pembayaran
+            'deny' => 'CANCEL', // Ditolak Midtrans
+            'cancel' => 'CANCEL', // Dibatalkan pengguna/admin
+            'expire' => 'CANCEL', // Kadaluarsa
+            'challenge' => 'VERIFICATION', // Perlu verifikasi manual
+        ];
+
+        // Mapping status Midtrans ke status Payment
+        $paymentStatusMapping = [
+            'capture' => 'PAID', // Pembayaran berhasil
+            'settlement' => 'PAID', // Sudah lunas
+            'pending' => 'UNPAID', // Menunggu pembayaran
+            'deny' => 'FAILED', // Pembayaran gagal
+            'cancel' => 'FAILED', // Pembatalan pembayaran
+            'expire' => 'FAILED', // Pembayaran kadaluarsa
+            'challenge' => 'PROCESS', // Masih dalam pengecekan
+        ];
+
+        // Tentukan status berdasarkan response Midtrans
+        $bookingStatus = $bookingStatusMapping[$response->transaction_status] ?? 'VERIFICATION'; // Default PROCESS jika status tidak dikenali
+        $paymentStatus = $paymentStatusMapping[$response->transaction_status] ?? 'PROCESS'; // Default UNPAID jika status tidak dikenali
+
+        // Update status pada Booking dan Payment
+        $booking->update(['status' => $bookingStatus]);
+        if ($payment) {
+            $payment->update([
+                'status' => $paymentStatus,
+                'gross_amount' => $response->gross_amount,
+                'payment_time' => $response->settlement_time ?? $response->transaction_time,
+                'payment_type' => $response->payment_type,
+            ]);
+        }
+
+        Log::info("Booking dan Payment diperbarui: Order ID: {$response->order_id}, Booking Status: {$bookingStatus}, Payment Status: {$paymentStatus}");
+
+        $this->redirectRoute('histories.show', [
+            'booking' => $this->booking,
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Error dalam pengecekan status Midtrans: ' . $e->getMessage());
+
+        $errorMessages = implode('<br>', $e->validator->errors()->all());
+
+        $this->alert('error', 'Error dalam pengecekan status Midtrans! ' . '<br>' . $errorMessages, [
+            'position' => 'center',
+            'timer' => 4000,
+            'toast' => true,
+            'timerProgressBar' => true,
+        ]);
+    }
+};
+
+/**
+ * Fungsi untuk mengembalikan label status Booking dalam bahasa Indonesia
+ */
+$getBookingStatusLabel = function ($status) {
+    $labels = [
+        'PENDING' => 'Menunggu Pembayaran',
+        'CANCEL' => 'Dibatalkan',
+        'PROCESS' => 'Dalam Proses',
+        'CONFIRM' => 'Dikonfirmasi',
+        'COMPLETE' => 'Selesai',
+    ];
+
+    return $labels[$status] ?? 'Status Tidak Diketahui';
+};
+
+/**
+ * Fungsi untuk mengembalikan label status Payment dalam bahasa Indonesia
+ */
+$getPaymentStatusLabel = function ($status) {
+    $labels = [
+        'PAID' => 'Sudah Dibayar',
+        'UNPAID' => 'Belum Dibayar',
+        'FAILED' => 'Gagal',
+    ];
+
+    return $labels[$status] ?? 'Status Tidak Diketahui';
 };
 
 ?>
@@ -112,7 +216,7 @@ $getTimeRemainingAttribute = function () {
                                         {{ $setting->name }}
                                     </span>
                                     <div class="d-none spinner-border" wire:loading.class.remove="d-none"
-                                        wire:target='processPayment, cancelBooking' role="status">
+                                        wire:target='processPayment, cancelBooking, checkStatus' role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </a>
@@ -193,8 +297,12 @@ $getTimeRemainingAttribute = function () {
                                             <h5 class="fw-bold">
                                                 Pembayaran
                                             </h5>
-                                            <div class="text-uppercase">{{ $this->getTimeRemainingAttribute() }}</div>
+                                            <div
+                                                class="text-uppercase {{ $booking->payment->status === 'UNPAID' ?: 'd-none' }}">
+                                                {{ $this->getTimeRemainingAttribute() }}</div>
                                             <div class="text-uppercase">{{ $booking->payment->status }}</div>
+                                            <div class="text-uppercase">{{ $booking->snapToken }}</div>
+                                            <div class="text-uppercase">{{ $booking->order_id }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -210,11 +318,11 @@ $getTimeRemainingAttribute = function () {
                                 </div>
                             </div>
 
-
-
-
-                            <div class="gap-4 {{ $booking->status !== 'canceled' ?: 'd-none' }}">
-                                <div class="row">
+                            <div
+                                class="gap-4
+                            {{ $booking->status !== 'canceled' ?: 'd-none' }}
+                            ">
+                                <div class="row mb-3 {{ empty($snapToken) ?: 'd-none' }}">
                                     <div class="col-md">
                                         <button wire:click='cancelBooking'
                                             class="btn w-100 btn-danger btn-lg {{ empty($snapToken) ?: 'disabled' }}">Batalkan</button>
@@ -225,10 +333,22 @@ $getTimeRemainingAttribute = function () {
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <button type="button" id="pay-button" href="{{ $snapToken }}"
-                                        class="btn btn-primary btn-lg {{ !empty($snapToken) ?: 'd-none' }}">Lanjutkan
-                                        Pembayaran</button>
+                                <div class="col {{ !empty($snapToken) ?: 'd-none' }}">
+                                    <div class="row">
+                                        <div class="col-md">
+                                            <button type="button" id="pay-button" href="{{ $snapToken }}"
+                                                class="btn btn-light border btn-lg w-100 {{ $booking->status === 'PENDING' ?: 'disabled' }}">Lanjutkan
+                                                Pembayaran</button>
+                                        </div>
+                                        <div class="col-md">
+                                            <button
+                                                class="btn btn-outline-dark btn-lg w-100 {{ $booking->payment->status === 'UNPAID' ?: '' }}"
+                                                wire:click='checkStatus'>
+                                                Check Status
+                                            </button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 

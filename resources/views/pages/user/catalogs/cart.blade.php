@@ -63,6 +63,7 @@ $ConfirmBooking = function () {
         $booking = Booking::create([
             'user_id' => Auth::user()->id,
             'total' => $total,
+            'order_id' => rand(),
         ]);
 
         foreach ($this->carts as $cart) {
@@ -76,11 +77,9 @@ $ConfirmBooking = function () {
             ]);
         }
 
+
         Payment::create([
             'booking_id' => $booking->id,
-            'expired_at' => now()->addMinutes(1),
-            'amount' => $total,
-            'receipt' => null,
         ]);
 
         Cart::where('user_id', Auth::user()->id)->delete();
