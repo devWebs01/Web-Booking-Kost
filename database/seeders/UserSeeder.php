@@ -33,6 +33,15 @@ class UserSeeder extends Seeder
                 'remember_token' => Str::random(10),
                 'role' => 'customer', // Mengganti 'customer' menjadi 'customer'
             ],
+            [
+                'name' => 'developer',
+                'email' => 'testingbae66@gmail.com',
+                'telp' => '08'.rand(1111111111, 9999999999),
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+                'remember_token' => Str::random(10),
+                'role' => 'developer', // Mengganti 'customer' menjadi 'customer'
+            ],
         ]);
     }
 }

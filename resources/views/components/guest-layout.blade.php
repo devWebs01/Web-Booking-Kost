@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>{{ $title ?? '' }} - Kamar Kost</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -112,6 +113,15 @@
         </div>
     </div>
     <!-- Navbar & Hero End -->
+
+      @if(session('error'))
+            <div class="container-fluid my-5">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    {{ session('error') }}
+                </div>
+            </div>
+        @endif
 
     <!-- Navbar & Hero Start -->
     <div class="mb-5">

@@ -24,20 +24,20 @@ class FolioServiceProvider extends ServiceProvider
 
             'admin/*' => [
                 'auth',
-                'verified',
-                'checkRole:admin,dev',
+                'checkRole:admin,developer',
+                'autoCancel',
             ],
 
             'guest/bookings/*' => [
                 'auth',
-                'verified',
-                'checkRole:customer,dev',
+                'checkRole:customer,developer',
+                'autoCancel',
             ],
 
             'guest/payment-records/*' => [
                 'auth',
-                'verified',
-                'checkRole:customer,dev',
+                'checkRole:customer,developer',
+                'autoCancel',
             ],
         ]);
     }
