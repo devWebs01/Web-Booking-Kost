@@ -15,6 +15,8 @@ class Payment extends Model
         'gross_amount',
         'payment_time',
         'payment_type',
+        'payment_detail',
+        'status_message',
         'status',
     ];
 

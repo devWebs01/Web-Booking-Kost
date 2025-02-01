@@ -140,11 +140,25 @@ $checkStatus = function () {
         // Update status pada Booking dan Payment
         $booking->update(['status' => $bookingStatus]);
         if ($payment) {
+            if ($response->payment_type === 'credit_card') {
+                $detail = 'Bank: ' . $response->bank . ', Tipe Kartu' . $response->card_type;
+            } elseif ($response->payment_type === 'bank_transfer') {
+                $bank = $response->va_numbers[0]->bank;
+                $va_number = $response->va_numbers[0]->va_number;
+                $detail = 'Bank: ' . $bank . ', VA Number: ' . $va_number;
+            } elseif ($response->payment_type === 'cstore') {
+                $detail = $response->store;
+            } else {
+                $detail = $response->payment_type;
+            }
+
             $payment->update([
                 'status' => $paymentStatus,
+                'status_message' => $response->status_message,
                 'gross_amount' => $response->gross_amount,
                 'payment_time' => $response->settlement_time ?? $response->transaction_time,
                 'payment_type' => $response->payment_type,
+                'payment_detail' => $detail ?? '',
             ]);
         }
 
@@ -292,6 +306,7 @@ $getPaymentStatusLabel = function ($status) {
                                             <div>{{ $user->name }}</div>
                                             <div>{{ Carbon::parse($booking->created_at)->format('d-m-Y h:i:s') }}</div>
                                             <div class="text-uppercase">{{ $booking->status }}</div>
+                                            <div class="text-uppercase">{{ $booking->payment->status_message }}</div>
                                         </div>
                                         <div class="col text-end">
                                             <h5 class="fw-bold">
@@ -301,8 +316,10 @@ $getPaymentStatusLabel = function ($status) {
                                                 class="text-uppercase {{ $booking->payment->status === 'UNPAID' ?: 'd-none' }}">
                                                 {{ $this->getTimeRemainingAttribute() }}</div>
                                             <div class="text-uppercase">{{ $booking->payment->status }}</div>
-                                            <div class="text-uppercase">{{ $booking->snapToken }}</div>
-                                            <div class="text-uppercase">{{ $booking->order_id }}</div>
+                                            <div class="text-uppercase">{{ formatRupiah($booking->payment->gross_amount) }}
+                                            </div>
+                                            <div class="text-uppercase">{{ $booking->payment->payment_type }}</div>
+                                            <div class="text-uppercase">{{ $booking->payment->payment_detail }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -320,7 +337,7 @@ $getPaymentStatusLabel = function ($status) {
 
                             <div
                                 class="gap-4
-                            {{ $booking->status !== 'canceled' ?: 'd-none' }}
+                            {{ $booking->status !== 'CANCEL' ?: 'd-none' }}
                             ">
                                 <div class="row mb-3 {{ empty($snapToken) ?: 'd-none' }}">
                                     <div class="col-md">
@@ -342,7 +359,7 @@ $getPaymentStatusLabel = function ($status) {
                                         </div>
                                         <div class="col-md">
                                             <button
-                                                class="btn btn-outline-dark btn-lg w-100 {{ $booking->payment->status === 'UNPAID' ?: '' }}"
+                                                class="btn btn-outline-dark btn-lg w-100 {{ $booking->payment->status === 'UNPAID' ?: 'disabled' }}"
                                                 wire:click='checkStatus'>
                                                 Check Status
                                             </button>
