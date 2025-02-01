@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('payment_type')->nullable();
             $table->longText('payment_detail')->nullable();
             $table->longText('status_message')->nullable();
-            $table->enum('status', ['PAID', 'UNPAID', 'FAILED', 'PROCESS'])->default('UNPAID');
+            $table->enum('status', ['PAID', 'UNPAID', 'FAILED', 'PROCESS', 'VERIFICATION'])->default('UNPAID');
             $table->timestamps();
         });
     }

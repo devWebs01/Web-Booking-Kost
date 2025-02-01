@@ -1,7 +1,10 @@
 <?php
 
 return [
-    'pending' => 'Menunggu Konfirmasi',
-    'confirmed' => 'Telah Dikonfirmasi',
-    'canceled' => 'Dibatalkan',
+    'PENDING' => 'Menunggu Konfirmasi',
+    'CANCEL' => 'Dibatalkan',
+    'PROCESS' => 'Sedang Diproses',
+    'CONFIRM' => 'Telah Dikonfirmasi',
+    'COMPLETE' => 'Selesai',
+    'VERIFICATION' => 'Dalam Verifikasi',
 ];

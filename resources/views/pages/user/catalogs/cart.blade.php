@@ -77,7 +77,6 @@ $ConfirmBooking = function () {
             ]);
         }
 
-
         Payment::create([
             'booking_id' => $booking->id,
         ]);
@@ -137,9 +136,9 @@ $ConfirmBooking = function () {
                                 </a>
                             </div>
                             <div class="col text-end text-muted small">
-                                <div>{{ $user->name }}</div>
-                                <div>{{ $user->email }}</div>
-                                <div>{{ $user->telp }}</div>
+                                <div>{{ $setting->name }}</div>
+                                <div>{{ $setting->email }}</div>
+                                <div>{{ $setting->telp }}</div>
                             </div>
                         </div>
 
@@ -155,7 +154,8 @@ $ConfirmBooking = function () {
                                                 <th>Check-out</th>
                                                 <th>Jumlah Kamar</th>
                                                 <th>Tipe Pemesanan</th>
-                                                <th>Jumlah yang dibayarkan</th>
+                                                <th>Lama Menginap</th>
+                                                <th>Jumlah</th>
                                                 <th>Opsi</th>
                                             </tr>
                                         </thead>
@@ -176,6 +176,11 @@ $ConfirmBooking = function () {
                                                     </td>
 
                                                     <td>{{ __('type.' . $cart->type) }}</td>
+
+                                                    <td>
+                                                        {{ Carbon::parse($cart->check_in_date)->diffInDays(Carbon::parse($cart->check_out_date)) }}
+                                                        malam
+                                                    </td>
 
                                                     <td>
                                                         {{ formatRupiah($cart->price) }}
