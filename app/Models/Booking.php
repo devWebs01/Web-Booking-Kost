@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Booking extends Model
 {
@@ -16,23 +17,26 @@ class Booking extends Model
         'status',
         'order_id',
         'total',
+        'snapToken',
+        'expired_at',
     ];
 
-    public static function boot()
+    // Sinkronkan waktu dengan middleware AutoCancelBooking
+    protected static function boot()
     {
         parent::boot();
 
+        // Set expired_at otomatis saat booking dibuat
         static::creating(function ($booking) {
-            $booking->order_id = self::generateOrderId();
+            if (! $booking->expired_at) {
+                $booking->expired_at = now()->addMinutes(1);
+            }
         });
     }
 
-    public static function generateOrderId()
+    public function getTimeRemainingAttribute()
     {
-        $timestamp = now()->format('YmdHis'); // Format waktu sebagai bagian dari ID
-        $randomNumber = mt_rand(1000, 9999); // Tambahkan angka acak untuk memastikan keunikan
-
-        return "INV-{$timestamp}-{$randomNumber}";
+        return $this->expired_at ? max(0, $this->expired_at->diffInSeconds(now())) : null;
     }
 
     public function user(): BelongsTo
@@ -40,9 +44,9 @@ class Booking extends Model
         return $this->belongsTo(user::class);
     }
 
-    public function payment(): HasMany
+    public function payment(): HasOne
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasOne(Payment::class);
     }
 
     /**

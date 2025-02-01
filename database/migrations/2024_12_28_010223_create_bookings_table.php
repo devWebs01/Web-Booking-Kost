@@ -20,7 +20,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('order_id')->nullable()->unique();
             $table->string('total')->nullable();
+            $table->string('snapToken')->nullable();
             $table->enum('status', ['pending', 'confirmed', 'canceled'])->default('pending');
+            $table->dateTime('expired_at');
             $table->timestamps();
         });
     }
