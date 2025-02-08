@@ -49,6 +49,12 @@ $destroy = function (User $user) {
 <x-admin-layout>
     <div>
         <x-slot name="title">Pelanggan</x-slot>
+        <x-slot name="header">
+            <li class="breadcrumb-item">
+                <a href="{{ route('home') }}">Beranda</a>
+            </li>
+            <li class="breadcrumb-item active">Pelanggan</li>
+        </x-slot>
 
         @volt
             <div>
@@ -56,8 +62,9 @@ $destroy = function (User $user) {
                     <div class="card-header">
                         <div class="mb-3">
                             <label for="email" class="form-label">Cari Pelanggan</label>
-                            <input wire:model.live="search" type="search" class="form-control" name="search" id="search"
-                                aria-describedby="helpId" placeholder="Masukkan nama pengguna / email / telp" />
+                            <input wire:model.live="search" type="search" class="form-control" name="search"
+                                id="search" aria-describedby="helpId"
+                                placeholder="Masukkan nama pengguna / email / telp" />
                         </div>
                     </div>
 

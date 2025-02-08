@@ -30,7 +30,7 @@ state([
             </li>
 
             <li class="sidebar-item">
-                <a wire:navigate class="sidebar-link" href="{{ route('home') }}" aria-expanded="false"
+                <a class="sidebar-link" href="{{ route('home') }}" aria-expanded="false"
                     {{ request()->routeIs('home') }}>
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">Beranda
@@ -48,7 +48,7 @@ state([
             </li>
 
             <li class="sidebar-item">
-                <a wire:navigate class="sidebar-link" href="{{ route('users.index') }}" aria-expanded="false"
+                <a class="sidebar-link" href="{{ route('users.index') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/users') }}>
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">
@@ -58,7 +58,7 @@ state([
             </li>
 
             <li class="sidebar-item">
-                <a wire:navigate class="sidebar-link" href="{{ route('customers') }}" aria-expanded="false"
+                <a class="sidebar-link" href="{{ route('customers') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/customers') }}>
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">
@@ -78,7 +78,7 @@ state([
             </li>
 
             <li class="sidebar-item">
-                <a wire:navigate class="sidebar-link" href="{{ route('rooms.index') }}" aria-expanded="false"
+                <a class="sidebar-link" href="{{ route('rooms.index') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/rooms') }}>
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">Kamar
@@ -86,8 +86,8 @@ state([
                 </a>
             </li>
 
-             <li class="sidebar-item">
-                <a wire:navigate class="sidebar-link" href="{{ route('settings.index') }}" aria-expanded="false"
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{{ route('settings.index') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/customers') }}>
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">
@@ -106,7 +106,7 @@ state([
             </li>
 
             <li class="sidebar-item">
-                <a wire:navigate class="sidebar-link" href="{{ route('transactions.index') }}" aria-expanded="false"
+                <a class="sidebar-link" href="{{ route('transactions.index') }}" aria-expanded="false"
                     {{ request()->routeIs(['admin/transactions', 'admin/transactions/*']) }}>
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">
@@ -116,7 +116,7 @@ state([
             </li>
 
             <li class="sidebar-item">
-                <a wire:navigate class="sidebar-link" href="{{ route('reports.bookings') }}" aria-expanded="false"
+                <a class="sidebar-link" href="{{ route('reports.bookings') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/reports') }}>
                     <iconify-icon icon="solar:home-2-bold"></iconify-icon>
                     <span class="hide-menu">

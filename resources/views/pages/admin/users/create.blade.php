@@ -34,7 +34,15 @@ $save = function () {
 ?>
 <x-admin-layout>
     <x-slot name="title">Tambah Admin Baru</x-slot>
-
+    <x-slot name="header">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Beranda</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ route('users.index') }}">Admin</a>
+        </li>
+        <li class="breadcrumb-item active">Tambah Admin</li>
+    </x-slot>
     @volt
         <div>
             <div class="card">
