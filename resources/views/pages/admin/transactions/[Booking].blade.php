@@ -1,105 +1,184 @@
 <?php
 
-use App\Models\Room;
-use App\Models\Image;
 use App\Models\Setting;
+use App\Models\Booking;
 use Carbon\Carbon;
-use function Livewire\Volt\{state, rules, computed};
+use function Livewire\Volt\{state, uses};
 use function Laravel\Folio\name;
-use function Laravel\Folio\{middleware};
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 
-middleware(['auth']);
+uses([LivewireAlert::class]);
 
 name('transactions.show');
 
 state([
     'setting' => fn() => Setting::first(['name', 'location', 'description']),
     'payment' => fn() => $this->booking->payment,
+    'user' => fn() => $this->booking->user,
     'booking',
 ]);
+
+$confirmBooking = function (Booking $booking) {
+    try {
+        $booking->update([
+            'status' => 'CONFIRM',
+        ]);
+        $this->alert('success', 'Pemesanan berhasil dikonfirmasi!', [
+            'position' => 'center',
+            'timer' => 3000,
+            'toast' => true,
+        ]);
+    } catch (\Throwable $th) {
+        $this->alert('error', 'Proses gagal!', [
+            'position' => 'center',
+            'timer' => 3000,
+            'toast' => true,
+        ]);
+    }
+};
+
+$completeBooking = function () {
+    $this->booking->update([
+        'status' => 'COMPLETE',
+    ]);
+
+    $this->alert('success', 'Pemesanan telah selesai!', [
+        'position' => 'center',
+        'timer' => 2000,
+        'toast' => true,
+    ]);
+};
 
 ?>
 
 <x-admin-layout>
     <x-slot name="title">Transaksi Pemesanan Kamar</x-slot>
 
+      <x-slot name="header">
+        <li class="breadcrumb-item">
+            <a href="{{ route('home') }}">Beranda</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ route('users.index') }}">Pemesanan</a>
+        </li>
+        <li class="breadcrumb-item active">Detail</li>
+    </x-slot>
+
+
+    @push('scripts')
+        <script>
+            document.getElementById('printInvoiceBtn').addEventListener('click', function() {
+                window.print(); // Fungsi bawaan browser untuk mencetak halaman
+            });
+        </script>
+    @endpush
+
     @volt
-    <div>
+        <div>
 
-        <div class="container">
-            <!-- Menampilkan Detail Pemesanan Kamar -->
+            <div class="card">
+                <section class="card-header bg-body border-0 mb-3">
+                    <div class="row justify-content-end">
+                        <div class="col-6 text-end">
+                            <button type="button" class="btn btn-dark d-print-none" id="printInvoiceBtn">
+                                Download
+                                Invoice
+                            </button>
+                        </div>
+                    </div>
+                </section>
 
-            <div class="card text-dark w-100 h-100 py-4">
                 <div class="card-body">
-                    <!-- Header -->
-                    <div class="row align-items-center mb-4">
-                        <div class="col">
-                            <a href="#" class="text-primary">
-                                <span class="display-5 fw-bold">
-                                    {{ $setting->name }}
-                                </span>
-                            </a>
-                        </div>
-                        <div class="col text-end text-muted small">
-                            <div>{{ $booking->customer_name }}</div>
-                            <div>{{ $booking->customer_contact }}</div>
-                            <div>{{ $booking->order_id }}</div>
-                            <div>{{ $booking->created_at }}</div>
-                        </div>
-                    </div>
 
-                    <!-- Invoice Summary -->
-                    <div class="card border mb-4">
-                        <div class="card-body bg-light d-flex justify-content-between">
-                            <strong class="text-dark fs-4">
-                                {{ formatRupiah($payment->amount) }}
-                            </strong>
-                            <span class="text-muted text-uppercase">{{ $payment->status }}</span>
+                    <section class="mb-5">
+                        <div class="row">
+                            <div class="col">
+                                <h5 class="fw-bold">
+                                    Pemesanan
+                                </h5>
+
+                                <div>INV-{{ $booking->order_id }}</div>
+                                <div>{{ $user->name }}</div>
+                                <div class="text-uppercase">{{ __('booking.' . $booking->status) }}</div>
+                                <div>{{ Carbon::parse($booking->created_at)->format('d-m-Y h:i:s') }}</div>
+                                <div class="text-uppercase">{{ $booking->payment->status_message }}</div>
+                            </div>
+                            <div class="col text-end">
+                                <h5 class="fw-bold">
+                                    Pembayaran
+                                </h5>
+
+                                <div class="text-uppercase">{{ __('payment.' . $booking->payment->status) }}</div>
+                                <div class="text-uppercase">{{ formatRupiah($booking->payment->gross_amount) }}
+                                </div>
+                                <div class="text-uppercase">{{ $booking->payment->payment_type }}</div>
+                                <div class="text-uppercase">{{ $booking->payment->payment_detail }}</div>
+                            </div>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- Invoice Details -->
-                    <div class="card border">
-                        <div class="card-body">
-                            <h3 class="border-bottom pb-2 mb-4 fw-bold">Detail Pemesanan Kamar</h3>
-                            <table class="table table-borderless">
-                                <tbody>
-                                    <tr>
-                                        <td>Check-in:</td>
-                                        <td class="text-end">
-                                            {{ Carbon::parse($booking->check_in_date)->format('d M Y') }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Check-out:</td>
-                                        <td class="text-end">
-                                            {{ Carbon::parse($booking->check_out_date)->format('d M Y') }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jumlah Kamar:</td>
-                                        <td class="text-end">
-                                            {{ $booking->totalRooms }} Kamar
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Tipe Pemesanan</td>
-                                        <td class="text-end">{{ __('type.' . $booking->type) }}</td>
-                                    </tr>
-                                    <tr class="fw-bold border-top border-bottom">
-                                        <td>Jumlah yang dibayarkan</td>
-                                        <td class="text-end"> {{ formatRupiah($payment->amount) }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <section class="mb-5">
+                        <h5 class="fw-bold">
+                            Detail Pemesanan Kamar</h3>
+                            <div class="table-responsive">
+                                <table class="table text-center rounded text-nowrap">
+                                    <thead>
+                                        <tr class="text-dark">
+                                            <th class="text-start">Check-in</th>
+                                            <th>Check-out</th>
+                                            <th>Kamar</th>
+                                            <th>Tipe Pemesanan</th>
+                                            <th>Lama Menginap</th>
+                                            <th class="text-end">Jumlah</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="vertical-align: middle">
+                                        @foreach ($booking->items as $item)
+                                            <tr>
+
+                                                <td class="text-start">
+                                                    {{ Carbon::parse($item->check_in_date)->format('d M Y') }}
+                                                </td>
+
+                                                <td>
+                                                    {{ Carbon::parse($item->check_out_date)->format('d M Y') }}
+                                                </td>
+
+                                                <td>
+                                                    Kamar {{ $item->room->number }}
+                                                </td>
+
+                                                <td>{{ __('type.' . $item->type) }}</td>
+
+                                                <td>
+                                                    {{ Carbon::parse($item->check_in_date)->diffInDays(Carbon::parse($item->check_out_date)) }}
+                                                    malam
+                                                </td>
+
+                                                <td class="text-end">
+                                                    {{ formatRupiah($item->price) }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+
+                                        <tr>
+                                            <td colspan="4"></td>
+                                            <td class="h5 fw-bold">
+                                                Total
+                                            </td>
+                                            <td class="h5 fw-bold text-end">
+                                                {{ formatRupiah($booking->total) }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                    </section>
+
                 </div>
             </div>
-
         </div>
-    </div>
     @endvolt
-
 
 </x-admin-layout>

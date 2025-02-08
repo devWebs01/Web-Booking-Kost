@@ -24,5 +24,5 @@ Auth::routes([
 ]);
 
 Route::get('/home', [HomeController::class, 'index'])
-    ->middleware(['verified', 'checkRole:dev,admin', 'autoCancel'])
+    ->middleware(['verified', 'checkRole:developer,admin', 'autoCancel'])
     ->name('home');
