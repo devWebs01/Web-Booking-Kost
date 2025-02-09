@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,11 +26,12 @@ class Booking extends Model
     protected static function boot()
     {
         parent::boot();
-        $expire_time = 5; // Waktu kadaluarsa dalam menit
 
-        // Set expired_at otomatis saat booking dibuat
-        static::creating(function ($booking) use ($expire_time) {
-            if (! $booking->expired_at) {
+        static::creating(function ($booking) {
+            $setting = Setting::first();
+            $expire_time = $setting ? $setting->expire_time : 10; // Default 60 menit jika tidak ada setting
+
+            if (!$booking->expired_at) {
                 $booking->expired_at = now()->addMinutes($expire_time);
             }
         });

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Booking;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Closure;
@@ -11,11 +12,11 @@ class AutoCancelBooking
 {
     public function handle(Request $request, Closure $next)
     {
-        $expire_time = 5;
+        $setting = Setting::first();
+        $expire_time = $setting ? $setting->expire_time : 10; // Default 60 menit jika tidak ada setting
 
-        // Cari booking yang statusnya 'PENDING' dan telah melewati batas waktu
         $expiredBookings = Booking::where('status', 'PENDING')
-            ->where('created_at', '<=', now()->subMinutes($expire_time))
+            ->where('expired_at', '<=', now()) // Gunakan 'expired_at' daripada 'created_at'
             ->get();
 
         $canceledCount = 0;
