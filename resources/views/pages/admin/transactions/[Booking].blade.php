@@ -54,7 +54,7 @@ $completeBooking = function () {
 <x-admin-layout>
     <x-slot name="title">Transaksi Pemesanan Kamar</x-slot>
 
-      <x-slot name="header">
+    <x-slot name="header">
         <li class="breadcrumb-item">
             <a href="{{ route('home') }}">Beranda</a>
         </li>
@@ -77,14 +77,17 @@ $completeBooking = function () {
         <div>
 
             <div class="card">
-                <section class="card-header bg-body border-0 mb-3">
-                    <div class="row justify-content-end">
-                        <div class="col-6 text-end">
+                <section class="card-header bg-body border-0 mb-0">
+                    <div class="d-block d-md-flex justify-content-between align-items-center gap-2">
+                        <h1 class="fs-5 fw-bolder text-uppercase">
+                            {{ $booking->order_id }}
+                            </h3>
+
                             <button type="button" class="btn btn-dark d-print-none" id="printInvoiceBtn">
                                 Download
                                 Invoice
                             </button>
-                        </div>
+
                     </div>
                 </section>
 
@@ -97,7 +100,6 @@ $completeBooking = function () {
                                     Pemesanan
                                 </h5>
 
-                                <div>INV-{{ $booking->order_id }}</div>
                                 <div>{{ $user->name }}</div>
                                 <div class="text-uppercase">{{ __('booking.' . $booking->status) }}</div>
                                 <div>{{ Carbon::parse($booking->created_at)->format('d-m-Y h:i:s') }}</div>

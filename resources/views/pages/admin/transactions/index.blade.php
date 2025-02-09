@@ -117,53 +117,53 @@ $cancelBooking = function (Booking $booking) {
                                     <tr>
                                         <th>No.</th>
                                         <th>Pelanggan</th>
-                                        <th>Check In</th>
-                                        <th>Check Out</th>
+                                        <th>Total kamar</th>
+                                        <th>Tanggal Pemesanan</th>
                                         <th>Status</th>
                                         <th>Opsi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($this->bookings as $no => $item)
+                                    @foreach ($this->bookings as $no => $booking)
                                         <tr>
                                             <td>
                                                 {{ ++$no }}
                                             </td>
                                             <td>
-                                                {{ $item->user->name }}
+                                                {{ $booking->user->name }}
                                             </td>
                                             <td>
-                                                {{ Carbon::parse($item->check_in_date)->format('d m Y') }}
+                                                {{$booking->items->count() . ' Kamar' ?? '-'}}
                                             </td>
                                             <td>
-                                                {{ Carbon::parse($item->check_out_date)->format('d m Y') }}
+                                                {{$booking->created_at->format('d M Y')}}
                                             </td>
                                             <td>
                                                 <button class="btn btn-primary btn-sm">
-                                                    {{ __('booking.' . $item->status) }}
+                                                    {{ __('booking.' . $booking->status) }}
                                                 </button>
                                             </td>
                                             <td>
                                                 <button wire:loading.attr='disabled'
-                                                    wire:click='confirmBooking({{ $item->id }})'
-                                                    class="btn btn-sm btn-dark {{ $item->status === 'PROCESS' ?: 'd-none' }}">
+                                                    wire:click='confirmBooking({{ $booking->id }})'
+                                                    class="btn btn-sm btn-dark {{ $booking->status === 'PROCESS' ?: 'd-none' }}">
                                                     Konfirmasi
                                                 </button>
 
                                                 <button wire:loading.attr='disabled'
-                                                    wire:click='cancelBooking({{ $item->id }})'
-                                                    class="btn btn-sm btn-danger {{ $item->status === 'PROCESS' ?: 'd-none' }}">
+                                                    wire:click='cancelBooking({{ $booking->id }})'
+                                                    class="btn btn-sm btn-danger {{ $booking->status === 'PROCESS' ?: 'd-none' }}">
                                                     Tolak
                                                 </button>
 
                                                 <button wire:loading.attr='disabled'
-                                                    wire:click='completeBooking({{ $item->id }})'
-                                                    class="btn btn-sm btn-success {{ $item->status === 'CONFIRM' ?: 'd-none' }}">
+                                                    wire:click='completeBooking({{ $booking->id }})'
+                                                    class="btn btn-sm btn-success {{ $booking->status === 'CONFIRM' ?: 'd-none' }}">
                                                     Selesai
                                                 </button>
 
                                                 <a class="btn btn-primary btn-sm"
-                                                    href="{{ route('transactions.show', ['booking' => $item]) }}">
+                                                    href="{{ route('transactions.show', ['booking' => $booking]) }}">
                                                     Detail
                                                 </a>
                                             </td>
