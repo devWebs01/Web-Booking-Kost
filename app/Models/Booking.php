@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Setting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,7 +30,7 @@ class Booking extends Model
             $setting = Setting::first();
             $expire_time = $setting ? $setting->expire_time : 10; // Default 60 menit jika tidak ada setting
 
-            if (!$booking->expired_at) {
+            if (! $booking->expired_at) {
                 $booking->expired_at = now()->addMinutes($expire_time);
             }
         });
