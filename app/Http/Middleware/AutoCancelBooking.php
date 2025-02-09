@@ -4,9 +4,9 @@ namespace App\Http\Middleware;
 
 use App\Models\Booking;
 use App\Models\Setting;
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Closure;
 
 class AutoCancelBooking
 {
