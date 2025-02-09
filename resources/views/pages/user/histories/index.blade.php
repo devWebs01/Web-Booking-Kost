@@ -11,7 +11,9 @@ uses([LivewireAlert::class]);
 name('histories.index');
 
 state([
-    'bookings' => fn() => Booking::where('user_id', Auth()->user()->id)->get(),
+    'bookings' => fn() => Booking::where('user_id', Auth()->user()->id)
+        ->latest()
+        ->get(),
 ]);
 
 ?>
@@ -27,8 +29,8 @@ state([
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>Tanggal Check In</th>
-                                    <th>Tanggal Check Out</th>
+                                    <th>Invoice</th>
+                                    <th>Tanggal Pemesanan</th>
                                     <th>Status</th>
                                     <th>Opsi</th>
                                 </tr>
@@ -40,10 +42,10 @@ state([
                                             {{ ++$no }}
                                         </td>
                                         <td>
-                                            {{ Carbon::parse($booking->check_in_date)->format('d M Y') }}
+                                            <span class="text-uppercase">{{ $booking->order_id }}</span>
                                         </td>
                                         <td>
-                                            {{ Carbon::parse($booking->check_out_date)->format('d M Y') }}
+                                            {{ $booking->created_at->format('d m Y') }}
                                         </td>
                                         <td>
                                             {{ __('booking.' . $booking->status) }}
