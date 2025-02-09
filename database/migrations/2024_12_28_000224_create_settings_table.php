@@ -21,6 +21,7 @@ return new class extends Migration
             $table->longText('description');
             $table->string('location');
             $table->string('phone');
+            $table->bigInteger('expire_time')->nullable();
             $table->timestamps();
         });
     }

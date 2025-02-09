@@ -15,6 +15,7 @@ class Setting extends Model
         'description',
         'location',
         'phone',
+        'expire_time',
     ];
 
     public function facilities(): HasMany
