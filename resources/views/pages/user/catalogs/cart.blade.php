@@ -1,11 +1,12 @@
 <?php
 
-use function Livewire\Volt\{state, rules, on, uses};
+use function Livewire\Volt\{state, on, uses};
 use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\Setting;
 use App\Models\Booking;
 use App\Models\Item;
+use App\Models\Room;
 use App\Models\Payment;
 use function Laravel\Folio\name;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
@@ -60,27 +61,55 @@ $ConfirmBooking = function () {
             throw new \Exception('Total tidak valid');
         }
 
+        // Membuat booking dengan order_id unik
         $booking = Booking::create([
             'user_id' => Auth::user()->id,
             'total' => $total,
-            'order_id' => rand(),
+            'order_id' => uniqid('ORD-'), // Gunakan uniqid untuk menghindari duplikasi
         ]);
 
+        $items = [];
+
         foreach ($this->carts as $cart) {
-            Item::create([
+            if (!$cart->room) {
+                Log::error('Room not found for cart ID: ' . $cart->id);
+                throw new \Exception('Kamar tidak ditemukan dalam keranjang');
+            }
+
+            // Lock kamar dengan lebih ketat untuk mencegah race condition
+            $room = Room::where('id', $cart->room->id)->lockForUpdate()->first();
+
+            // Periksa kembali apakah kamar masih tersedia
+            if ($room->room_status === 'booked') {
+                Log::warning('Room ID ' . $room->id . ' already booked by another user.');
+                throw new \Exception('Kamar sudah dibooking oleh pengguna lain');
+            }
+
+            // Tambahkan item booking ke dalam array untuk batch insert
+            $items[] = [
                 'booking_id' => $booking->id,
                 'room_id' => $cart->room->id,
                 'check_in_date' => $cart->check_in_date,
                 'check_out_date' => $cart->check_out_date,
                 'type' => $cart->type,
                 'price' => $cart->price,
-            ]);
+            ];
+
+            // Perbarui status kamar menjadi 'booked'
+            $room->update(['room_status' => 'booked']);
+
+            Log::info('Room ID ' . $room->id . ' successfully booked by User ID: ' . Auth::id());
         }
 
+        // Insert semua item booking sekaligus untuk efisiensi
+        Item::insert($items);
+
+        // Buat entri pembayaran
         Payment::create([
             'booking_id' => $booking->id,
         ]);
 
+        // Hapus semua item di keranjang pengguna setelah booking sukses
         Cart::where('user_id', Auth::user()->id)->delete();
 
         $this->dispatch('cart-updated');
@@ -92,9 +121,9 @@ $ConfirmBooking = function () {
             'timerProgressBar' => true,
         ]);
 
-        DB::commit(); // Pastikan ini sebelum redirect
+        DB::commit(); // Pastikan transaksi selesai sebelum redirect
 
-        $this->redirectRoute('histories.show', [
+        return $this->redirectRoute('histories.show', [
             'booking' => $booking,
         ]);
     } catch (\Exception $e) {
@@ -111,6 +140,7 @@ $ConfirmBooking = function () {
     }
 };
 
+
 ?>
 
 <x-guest-layout>
@@ -123,29 +153,18 @@ $ConfirmBooking = function () {
 
                 <div class="text-dark w-100 h-100 py-4">
                     <div class="container-fluid">
-                        <!-- Header -->
-                        <div class="row align-items-center mb-4">
-                            <div class="col">
-                                <a href="#" class="text-primary">
-                                    <span class="display-5 fw-bold">
-                                        {{ $setting->name }}
-                                    </span>
-                                    <div class="d-none spinner-border" wire:loading.class.remove="d-none" role="status">
-                                        <span class="sr-only">Loading...</span>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col text-end text-muted small">
-                                <div>{{ $setting->name }}</div>
-                                <div>{{ $setting->email }}</div>
-                                <div>{{ $setting->telp }}</div>
-                            </div>
-                        </div>
 
                         <!-- Invoice Details -->
                         <div class="card border-dark bg-light">
                             <div class="card-body">
-                                <h3 class="border-bottom pb-2 mb-4 fw-bold">Detail Pemesanan Kamar</h3>
+                                <h3 class="border-bottom pb-2 mb-4 fw-bold">
+                                    Detail Pemesanan Kamar
+                                    <span class="text-center">
+                                        <div class="d-none spinner-border fw-normal" wire:loading.class.remove="d-none" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
+                                    </span>
+                                </h3>
                                 <div class="table-responsive">
                                     <table class="table text-center rounded text-nowrap">
                                         <thead>

@@ -45,6 +45,11 @@ $processPayment = function () {
             'email' => $this->user->email,
             'phone' => $this->user->telp,
         ],
+        'expiry' => [
+            'start_time' => $this->booking->expired_at ? Carbon::parse($this->booking->expired_at)->format('Y-m-d H:i:s O') : Carbon::now()->format('Y-m-d H:i:s O'),
+            'unit' => 'minutes',
+            'duration' => $this->booking->expired_at ? Carbon::now()->diffInMinutes(Carbon::parse($this->booking->expired_at)) : 5, // Menghitung durasi kedaluwarsa dalam menit
+        ],
     ];
 
     try {
@@ -250,8 +255,8 @@ $getPaymentStatusLabel = function ($status) {
 
                         <section class="row align-items-center mb-4">
                             <div class="col">
-                                <span class="display-6 fw-bold text-primary">
-                                    INV-{{ $booking->order_id }}
+                                <span class="display-6 fw-bold text-primary text-uppercase">
+                                    {{ $booking->order_id }}
                                 </span>
                                 <div class="d-none spinner-border" wire:loading.class.remove="d-none"
                                     wire:target='processPayment, cancelBooking, checkStatus' role="status">
