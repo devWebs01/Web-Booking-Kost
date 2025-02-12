@@ -7,6 +7,10 @@
         </div>
     @endif
 
+    @foreach ($errors->all() as $item)
+        <p>{{ $item }}</p>
+    @endforeach
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -38,11 +42,11 @@
         </div>
 
         <div class="mb-3">
-            <label for="phone" class="form-label">{{ __('No. Telp') }}</label>
-            <input id="phone" type="number" class="form-control border px-2 @error('phone') is-invalid @enderror"
-                name="phone" value="{{ old('phone') }}" required>
+            <label for="telp" class="form-label">{{ __('No. Telp') }}</label>
+            <input id="telp" type="number" class="form-control border px-2 @error('telp') is-invalid @enderror"
+                name="telp" value="{{ old('telp') }}" required>
 
-            @error('phone')
+            @error('telp')
                 <span class="invalid-feedback text-white" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>

@@ -69,7 +69,7 @@ state(['reports' => fn() => Booking::get()]);
                                                 {{ Carbon::parse($report->check_out_date)->format('d-m-Y') }}
                                             </td>
                                             <td>
-                                                {{ $report }}
+                                                {{ $report->items->count() }}
                                             </td>
                                             <td>
                                                 {{ __('type.' . $report->type) }}
