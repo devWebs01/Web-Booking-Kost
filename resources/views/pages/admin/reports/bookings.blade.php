@@ -41,10 +41,9 @@ state(['reports' => fn() => Booking::get()]);
                                         <th>Check In</th>
                                         <th>Check Out</th>
                                         <th>Total Kamar</th>
-                                        <th>Tipe</th>
                                         <th>Total Harga</th>
                                         <th>Status</th>
-                                        <th>Opsi</th>
+                                        <th>Tanggal</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -72,21 +71,16 @@ state(['reports' => fn() => Booking::get()]);
                                                 {{ $report->items->count() }}
                                             </td>
                                             <td>
-                                                {{ __('type.' . $report->type) }}
-                                            </td>
-                                            <td>
-                                                {{ formatRupiah($report->payment->amount) }}
+                                                {{ formatRupiah($report->total) }}
                                             </td>
                                             <td>
                                                 <button class="btn btn-primary btn-sm">
-                                                    {{ __('booking.' . $report->status) }}
-                                                </button>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-primary btn-sm">
-                                                    {{ $report->payment->status }}
+                                                    {{ $report->status }}
                                                 </button>
 
+                                            </td>
+                                            <td>
+                                                {{ $report->created_at }}
                                             </td>
                                         </tr>
                                     @endforeach
