@@ -11,15 +11,12 @@ class Image extends Model
     use HasFactory;
 
     protected $fillable = [
-        'room_id',
+        'setting_id',
         'image_path',
     ];
 
-    /**
-     * Get the room that owns the Facility
-     */
-    public function room(): BelongsTo
+    public function setting(): BelongsTo
     {
-        return $this->belongsTo(room::class);
+        return $this->belongsTo(Setting::class);
     }
 }

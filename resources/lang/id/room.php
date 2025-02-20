@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'available' => 'Tersedia',
-    'booked' => 'Telah dipesan',
+    'active' => 'Aktif',
+    'non-active' => 'Tidak Aktif',
     'maintenance' => 'Perbaikan',
 ];

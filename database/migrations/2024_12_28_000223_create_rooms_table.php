@@ -18,9 +18,8 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->string('number');
-            $table->string('daily_price');
-            $table->string('monthly_price');
-            $table->enum('room_status', ['available', 'booked', 'maintenance'])->default('available');
+            $table->enum('room_status', ['active', 'non-active'])->default('active');
+            $table->enum('position', ['up', 'down'])->default('up');
             $table->timestamps();
         });
     }

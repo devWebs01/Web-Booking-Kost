@@ -12,26 +12,9 @@ class Room extends Model
 
     protected $fillable = [
         'number',
-        'daily_price',
-        'monthly_price',
         'room_status',
+        'position'
     ];
-
-    /**
-     * Get all of the facilities for the Room
-     */
-    public function facilities(): HasMany
-    {
-        return $this->hasMany(Facility::class);
-    }
-
-    /**
-     * Get all of the images for the Room
-     */
-    public function images(): HasMany
-    {
-        return $this->hasMany(Image::class);
-    }
 
     /**
      * Get all of the carts for the Room

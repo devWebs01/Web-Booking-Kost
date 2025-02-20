@@ -24,17 +24,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link rel="stylesheet" href="/guest/lib/animate/animate.min.css" />
-    <link href="/guest/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
-    <link href="/guest/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('/guest/lib/animate/animate.min.css') }}" />
+    <link href="{{ asset('/guest/lib/lightbox/css/lightbox.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('/guest/lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="/guest/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('/guest/css/bootstrap.min.css') }}" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="/guest/css/style.css" rel="stylesheet">
+    <link href="{{ asset('/guest/css/style.css') }}" rel="stylesheet">
 
 
     @livewireStyles
@@ -72,7 +72,7 @@
                     <h5 class="text-primary fw-bold mb-0">
                         {{ $setting->name }}
                     </h5>
-                    <!-- <img src="/guest/img/logo.png" alt="Logo"> -->
+                    <!-- <img src="{{ asset('/guest/img/logo.png') }}" alt="Logo"> -->
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="fa fa-bars">
@@ -151,22 +151,22 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
     </script>
-    <script src="/guest/lib/wow/wow.min.js">
+    <script src="{{ asset('/guest/lib/wow/wow.min.js') }}">
     </script>
-    <script src="/guest/lib/easing/easing.min.js">
+    <script src="{{ asset('/guest/lib/easing/easing.min.js') }}">
     </script>
-    <script src="/guest/lib/waypoints/waypoints.min.js">
+    <script src="{{ asset('/guest/lib/waypoints/waypoints.min.js') }}">
     </script>
-    <script src="/guest/lib/counterup/counterup.min.js">
+    <script src="{{ asset('/guest/lib/counterup/counterup.min.js') }}">
     </script>
-    <script src="/guest/lib/lightbox/js/lightbox.min.js">
+    <script src="{{ asset('/guest/lib/lightbox/js/lightbox.min.js') }}">
     </script>
-    <script src="/guest/lib/owlcarousel/owl.carousel.min.js">
+    <script src="{{ asset('/guest/lib/owlcarousel/owl.carousel.min.js') }}">
     </script>
 
 
     <!-- Template Javascript -->
-    <script src="/guest/js/main.js">
+    <script src="{{ asset('/guest/js/main.js') }}">
     </script>
 
     @stack('scripts')

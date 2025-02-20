@@ -20,7 +20,7 @@ $rooms = computed(function () {
     } else {
         return Room::query()
             ->where(function ($query) {
-                $query->whereAny(['number', 'room_status'], 'LIKE', "%{$this->search}%");
+                $query->whereAny(['number', 'room_status', 'position'], 'LIKE', "%{$this->search}%");
             })
             ->latest()
             ->paginate(10);
@@ -29,13 +29,7 @@ $rooms = computed(function () {
 
 $destroy = function (room $room) {
     try {
-        foreach ($room->images as $image) {
-            if (Storage::disk('public')->exists($image->image_path)) {
-                Storage::disk('public')->delete($image->image_path);
-            }
-        }
-
-        $room->images()->delete();
+       
         $room->delete();
         $this->alert('success', 'Proses berhasil!', [
             'position' => 'center',
@@ -89,6 +83,7 @@ $destroy = function (room $room) {
                                     <tr>
                                         <th>No. Kamar</th>
                                         <th>Status</th>
+                                        <th>Posisi</th>
                                         <th>Opsi</th>
                                     </tr>
                                 </thead>
@@ -96,13 +91,15 @@ $destroy = function (room $room) {
                                     @foreach ($this->rooms as $no => $item)
                                         <tr>
                                             <td>
-                                                Kamar
                                                 {{ $item->number }}
                                             </td>
                                             <td>
                                                 <button class="btn btn-primary btn-sm">
                                                     {{ __('room.' . $item->room_status) }}
                                                 </button>
+                                            </td>
+                                            <td>
+                                                {{ __('position.'.$item->position) }}
                                             </td>
                                             <td>
                                                 <div>

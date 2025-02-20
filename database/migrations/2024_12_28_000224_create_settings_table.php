@@ -22,6 +22,9 @@ return new class extends Migration
             $table->string('location');
             $table->string('phone');
             $table->bigInteger('expire_time')->nullable();
+
+            $table->string('daily_price');
+            $table->string('monthly_price');
             $table->timestamps();
         });
     }

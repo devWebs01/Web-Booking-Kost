@@ -16,10 +16,18 @@ class Setting extends Model
         'location',
         'phone',
         'expire_time',
+
+        'daily_price',
+        'monthly_price',
     ];
 
     public function facilities(): HasMany
     {
         return $this->hasMany(Facility::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(Image::class);
     }
 }
