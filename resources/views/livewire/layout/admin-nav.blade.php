@@ -32,7 +32,7 @@ state([
             <li class="sidebar-item">
                 <a class="sidebar-link" href="{{ route('home') }}" aria-expanded="false"
                     {{ request()->routeIs('home') }}>
-                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
+                    <i class='fs-6 bx bx-home'></i>
                     <span class="hide-menu">Beranda
                     </span>
                 </a>
@@ -43,14 +43,14 @@ state([
             </li>
 
             <li class="nav-small-cap">
-                <iconify-icon icon="solar:shield-user-outline" class="nav-small-cap-icon fs-4"></iconify-icon>
+               
                 <span class="hide-menu">Pengguna</span>
             </li>
 
             <li class="sidebar-item">
                 <a class="sidebar-link" href="{{ route('users.index') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/users') }}>
-                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
+                    <i class='fs-6 bx bxs-user-pin'></i>
                     <span class="hide-menu">
                         Admin
                     </span>
@@ -60,7 +60,7 @@ state([
             <li class="sidebar-item">
                 <a class="sidebar-link" href="{{ route('customers') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/customers') }}>
-                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
+                    <i class='fs-6 bx bxs-user' ></i>
                     <span class="hide-menu">
                         Pelanggan
                     </span>
@@ -80,7 +80,7 @@ state([
             <li class="sidebar-item">
                 <a class="sidebar-link" href="{{ route('rooms.index') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/rooms') }}>
-                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
+                    <i class='fs-6 bx bx-square-rounded'></i>
                     <span class="hide-menu">Kamar
                     </span>
                 </a>
@@ -89,12 +89,12 @@ state([
             <li class="sidebar-item">
                 <a class="sidebar-link" href="{{ route('settings.index') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/customers') }}>
-                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
+                    <i class='fs-6 bx bxs-cog' ></i>
                     <span class="hide-menu">
                         Pengaturan Kost
                     </span>
                 </a>
-            </li>
+            </li> 
 
             <li>
                 <span class="sidebar-divider lg"></span>
@@ -108,7 +108,7 @@ state([
             <li class="sidebar-item">
                 <a class="sidebar-link" href="{{ route('transactions.index') }}" aria-expanded="false"
                     {{ request()->routeIs(['admin/transactions', 'admin/transactions/*']) }}>
-                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
+                    <i class='fs-6 bx bx-transfer'></i>
                     <span class="hide-menu">
                         Pemesanan
                     </span>
@@ -118,7 +118,7 @@ state([
             <li class="sidebar-item">
                 <a class="sidebar-link" href="{{ route('reports.bookings') }}" aria-expanded="false"
                     {{ request()->routeIs('admin/reports') }}>
-                    <iconify-icon icon="solar:home-2-bold"></iconify-icon>
+                    <i class='fs-6 bx bxs-report' ></i>
                     <span class="hide-menu">
                         Laporan Pemesanan
                     </span>

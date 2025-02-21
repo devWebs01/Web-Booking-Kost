@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Facility;
 use App\Models\Image;
 use App\Models\Setting;
-use App\Models\Facility;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 

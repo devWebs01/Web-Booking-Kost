@@ -122,11 +122,6 @@ $save = function () {
                 </div>
             </div>
 
-
-
-            <div class="row mb-3">
-
-            </div>
         </form>
     </div>
 @endvolt
