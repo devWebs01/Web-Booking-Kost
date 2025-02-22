@@ -13,10 +13,6 @@ class Item extends Model
     protected $fillable = [
         'booking_id',
         'room_id',
-        'check_in_date',
-        'check_out_date',
-        'type',
-        'price',
     ];
 
     /**

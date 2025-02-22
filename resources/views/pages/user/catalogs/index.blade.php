@@ -1,9 +1,12 @@
 <?php
 
+use App\Models\Image;
 use App\Models\Room;
+use App\Models\Facility;
+use App\Models\Setting;
 use App\Models\Cart;
 use Carbon\Carbon;
-use function Livewire\Volt\{state, uses, computed};
+use function Livewire\Volt\{state, uses, computed, mount, on};
 use function Laravel\Folio\name;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
@@ -11,179 +14,141 @@ uses([LivewireAlert::class]);
 
 name('catalogs.index');
 
-state([
-    'type' => 'daily',
-    'check_in_date',
-    'check_out_date',
-])->url();
+state([])->url();
 
 $rooms = computed(function () {
-    return $this->getAvailableRooms($this->check_in_date, $this->check_out_date, $this->type);
+    return Room::get();
 });
 
-$getAvailableRooms = function ($checkInDate, $checkOutDate, $type = 'daily') {
-    // Jika tidak ada tanggal check-in dan check-out, kembalikan semua kamar yang tersedia
-    if (!$checkInDate && !$checkOutDate) {
-        return Room::where('room_status', 'available')->latest()->get();
-    }
+state([
+    'galleries' => fn() => Image::get(),
+    'facilities' => fn() => Facility::get(),
+    //
+    'user_id' => fn() => Auth()->user()->id ?? '',
+    'setting' => fn() => Setting::first(),
+    'rooms' => fn() => Room::get(),
+    //
+]);
 
-    $checkInDate = Carbon::parse($checkInDate);
-    $checkOutDate = $checkOutDate ? Carbon::parse($checkOutDate) : null;
+state([
+    'now' => fn() => Carbon::now()->format('Y-m-d'),
+    'selectedRooms' => [],
+    'booking_type' => 'daily',
+    'total_price' => 0,
+    'check_in_date',
+    'check_out_date',
+]);
 
-    // Jika tipe monthly, sesuaikan check-out date
-    if ($type === 'monthly') {
-        if ($checkOutDate) {
-            $checkOutDate = Carbon::create($checkOutDate->year, $checkOutDate->month, $checkInDate->day);
-            if ($checkOutDate->lessThanOrEqualTo($checkInDate)) {
-                $checkOutDate->addMonth();
-            }
-        } else {
-            // Jika check-out date tidak diberikan, set default ke satu bulan dari check-in
-            $checkOutDate = $checkInDate->copy()->addMonth();
-        }
-    }
-
-    // Jika hanya tanggal check-in yang diberikan
-    if ($checkInDate && !$checkOutDate) {
-        return Room::whereDoesntHave('items', function ($query) use ($checkInDate) {
-            $query->where('check_out_date', '>', $checkInDate);
-        })
-            ->where('room_status', 'available')
-            ->latest()
-            ->get();
-    }
-
-    // Jika hanya tanggal check-out yang diberikan
-    if (!$checkInDate && $checkOutDate) {
-        return Room::whereDoesntHave('items', function ($query) use ($checkOutDate) {
-            $query->where('check_in_date', '<', $checkOutDate);
-        })
-            ->where('room_status', 'available')
-            ->latest()
-            ->get();
-    }
-
-    // Jika kedua tanggal diberikan
-    if ($checkInDate && $checkOutDate) {
-        return Room::whereDoesntHave('items', function ($query) use ($checkInDate, $checkOutDate) {
-            $query->where(function ($q) use ($checkInDate, $checkOutDate) {
-                $q->where('check_in_date', '<', $checkOutDate)->where('check_out_date', '>', $checkInDate);
-            });
-        })
-            ->where('room_status', 'available')
-            ->latest()
-            ->get();
+$selectRoom = function ($roomId) {
+    if (in_array($roomId, $this->selectedRooms)) {
+        // Jika kamar sudah dipilih, hapus dari daftar
+        $this->selectedRooms = array_diff($this->selectedRooms, [$roomId]);
+        $this->dispatch('updateTotalPrice');
+    } else {
+        // Jika belum dipilih, tambahkan ke daftar
+        $this->selectedRooms[] = $roomId;
+        $this->dispatch('updateTotalPrice');
     }
 };
 
-state([
-    'cart' => fn() => Cart::where('user_id', Auth()->id())->get(),
-    'user_id' => fn() => Auth()->user()->id ?? '',
-    'booking_date' => fn() => Carbon::now()->format('Y-m-d'),
-]);
-
-$addToCart = function ($room) {
-    if (!Auth::check()) {
-        return $this->redirect('/login');
-    }
-
-    if (!$room || !isset($room['id'])) {
-        $this->alert('warning', 'Silakan pilih kamar terlebih dahulu!', [
-            'position' => 'center',
-            'timer' => 2000,
-            'toast' => true,
-        ]);
-        return;
-    }
-
-    if (!isset($room['daily_price']) || !isset($room['monthly_price'])) {
-        $this->alert('warning', 'Harga kamar tidak valid!', [
-            'position' => 'center',
-            'timer' => 2000,
-            'toast' => true,
-        ]);
-        return;
-    }
-
-    try {
-        $this->validate([
-            'check_in_date' => 'required|date',
-            'check_out_date' => $this->type === 'monthly' ? 'required|date_format:Y-m|after:' . now()->format('Y-m') : 'required|date|after:check_in_date',
-        ]);
-
-        $checkInDate = Carbon::parse($this->check_in_date);
-        $checkOutDate = Carbon::parse($this->check_out_date);
-
-        if ($this->type === 'monthly') {
-            // Pastikan check_out_date tetap di bulan yang benar
-            $checkOutDate = Carbon::create($checkOutDate->year, $checkOutDate->month, $checkInDate->day);
-
-            // Jika check_out_date lebih kecil atau sama dengan check_in_date, tambahkan 1 bulan
-            if ($checkOutDate->lessThanOrEqualTo($checkInDate)) {
-                $checkOutDate->addMonth();
-            }
-        } else {
-            if ($checkOutDate->lessThanOrEqualTo($checkInDate)) {
-                $this->alert('warning', 'Tanggal check-out harus setelah check-in!', [
-                    'position' => 'center',
-                    'timer' => 2000,
-                    'toast' => true,
-                ]);
-                return;
-            }
-        }
-
-        $checkCart = Cart::where('user_id', Auth::id())->where('room_id', $room['id'])->exists();
-
-        if ($checkCart) {
-            $this->alert('warning', 'Kamar sudah ada di keranjang!', [
-                'position' => 'center',
-                'timer' => 2000,
-                'toast' => true,
-            ]);
+on([
+    'updateTotalPrice' => function () {
+        if (!$this->check_in_date || !$this->check_out_date) {
+            $this->total_price = 0;
+            return;
+        } elseif (!Auth()->check()) {
+            $this->redirectRoute('login');
             return;
         }
 
-        // Menghitung jumlah hari
-        $days = $checkInDate->diffInDays($checkOutDate);
+        $daily_price = $this->setting->daily_price;
+        $monthly_price = $this->setting->monthly_price;
+        $getRooms = count($this->selectedRooms) ?? 0;
 
-        // Menghitung harga berdasarkan tipe pemesanan (harian/bulanan)
-        if ($this->type === 'daily') {
-            $price = $room['daily_price'] * $days;
+        $checkIn = Carbon::parse($this->check_in_date);
+
+        if ($this->booking_type === 'daily') {
+            $checkOut = Carbon::parse($this->check_out_date);
+            $duration = $checkIn->diffInDays($checkOut);
         } else {
-            $months = ceil($days / 30);
-            $price = $room['monthly_price'] * $months;
+            // Ambil tanggal dari check_in_date
+            $day = $checkIn->day;
+
+            // Gabungkan bulan dan tahun dari check_out_date dengan tanggal dari check_in_date
+            $checkOut = Carbon::parse($this->check_out_date . '-' . $day);
+
+            // Pastikan tidak melebihi jumlah hari dalam bulan yang dipilih user
+            if ($checkOut->day != $day) {
+                $checkOut = $checkOut->endOfMonth(); // Jika tidak valid, set ke akhir bulan
+            }
+
+            $duration = $checkIn->diffInMonths($checkOut);
         }
 
-        Cart::create([
-            'user_id' => Auth::id(),
-            'room_id' => $room['id'],
-            'check_in_date' => $checkInDate->format('Y-m-d'),
-            'check_out_date' => $checkOutDate->format('Y-m-d'),
-            'type' => $this->type,
-            'price' => $price,
-        ]);
+        $this->total_price = $duration * ($this->booking_type === 'daily' ? $daily_price : $monthly_price) * $getRooms;
+    },
+]);
 
-        $this->dispatch('cart-updated');
-
-        $this->alert('success', 'Kamar berhasil ditambahkan ke keranjang!', [
+$submitBooking = function () {
+    // Validasi input
+    if (!$this->check_in_date || !$this->check_out_date || empty($this->selectedRooms)) {
+        $this->alert('error', 'Silakan lengkapi semua data pemesanan.', [
             'position' => 'center',
             'timer' => 2000,
             'toast' => true,
             'timerProgressBar' => true,
         ]);
-    } catch (\Throwable $th) {
-        $errorMessages = implode('<br>', $th->validator->errors()->all());
-
-        $this->alert('error', 'Proses gagal! ' . '<br>' . $errorMessages, [
-            'position' => 'center',
-            'timer' => 4000,
-            'toast' => true,
-            'timerProgressBar' => true,
-        ]);
-        $this->redirect('#form-input');
+        return;
     }
+
+    // Ambil data yang diperlukan
+    $userId = $this->user_id;
+    $bookingType = $this->booking_type;
+    $totalPrice = $this->total_price;
+
+    // Konversi check_in_date menjadi Carbon
+    $checkIn = Carbon::parse($this->check_in_date);
+    $checkOut = Carbon::parse($this->check_out_date);
+
+    if ($bookingType === 'monthly') {
+        $day = $checkIn->day;
+
+        // Gabungkan bulan dan tahun dari check_out_date dengan tanggal dari check_in_date
+        $checkOut = Carbon::parse($this->check_out_date . '-' . $day);
+
+        // Pastikan tidak melebihi jumlah hari dalam bulan yang dipilih user
+        if ($checkOut->day != $day) {
+            $checkOut = $checkOut->endOfMonth();
+        }
+    }
+
+    // Buat entri di tabel bookings
+    $booking = \App\Models\Booking::create([
+        'user_id' => $userId,
+        'booking_type' => $bookingType,
+        'check_in_date' => $checkIn->format('Y-m-d'),
+        'check_out_date' => $checkOut->format('Y-m-d'),
+        'price' => $totalPrice,
+        'order_id' => 'INV-' . rand(),
+        'expired_at' => Carbon::now()->addMinutes($this->setting->expire_time),
+    ]);
+
+    // Simpan item kamar yang dipilih
+    foreach ($this->selectedRooms as $roomId) {
+        \App\Models\Item::create([
+            'booking_id' => $booking->id,
+            'room_id' => $roomId,
+        ]);
+    }
+
+    $this->alert('success', 'Proses berhasil! Silahkan lanjut untuk proses pembayaran', [
+        'position' => 'center',
+        'timer' => 2000,
+        'toast' => true,
+        'timerProgressBar' => true,
+    ]);
 };
+
 
 ?>
 
@@ -196,93 +161,125 @@ $addToCart = function ($room) {
                 <p>{{ $item }}</p>
             @endforeach
 
-            <section class="py-5" id="form-input">
-                <div class="container-fluid mb-5">
-                    <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s"
-                        style="max-width: 800px; visi
-                    bility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
-                        <h1 class="display-4 mb-4">Pemesanan Kamar Kost</h1>
-                        <p class="mb-0">
-                            Selamat datang di layanan pemesanan kamar kost kami! Nikmati kenyamanan dan fasilitas terbaik
-                            yang kami tawarkan. Kami
-                            menyediakan berbagai pilihan kamar yang sesuai dengan kebutuhan Anda.
+            @include('pages.user.catalogs.detailKost')
+
+            <section class="mt-5">
+                <div class="row">
+                    <div class="col-md">
+                        <h3 class="fw-bold">
+                            {{ $setting->name }}
+                        </h3>
+                        <p>
+                            {{ $setting->description }}
                         </p>
-                    </div>
 
-                    <div class="mt-4 row bg-light px-2 py-5 rounded-3 wow fadeInUp" data-wow-dela y="0.2s">
+                        <p class="fw-bold">Fasilitas</p>
+                        <ol>
+                            @foreach ($facilities as $facility)
+                                <li>
+                                    {{ $facility->name }}
+                                </li>
+                            @endforeach
+                        </ol>
 
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Tipe Pemesanan</label>
-                            <select class="form-select" name="type" id="type" wire:model.live='type'>
-                                <option value="daily" selected>Perhari</option>
-                                <option value="monthly">Perbulan</option>
-                            </select>
-                            @error('type')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="mb-4 col-md">
-                            <label for="check_in_date" class="form-label">Tanggal Check-In</label>
-                            <input wire:model.live="check_in_date" type="date" class="form-control" id="check_in_date"
-                                min="{{ now()->format('Y-m-d') }}">
-                            @error('check_in_date')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="mb-4 col-md">
-                            <label for="check_out_date" class="form-label">Tanggal Check-Out</label>
-                            <input wire:model.live="check_out_date" type="{{ $type === 'monthly' ? 'month' : 'date' }}"
-                                class="form-control" id="check_out_date"
-                                min="{{ $type === 'monthly' ? Carbon::parse($check_in_date)->addMonth(1)->format('Y-m') : Carbon::parse($check_in_date)->addDay()->format('Y-m-d') }}">
-                            @error('check_out_date')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="mt-3 text-center">
-                            <span class="text-center">
-                                <div class="d-none spinner-border" wire:loading.class.remove="d-none" role="status">
-                                    <span class="sr-only">Loading...</span>
+                        <p class="fw-bold">Lantai Bawah</p>
+                        <hr>
+                        <div class="row">
+                            @foreach ($rooms->where('position', 'up') as $roomUp)
+                                <div class="col-md-3 mb-3">
+                                    <button wire:click="selectRoom({{ $roomUp->id }})"
+                                        class="btn w-100 py-3 
+                                        {{ in_array($roomUp->id, $selectedRooms) ? 'btn-danger text-white' : 'btn-outline-primary' }}">
+                                        {{ $roomUp->number }}
+                                    </button>
                                 </div>
-                            </span>
+                            @endforeach
                         </div>
-                    </div>
 
-                    <div class="row g-4 justify-content-center py-5">
-                        @foreach ($this->rooms as $room)
-                            <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s"
-                                style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
-                                <div class="blog-item">
-                                    <div class=" blog-img">
-                                        <img src="{{ Storage::url($room->images->first()->image_path) }}"
-                                            class="img-fluid rounded-top w-100" alt="image room">
 
-                                    </div>
-                                    <div class="blog-content p-4">
-                                        <h4 class=" mb-3 fw-bold">
-                                            Kamar {{ $room->number }}
-                                        </h4>
-                                        <h5 class="mb-3 fw-bold">
-                                            {{ $type == 'monthly' ? formatRupiah($room->monthly_price) : formatRupiah($room->daily_price) }}
-                                        </h5>
-                                        <p class="mb-3">
-                                            @foreach ($room->facilities as $facility)
-                                                {{ $facility->name }},
-                                            @endforeach
-                                        </p>
-                                        <a wire:click.prevent="addToCart({{ $room }})"
-                                            class="btn btn-primary w-100">
-                                            Pesan Kamar
-                                            <i class="fa fa-arrow-right"></i>
-                                        </a>
-                                    </div>
+                        <!-- Kamar Lantai Bawah -->
+                        <p class="fw-bold">Lantai Bawah</p>
+                        <hr>
+                        <div class="row">
+                            @foreach ($rooms->where('position', 'down') as $roomDown)
+                                <div class="col-md-3 mb-3">
+                                    <button wire:click="selectRoom({{ $roomDown->id }})"
+                                        class="btn w-100 py-3 
+                                        {{ in_array($roomDown->id, $selectedRooms) ? 'btn-danger text-white' : 'btn-outline-primary' }}">
+                                        {{ $roomDown->number }}
+                                    </button>
                                 </div>
+                            @endforeach
+                        </div>
+
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <form wire:submit="submitBooking">
+
+                                    @if (!empty($selectedRooms))
+                                        <div class="alert alert-success mt-3 text-center">
+                                            Kamu telah memilih kamar:
+                                            <strong>{{ implode(', ', App\Models\Room::whereIn('id', $selectedRooms)->pluck('number')->toArray()) }}</strong>
+
+                                            <p>{{ $check_in_date }} - {{ $check_out_date }}</p>
+                                        </div>
+                                    @endif
+
+                                    <div class="mb-3">
+                                        <label for="booking_type" class="form-label">Tipe</label>
+                                        <select wire:model.live='booking_type' class="form-select" name="booking_type"
+                                            id="booking_type">
+                                            <option selected>Select one</option>
+                                            <option value="daily">Harian - {{ formatRupiah($setting->daily_price) }}
+                                            </option>
+                                            <option value="monthly">Bulanan - {{ formatRupiah($setting->monthly_price) }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="check_in_date" class="form-label">Check In</label>
+                                        <input wire:model.live="check_in_date" wire:change="dispatch('updateTotalPrice')"
+                                            type="date" class="form-control" min="{{ $now }}"
+                                            name="check_in_date" id="check_in_date" />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="check_out_date" class="form-label">Check Out</label>
+                                        <input wire:model.live="check_out_date" wire:change="dispatch('updateTotalPrice')"
+                                            type="{{ $booking_type === 'daily' ? 'date' : 'month' }}" class="form-control"
+                                            min="{{ $booking_type === 'daily'
+                                                ? Carbon::parse($check_in_date ?? now())->addDay()->format('Y-m-d')
+                                                : Carbon::parse($check_in_date ?? now())->addMonth()->format('Y-m') }}"
+                                            name="check_out_date" id="check_out_date" />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="total_price" class="form-label">Total</label>
+                                        <input type="text" class="form-control" name="total_price"
+                                            value="{{ formatRupiah($total_price) }}" id="total_price" readonly />
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <button type="submit" class="btn btn-primary">
+                                            Submit
+                                        </button>
+                                        <div wire:loading="submitBooking" class="d-nonw" Wire:loading.remove.class="d-none">
+                                            <div class="spinner-border spinner-border-sm" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <div class="spinner-grow spinner-grow-sm" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
                             </div>
-                        @endforeach
-
+                        </div>
                     </div>
-
                 </div>
             </section>
         </div>

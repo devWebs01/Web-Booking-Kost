@@ -14,9 +14,13 @@ class Booking extends Model
 
     protected $fillable = [
         'user_id',
+        'booking_type',
+        'check_in_date',
+        'check_out_date',
         'status',
+        'price',
+        
         'order_id',
-        'total',
         'snapToken',
         'expired_at',
     ];
@@ -50,10 +54,6 @@ class Booking extends Model
     {
         return $this->hasOne(Payment::class);
     }
-
-    /**
-     * Get all of the items for the Booking
-     */
     public function items(): HasMany
     {
         return $this->hasMany(Item::class);

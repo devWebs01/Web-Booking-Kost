@@ -9,19 +9,29 @@ return new class extends Migration
     /**
      * Run the migrations.
      *  'user_id',
+     *  'booking_type',
+     *  'check_in_date',
+     *  'check_out_date',
      *  'status',
+     *  'price',
+     *  
      *  'order_id',
-     *  'total'
+     *  'snapToken',
+     *  'expired_at', 
      */
     public function up(): void
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('order_id')->nullable()->unique();
-            $table->string('total')->nullable();
-            $table->string('snapToken')->nullable();
+            $table->string('booking_type');
+            $table->string('check_in_date');
+            $table->string('check_out_date');
+            $table->string('price');
             $table->enum('status', allowed: ['PENDING', 'CANCEL', 'PROCESS', 'CONFIRM', 'COMPLETE', 'VERIFICATION'])->default('PENDING');
+            
+            $table->string('order_id')->nullable()->unique();
+            $table->string('snapToken')->nullable();
             $table->dateTime('expired_at');
             $table->timestamps();
         });
