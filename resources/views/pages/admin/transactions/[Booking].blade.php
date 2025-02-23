@@ -74,111 +74,148 @@ $completeBooking = function () {
     @endpush
 
     @volt
-        <div>
+        <div class="card">
 
-            <div class="card">
-                <section class="card-header bg-body border-0 mb-0">
-                    <div class="d-block d-md-flex justify-content-between align-items-center gap-2">
-                        <h1 class="fs-5 fw-bolder text-uppercase">
+            <div class="card-body px-lg-5 mx-lg-5">
+
+                <section class="row align-items-center mb-4 border-bottom pb-3">
+                    <div class="col">
+                        <span class="h3 fw-bolder text-primary text-uppercase">
                             {{ $booking->order_id }}
-                            </h3>
+                        </span>
+                        <div class="d-none spinner-border" wire:loading.class.remove="d-none"
+                            wire:target='processPayment, cancelBooking, checkStatus' role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                    <div class="col text-end">
+                        <button type="button" class="btn btn-dark d-print-none"
+                            id="printInvoiceBtn">Download
+                            Invoice</button>
 
-                            <button type="button" class="btn btn-dark d-print-none" id="printInvoiceBtn">
-                                Download
-                                Invoice
-                            </button>
+                        <script>
+                            document.getElementById('printInvoiceBtn').addEventListener('click', function() {
+                                window.print(); // Fungsi bawaan browser untuk mencetak halaman
+                            });
+                        </script>
 
                     </div>
                 </section>
 
-                <div class="card-body">
-
-                    <section class="mb-5">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="fw-bold">
-                                    Pemesanan
-                                </h5>
-
-                                <div>{{ $user->name }}</div>
-                                <div class="text-uppercase">{{ __('booking.' . $booking->status) }}</div>
-                                <div>{{ Carbon::parse($booking->created_at)->format('d-m-Y h:i:s') }}</div>
-                                <div class="text-uppercase">{{ $booking->payment->status_message }}</div>
-                            </div>
-                            <div class="col text-end">
-                                <h5 class="fw-bold">
-                                    Pembayaran
-                                </h5>
-
-                                <div class="text-uppercase">{{ __('payment.' . $booking->payment->status) }}</div>
-                                <div class="text-uppercase">{{ formatRupiah($booking->payment->gross_amount) }}
-                                </div>
-                                <div class="text-uppercase">{{ $booking->payment->payment_type }}</div>
-                                <div class="text-uppercase">{{ $booking->payment->payment_detail }}</div>
-                            </div>
+                <section class="mb-5">
+                    <div class="row">
+                        <div class="col-4">
+                            <h6 class="fw-bolder">
+                                Checkin
+                            </h6>
+                            <p>{{ Carbon::parse($booking->check_in_date)->format('d M Y') }}</p>
                         </div>
-                    </section>
+                        <div class="col-4">
+                            <h6 class="fw-bolder">
+                                Checkin
+                            </h6>
+                            <p>{{ Carbon::parse($booking->check_out_date)->format('d M Y') }}</p>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="fw-bolder">
+                                Tipe Pemesanan
+                            </h6>
+                            <p>
+                                {{ $booking->booking_type }}
+                            </p>
+                        </div>
 
-                    <!-- Invoice Details -->
-                    <section class="mb-5">
-                        <h5 class="fw-bold">
-                            Detail Pemesanan Kamar</h3>
-                            <div class="table-responsive">
-                                <table class="table text-center rounded text-nowrap">
-                                    <thead>
-                                        <tr class="text-dark">
-                                            <th class="text-start">Check-in</th>
-                                            <th>Check-out</th>
-                                            <th>Kamar</th>
-                                            <th>Tipe Pemesanan</th>
-                                            <th>Lama Menginap</th>
-                                            <th class="text-end">Jumlah</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody style="vertical-align: middle">
-                                        @foreach ($booking->items as $item)
-                                            <tr>
+                        <div class="col-4">
+                            <h6 class="fw-bolder">
+                                Dibayarkan Ke
+                            </h6>
+                            <p class="mb-0">
+                                {{ $booking->user->name }}
+                            </p>
 
-                                                <td class="text-start">
-                                                    {{ Carbon::parse($item->check_in_date)->format('d M Y') }}
-                                                </td>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="fw-bolder">
+                                Tipe Pemesanan
+                            </h6>
+                            <p>
+                                {{ __('booking.' . $booking->status) }}
+                            </p>
+                        </div>
 
-                                                <td>
-                                                    {{ Carbon::parse($item->check_out_date)->format('d M Y') }}
-                                                </td>
+                        <div class="col-4">
+                            <h6 class="fw-bolder">
+                                Pembayaran
+                            </h6>
+                            <p>
+                                {{ __('payment.'.$payment->status ?? '-') }}
+                            </p>
+                        </div>
+                    </div>
+                </section>
 
-                                                <td>
-                                                    Kamar {{ $item->room->number }}
-                                                </td>
+                <section>
+                    <div class="table-responsive rounded">
+                        <table class="table table-hover rounded border">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="fw-bolder text-dark">No.</th>
+                                    <th class="fw-bolder text-dark">Kamar</th>
+                                    <th class="text-end text-dark">Tempat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($booking->items as $no => $item)
+                                    <tr>
+                                        <td>
+                                            {{ ++$no }}.
+                                        </td>
+                                        <td>
+                                            Kamar {{ $item->room->number }}
+                                        </td>
+                                        <td class="text-end">
+                                            {{ $item->room->position === 'up' ? 'Kamar Atas' : 'Kamar Bawah' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                            <tfooter>
+                               
+                                <tr>
+                                    <td colspan="2" class="fw-bolder">Status</td>
+                                    <td class="text-end fw-bolder">{{ __('payment.' . $payment->status) }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="fw-bolder">Waktu pembayaran</td>
+                                    <td class="text-end fw-bolder">{{ $payment->payment_time ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="fw-bolder">Jenis pembayaran</td>
+                                    <td class="text-end fw-bolder">{{ $payment->payment_type ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="fw-bolder">Detail pembayaran</td>
+                                    <td class="text-end fw-bolder">{{ $payment->payment_detail ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="fw-bolder">Pesan pembayaran</td>
+                                    <td class="text-end fw-bolder">{{ $payment->status_message ?? '-' }}</td>
+                                </tr>
 
-                                                <td>{{ __('type.' . $item->type) }}</td>
+                                <tr>
+                                    <td colspan="2" class="fw-bolder">Jumlah harus dibayar</td>
+                                    <td class="text-end fw-bolder">{{ formatRupiah($booking->price) }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="fw-bolder">Jumlah yang diterima</td>
+                                    <td class="text-end fw-bolder">{{ formatRupiah($payment->gross_amount) ?? '-' }}</td>
+                                </tr>
+                            </tfooter>
+                        </table>
 
-                                                <td>
-                                                    {{ Carbon::parse($item->check_in_date)->diffInDays(Carbon::parse($item->check_out_date)) }}
-                                                    malam
-                                                </td>
+                    </div>
+                </section>
 
-                                                <td class="text-end">
-                                                    {{ formatRupiah($item->price) }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-
-                                        <tr>
-                                            <td colspan="4"></td>
-                                            <td class="h5 fw-bold">
-                                                Total
-                                            </td>
-                                            <td class="h5 fw-bold text-end">
-                                                {{ formatRupiah($booking->total) }}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                    </section>
-
-                </div>
             </div>
         </div>
     @endvolt

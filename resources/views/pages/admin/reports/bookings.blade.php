@@ -43,7 +43,7 @@ state(['reports' => fn() => Booking::get()]);
                                         <th>Total Kamar</th>
                                         <th>Total Harga</th>
                                         <th>Status</th>
-                                        <th>Tanggal</th>
+                                        <th>Tanggal Dibuat</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -71,13 +71,10 @@ state(['reports' => fn() => Booking::get()]);
                                                 {{ $report->items->count() }}
                                             </td>
                                             <td>
-                                                {{ formatRupiah($report->total) }}
+                                                {{ formatRupiah($report->price) }}
                                             </td>
                                             <td>
-                                                <button class="btn btn-primary btn-sm">
-                                                    {{ $report->status }}
-                                                </button>
-
+                                                {{ $report->status }}
                                             </td>
                                             <td>
                                                 {{ $report->created_at }}
