@@ -30,14 +30,6 @@ class AutoCancelBooking
                 $booking->payment()->update(['status' => 'FAILED']);
             }
 
-            // Ubah status kamar kembali menjadi 'available'
-            foreach ($booking->items as $item) {
-                if ($item->room) {
-                    $item->room->update(['room_status' => 'available']);
-                    Log::info("Room ID {$item->room->id} dikembalikan menjadi 'available' karena booking ID {$booking->id} dibatalkan.");
-                }
-            }
-
             $canceledCount++;
         }
 

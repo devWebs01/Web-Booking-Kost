@@ -2,7 +2,7 @@
 
 use App\Models\Booking;
 use Carbon\Carbon;
-use function Livewire\Volt\{state, uses, computed};
+use function Livewire\Volt\{state, uses};
 use function Laravel\Folio\name;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 

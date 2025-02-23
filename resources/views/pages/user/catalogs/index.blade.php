@@ -4,7 +4,7 @@ use App\Models\Image;
 use App\Models\Room;
 use App\Models\Facility;
 use App\Models\Setting;
-use App\Models\Cart;
+use App\Models\Payment;
 use Carbon\Carbon;
 use function Livewire\Volt\{state, uses, computed, mount, on};
 use function Laravel\Folio\name;
@@ -141,12 +141,20 @@ $submitBooking = function () {
         ]);
     }
 
+    Payment::create([
+                'booking_id' => $booking->id,
+        ]);
+
     $this->alert('success', 'Proses berhasil! Silahkan lanjut untuk proses pembayaran', [
         'position' => 'center',
         'timer' => 2000,
         'toast' => true,
         'timerProgressBar' => true,
     ]);
+
+    return $this->redirectRoute('histories.show', [
+            'booking' => $booking,
+        ]);
 };
 
 
@@ -182,7 +190,7 @@ $submitBooking = function () {
                             @endforeach
                         </ol>
 
-                        <p class="fw-bold">Lantai Bawah</p>
+                        <p class="fw-bold">Lantai Atas</p>
                         <hr>
                         <div class="row">
                             @foreach ($rooms->where('position', 'up') as $roomUp)
@@ -263,7 +271,7 @@ $submitBooking = function () {
                                     </div>
 
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <button type="submit" class="btn btn-primary">
+                                        <button type="submit" class="btn btn-lg btn-primary">
                                             Submit
                                         </button>
                                         <div wire:loading="submitBooking" class="d-nonw" Wire:loading.remove.class="d-none">

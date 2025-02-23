@@ -9,7 +9,7 @@ use function Laravel\Folio\name;
 name('welcome');
 
 state([
-    'images' => fn() => Image::limit(10)->get('image_path'),
+    'images' => fn() => Image::limit(4)->get('image_path'),
     'setting' => fn() => Setting::first(),
 ]);
 

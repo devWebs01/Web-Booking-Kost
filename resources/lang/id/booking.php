@@ -2,7 +2,7 @@
 
 return [
     'PENDING' => 'Menunggu Konfirmasi',
-    'CANCEL' => 'Dibatalkan',
+    'CANCEL' => 'Batal',
     'PROCESS' => 'Sedang Diproses',
     'CONFIRM' => 'Telah Dikonfirmasi',
     'COMPLETE' => 'Selesai',
