@@ -19,7 +19,7 @@ class Booking extends Model
         'check_out_date',
         'status',
         'price',
-        
+
         'order_id',
         'snapToken',
         'expired_at',
@@ -54,6 +54,7 @@ class Booking extends Model
     {
         return $this->hasOne(Payment::class);
     }
+
     public function items(): HasMany
     {
         return $this->hasMany(Item::class);

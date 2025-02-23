@@ -45,7 +45,7 @@ state([
                                             <span class="text-uppercase">{{ $booking->order_id }}</span>
                                         </td>
                                         <td>
-                                            {{ $booking->created_at->format('d m Y') }}
+                                            {{ $booking->created_at->format('d M Y') }}
                                         </td>
                                         <td>
                                             {{ __('booking.' . $booking->status) }}

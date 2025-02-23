@@ -14,10 +14,10 @@ return new class extends Migration
      *  'check_out_date',
      *  'status',
      *  'price',
-     *  
+     *
      *  'order_id',
      *  'snapToken',
-     *  'expired_at', 
+     *  'expired_at',
      */
     public function up(): void
     {
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('check_out_date');
             $table->string('price');
             $table->enum('status', allowed: ['PENDING', 'CANCEL', 'PROCESS', 'CONFIRM', 'COMPLETE', 'VERIFICATION'])->default('PENDING');
-            
+
             $table->string('order_id')->nullable()->unique();
             $table->string('snapToken')->nullable();
             $table->dateTime('expired_at');

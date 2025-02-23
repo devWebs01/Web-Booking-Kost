@@ -22,15 +22,19 @@ state([
 
             <!-- Carousel Start -->
             <section class="py-5 d-flex align-items-center position-relative wow fadeInUp" data-wow-delay="0.2s"
-                style="height: 500px;">
+                style="height: 500px; background-image: url('https://images.pexels.com/photos/776120/pexels-photo-776120.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;">
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-lg-7">
                             <div class="text-center">
-                                <h1 class="display-3 fw-bold">Selamat Datang di <span class="text-primary">Kost Syariah Gala
+                                <h1 class="display-3 fw-bold">
+                                    Selamat Datang di 
+                                    <span class="text-primary">Kost Syariah Gala
                                         Residence</span>
                                 </h1>
-                                <p class="lead py-3 py-md-4">Kost syariah yang nyaman dan aman untuk Anda. Nikmati fasilitas
+                                <p class="lead py-3 py-md-4 text-white">Kost syariah yang nyaman dan aman untuk Anda. Nikmati fasilitas
                                     lengkap dan lingkungan yang mendukung.</p>
                             </div>
                         </div>
@@ -60,9 +64,7 @@ state([
                                 <p class="lead">Kami menyediakan tempat tinggal yang nyaman dan sesuai dengan prinsip
                                     syariah. Dengan fasilitas yang lengkap, kami berkomitmen untuk memberikan pengalaman
                                     tinggal yang terbaik.</p>
-                                <p class="lead">Kami mengutamakan kenyamanan dan keamanan penghuni kami. Bergabunglah
-                                    dengan komunitas kami yang harmonis.</p>
-                                <a class="btn btn-primary" href="#">Pelajari lebih lanjut</a>
+                                <a class="btn btn-primary" href="{{ route('catalogs.index') }}">Pesan Sekarang</a>
                             </div>
                         </div>
                     </div>
@@ -75,23 +77,25 @@ state([
                         <div class="col-lg-8 col-xl-7">
                             <span class="text-muted">Fasilitas</span>
                             <h2 class="display-5 fw-bold">Fasilitas Kost Syariah</h2>
-                            <p class="lead">Kami menyediakan fasilitas lengkap untuk mendukung kenyamanan dan keamanan penghuni sesuai dengan prinsip syariah.</p>
+                            <p class="lead">Kami menyediakan fasilitas lengkap untuk mendukung kenyamanan dan keamanan
+                                penghuni sesuai dengan prinsip syariah.</p>
                         </div>
                     </div>
                     <div class="row align-items-center">
                         <div class="col-md-4 order-2 order-md-1">
                             <div class="d-flex mb-4 mt-4 mt-md-0">
                                 <div class="text-muted">
-                                    
+
                                 </div>
                                 <div class="ms-4">
                                     <h5 class="fw-bold">Lingkungan Islami</h5>
-                                    <p class="fw-light">Kost dengan aturan syariah yang menjamin suasana islami dan nyaman.</p>
+                                    <p class="fw-light">Kost dengan aturan syariah yang menjamin suasana islami dan nyaman.
+                                    </p>
                                 </div>
                             </div>
                             <div class="d-flex">
                                 <div class="text-muted">
-                                    
+
                                 </div>
                                 <div class="ms-4">
                                     <h5 class="fw-bold">Internet Gratis</h5>
@@ -100,13 +104,13 @@ state([
                             </div>
                         </div>
                         <div class="col-md-4 pe-lg-5 order-1 order-md-2">
-                            <img class="img rounded" style="width:100%; height:300px; object-fit:cover;" 
-                                 src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/416419331.jpg?k=f47c9b054754cdc3e991c0d122ce0fd85ed23aa46bf37460d0f0834b0422ad1c&o=&hp=1">
+                            <img class="img rounded" style="width:100%; height:300px; object-fit:cover;"
+                                src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/416419331.jpg?k=f47c9b054754cdc3e991c0d122ce0fd85ed23aa46bf37460d0f0834b0422ad1c&o=&hp=1">
                         </div>
                         <div class="col-md-4 ps-lg-5 order-3 order-md-3">
                             <div class="d-flex mb-4">
                                 <div class="text-muted">
-                                    
+
                                 </div>
                                 <div class="ms-4">
                                     <h5 class="fw-bold">Listrik & Air 24 Jam</h5>
@@ -115,7 +119,7 @@ state([
                             </div>
                             <div class="d-flex">
                                 <div class="text-muted">
-                                    
+
                                 </div>
                                 <div class="ms-4">
                                     <h5 class="fw-bold">Privasi Terjaga</h5>
@@ -126,7 +130,7 @@ state([
                     </div>
                 </div>
             </section>
-            
+
             <section class="bg-light py-5 wow fadeInUp" data-wow-delay="0.2s">
                 <div class="container">
                     <div class="row justify-content-center text-center mb-2 mb-lg-4">
@@ -189,10 +193,10 @@ state([
                                         </i>
                                     </div>
                                     <h5 class="fw-bold">Harian</h5>
-                                    <div class="display-3 fw-bold mt-4 text-primary">
+                                    <h2 class=" fw-bold mt-4 text-primary">
                                         {{ formatRupiah($setting->daily_price) }}
-                                    </div>
-                                    <a class="btn btn-primary btn-lg mt-4" href="">Pelajari lebih lanjut</a>
+                                    </h2>
+                                    <a class="btn btn-primary btn-lg mt-4" href="{{ route('catalogs.index') }}">Pesan</a>
                                 </div>
                             </div>
                         </div>
@@ -205,10 +209,10 @@ state([
                                         </i>
                                     </div>
                                     <h5 class="fw-bold text-white">Bulanan</h5>
-                                    <div class="display-3 fw-bold mt-4">
+                                    <h2 class="text-white fw-bold mt-4">
                                         {{ formatRupiah($setting->monthly_price) }}
-                                    </div>
-                                    <a class="btn btn-light btn-lg mt-4" href="">Pelajari lebih lanjut</a>
+                                    </h2>
+                                    <a class="btn btn-light btn-lg mt-4" href="{{ route('catalogs.index') }}">Pesan</a>
                                 </div>
                             </div>
                         </div>
