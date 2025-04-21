@@ -17,3 +17,13 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Laravel IDE Helper
+/_ide_helper.php
+/_ide_helper_models.php
+/_ide_helper_facades.php
+/_ide_helper.php.cache
+
+# PHP CS Fixer config
+/.php-cs-fixer.cache
+/.phpstorm.meta.php
