@@ -34,7 +34,7 @@ class Booking extends Model
             $setting = Setting::first();
             $expire_time = $setting ? $setting->expire_time : 10; // Default 60 menit jika tidak ada setting
 
-            if (! $booking->expired_at) {
+            if (!$booking->expired_at) {
                 $booking->expired_at = now()->addMinutes($expire_time);
             }
         });
@@ -47,7 +47,7 @@ class Booking extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(user::class);
+        return $this->belongsTo(User::class);
     }
 
     public function payment(): HasOne
