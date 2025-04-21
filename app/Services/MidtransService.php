@@ -39,7 +39,7 @@ class MidtransService
         try {
             return Snap::getSnapToken($params);
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            throw new Exception('Midtrans Snap Error: '.$e->getMessage());
         }
     }
 
@@ -78,26 +78,27 @@ class MidtransService
      */
     public function handleNotification(): void
     {
-        $notification = new Notification;
-        $booking = Booking::where('order_id', $notification->order_id)->first();
+        /** @var \Midtrans\Notification $notification */
+        $notification = new Notification();
+
+        $orderId = $notification->order_id ?? null;
+        $status = $notification->transaction_status ?? null;
+
+        if (! $orderId || ! $status) {
+            return;
+        }
+
+        $booking = Booking::where('order_id', $orderId)->first();
 
         if (! $booking) {
             return;
         }
 
-        switch ($notification->transaction_status) {
-            case 'settlement':
-            case 'capture':
-                $booking->update(['status' => 'confirmed']);
-                break;
-            case 'pending':
-                $booking->update(['status' => 'pending']);
-                break;
-            case 'cancel':
-            case 'expire':
-            case 'deny':
-                $booking->update(['status' => 'canceled']);
-                break;
-        }
+        match ($status) {
+            'settlement', 'capture' => $booking->update(['status' => 'confirmed']),
+            'pending' => $booking->update(['status' => 'pending']),
+            'cancel', 'expire', 'deny' => $booking->update(['status' => 'canceled']),
+            default => null,
+        };
     }
 }

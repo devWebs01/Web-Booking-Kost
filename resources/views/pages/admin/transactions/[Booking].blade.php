@@ -3,18 +3,19 @@
 use App\Models\Setting;
 use App\Models\Booking;
 use Carbon\Carbon;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
+
 use function Livewire\Volt\{state, uses};
 use function Laravel\Folio\name;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 uses([LivewireAlert::class]);
 
 name('transactions.show');
 
 state([
-    'setting' => fn() => Setting::first(['name', 'location', 'description']),
-    'payment' => fn() => $this->booking->payment,
-    'user' => fn() => $this->booking->user,
+    'setting' => fn () => Setting::first(['name', 'location', 'description']),
+    'payment' => fn () => $this->booking->payment,
+    'user' => fn () => $this->booking->user,
     'booking',
 ]);
 

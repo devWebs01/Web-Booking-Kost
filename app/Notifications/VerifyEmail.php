@@ -16,7 +16,7 @@ class VerifyEmail extends VerifyEmailNotification
             ['id' => $notifiable->getKey(), 'hash' => sha1($notifiable->getEmailForVerification())]
         );
 
-        return (new MailMessage)
+        return (new MailMessage())
             ->view('emails.verify_email', ['url' => $url]);
     }
 }

@@ -6,9 +6,10 @@ use App\Models\Facility;
 use App\Models\Setting;
 use App\Models\Payment;
 use Carbon\Carbon;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
+
 use function Livewire\Volt\{state, uses, computed, mount, on};
 use function Laravel\Folio\name;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 uses([LivewireAlert::class]);
 
@@ -21,17 +22,17 @@ $rooms = computed(function () {
 });
 
 state([
-    'galleries' => fn() => Image::get(),
-    'facilities' => fn() => Facility::get(),
+    'galleries' => fn () => Image::get(),
+    'facilities' => fn () => Facility::get(),
     //
-    'user_id' => fn() => Auth()->user()->id ?? '',
-    'setting' => fn() => Setting::first(),
-    'rooms' => fn() => Room::get(),
+    'user_id' => fn () => Auth()->user()->id ?? '',
+    'setting' => fn () => Setting::first(),
+    'rooms' => fn () => Room::get(),
     //
 ]);
 
 state([
-    'now' => fn() => Carbon::now()->format('Y-m-d'),
+    'now' => fn () => Carbon::now()->format('Y-m-d'),
     'selectedRooms' => [],
     'booking_type' => 'daily',
     'total_price' => 0,

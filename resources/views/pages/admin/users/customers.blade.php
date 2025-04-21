@@ -1,9 +1,10 @@
 <?php
 
 use App\Models\User;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
+
 use function Livewire\Volt\{computed, state, usesPagination, uses};
 use function Laravel\Folio\name;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 uses([LivewireAlert::class]);
 

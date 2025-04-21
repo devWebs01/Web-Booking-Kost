@@ -2,17 +2,18 @@
 
 use App\Models\Setting;
 use App\Models\Image;
-use function Livewire\Volt\{state, usesFileUploads, rules, uses};
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+
+use function Livewire\Volt\{state, usesFileUploads, rules, uses};
 
 usesFileUploads();
 uses([LivewireAlert::class]);
 
 state([
-    'setting' => fn() => Setting::first(),
-    'facilities' => fn() => $this->setting->facilities->pluck('name')->toArray(),
-    'daily_price' => fn() => $this->setting->daily_price,
-    'monthly_price' => fn() => $this->setting->monthly_price,
+    'setting' => fn () => Setting::first(),
+    'facilities' => fn () => $this->setting->facilities->pluck('name')->toArray(),
+    'daily_price' => fn () => $this->setting->daily_price,
+    'monthly_price' => fn () => $this->setting->monthly_price,
     'images' => [],
     'previmages',
 ]);

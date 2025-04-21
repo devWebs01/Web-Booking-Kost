@@ -5,10 +5,11 @@ use Midtrans\Snap;
 use Midtrans\Config;
 use App\Models\Setting;
 use Carbon\Carbon;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
+
 use function Livewire\Volt\{state, on, uses};
 use function Laravel\Folio\name;
 use function Laravel\Folio\{middleware};
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 uses([LivewireAlert::class]);
 middleware(['auth']);
@@ -16,11 +17,11 @@ middleware(['auth']);
 name('histories.show');
 
 state([
-    'setting' => fn() => Setting::first(),
-    'user' => fn() => Auth()->user(),
-    'snapToken' => fn() => $this->booking->snapToken ?? '',
-    'expired_at' => fn() => $this->booking->expired_at ?? '',
-    'payment' => fn() => $this->booking->payment ?? null,
+    'setting' => fn () => Setting::first(),
+    'user' => fn () => Auth()->user(),
+    'snapToken' => fn () => $this->booking->snapToken ?? '',
+    'expired_at' => fn () => $this->booking->expired_at ?? '',
+    'payment' => fn () => $this->booking->payment ?? null,
     'booking',
 ]);
 
@@ -36,11 +37,11 @@ $processPayment = function () {
     Config::$isSanitized = true;
     Config::$is3ds = true;
 
-    
+
     try {
         // Data transaksi
 
-        if (empty($this->snapToken)){
+        if (empty($this->snapToken)) {
             $params = [
                 'transaction_details' => [
                     'order_id' => $this->booking->order_id,
@@ -57,26 +58,26 @@ $processPayment = function () {
                     'duration' => $this->booking->expired_at ? Carbon::now()->diffInMinutes(Carbon::parse($this->booking->expired_at)) : 5, // Menghitung durasi kedaluwarsa dalam menit
                 ],
             ];
-    
+
             $snapToken = Snap::getSnapToken($params);
-    
+
             // Simpan snapToken ke dalam booking
             $this->booking->update(['snapToken' => $snapToken]);
-    
+
             // Dispatch event untuk update snapToken di state
             $this->dispatch('updateSnapToken');
 
         }
-        
-        
-        if(!$this->booking->payment){
+
+
+        if (!$this->booking->payment) {
             $payment = Payment::create([
                 'booking_id' => $this->booking->id,
         ]);
-        }else{
+        } else {
             $payment = $this->booking->payment;
         }
-        
+
 
         $this->redirectRoute('payments.guest', [
             'payment' => $payment,

@@ -5,6 +5,7 @@ use App\Models\Facility;
 use App\Models\Image;
 use Illuminate\Validation\Rule;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+
 use function Livewire\Volt\{state, rules, uses, usesFileUploads};
 use function Laravel\Folio\name;
 
@@ -15,9 +16,9 @@ uses([LivewireAlert::class]);
 name('rooms.edit');
 
 state([
-    'number' => fn() => $this->room->number,
-    'room_status' => fn() => $this->room->room_status,
-    'position' => fn() => $this->room->position,
+    'number' => fn () => $this->room->number,
+    'room_status' => fn () => $this->room->room_status,
+    'position' => fn () => $this->room->position,
     'room',
 ]);
 
@@ -31,7 +32,7 @@ $edit = function () {
     $validateData = $this->validate();
     try {
         \DB::beginTransaction();
-        
+
         $room = $this->room;
 
         $room->update([

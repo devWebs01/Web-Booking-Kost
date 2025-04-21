@@ -1,10 +1,11 @@
 <?php
 
-use function Livewire\Volt\{computed, state, on};
 use App\Models\Setting;
 
+use function Livewire\Volt\{computed, state, on};
+
 state([
-    'setting' => fn() => Setting::first(),
+    'setting' => fn () => Setting::first(),
 ]);
 
 ?>

@@ -3,6 +3,7 @@
 use App\Models\Room;
 use App\Models\Setting;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+
 use function Laravel\Folio\name;
 use function Livewire\Volt\{computed, state, usesPagination, uses, rules};
 
@@ -29,7 +30,7 @@ $rooms = computed(function () {
 
 $destroy = function (room $room) {
     try {
-       
+
         $room->delete();
         $this->alert('success', 'Proses berhasil!', [
             'position' => 'center',

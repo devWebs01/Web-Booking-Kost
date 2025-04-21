@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Booking;
+
 use function Livewire\Volt\{computed, state, on};
 
 $logout = function () {

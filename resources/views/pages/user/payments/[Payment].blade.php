@@ -3,10 +3,11 @@
 use Midtrans\Snap;
 use Midtrans\Config;
 use Carbon\Carbon;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
+
 use function Livewire\Volt\{state, on, uses};
 use function Laravel\Folio\name;
 use function Laravel\Folio\{middleware};
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 uses([LivewireAlert::class]);
 middleware(['auth']);
@@ -14,10 +15,10 @@ middleware(['auth']);
 name('payments.guest');
 
 state([
-    'booking' => fn() => $this->payment->booking,
-    'user' => fn() => Auth()->user(),
-    'snapToken' => fn() => $this->booking->snapToken,
-    'expired_at' => fn() => $this->booking->expired_at,
+    'booking' => fn () => $this->payment->booking,
+    'user' => fn () => Auth()->user(),
+    'snapToken' => fn () => $this->booking->snapToken,
+    'expired_at' => fn () => $this->booking->expired_at,
     'payment',
 ]);
 

@@ -2,16 +2,17 @@
 
 use App\Models\Booking;
 use Carbon\Carbon;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
+
 use function Livewire\Volt\{state, uses};
 use function Laravel\Folio\name;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 uses([LivewireAlert::class]);
 
 name('histories.index');
 
 state([
-    'bookings' => fn() => Booking::where('user_id', Auth()->user()->id)
+    'bookings' => fn () => Booking::where('user_id', Auth()->user()->id)
         ->latest()
         ->get(),
 ]);

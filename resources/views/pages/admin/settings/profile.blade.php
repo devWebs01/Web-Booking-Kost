@@ -1,8 +1,9 @@
 <?php
 
 use App\Models\Setting;
-use function Livewire\Volt\{state, computed, rules, uses};
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+
+use function Livewire\Volt\{state, computed, rules, uses};
 
 uses([LivewireAlert::class]);
 
@@ -11,11 +12,11 @@ $getSetting = computed(function () {
 });
 
 state([
-    'name' => fn() => $this->getSetting->name ?? '',
-    'phone' => fn() => $this->getSetting->phone ?? '',
-    'location' => fn() => $this->getSetting->location ?? '',
-    'description' => fn() => $this->getSetting->description ?? '',
-    'expire_time' => fn() => $this->getSetting->expire_time ?? '',
+    'name' => fn () => $this->getSetting->name ?? '',
+    'phone' => fn () => $this->getSetting->phone ?? '',
+    'location' => fn () => $this->getSetting->location ?? '',
+    'description' => fn () => $this->getSetting->description ?? '',
+    'expire_time' => fn () => $this->getSetting->expire_time ?? '',
 ]);
 
 rules([

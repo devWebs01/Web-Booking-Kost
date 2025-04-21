@@ -1,19 +1,20 @@
 <?php
 
 use App\Models\User;
-use function Livewire\Volt\{state, rules, uses};
 use Illuminate\Validation\Rule;
-use function Laravel\Folio\name;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+
+use function Livewire\Volt\{state, rules, uses};
+use function Laravel\Folio\name;
 
 uses([LivewireAlert::class]);
 
 name('users.edit');
 
 state([
-    'name' => fn() => $this->user->name,
-    'email' => fn() => $this->user->email,
-    'telp' => fn() => $this->user->telp,
+    'name' => fn () => $this->user->name,
+    'email' => fn () => $this->user->email,
+    'telp' => fn () => $this->user->telp,
     'password',
     'user',
 ]);

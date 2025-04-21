@@ -11,11 +11,9 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-
     use RegistersUsers;
 
-    protected $redirectTo = '/home';
-
+    protected string $redirectTo = '/home';
 
     public function __construct()
     {
@@ -34,14 +32,13 @@ class RegisterController extends Controller
 
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'telp' => $data['telp'],
             'password' => Hash::make($data['password']),
             'role' => 'customer',
         ]);
-
 
         $user->sendEmailVerificationNotification();
 

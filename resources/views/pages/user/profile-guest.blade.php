@@ -1,10 +1,11 @@
 <?php
 
 use App\Models\User;
-use function Livewire\Volt\{state, rules, uses};
 use Illuminate\Validation\Rule;
-use function Laravel\Folio\{name, middleware};
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+
+use function Livewire\Volt\{state, rules, uses};
+use function Laravel\Folio\{name, middleware};
 
 uses([LivewireAlert::class]);
 middleware(['auth']);
@@ -12,10 +13,10 @@ middleware(['auth']);
 name('profile.guest');
 
 state([
-    'user' => fn() => Auth()->user(),
-    'name' => fn() => $this->user->name,
-    'email' => fn() => $this->user->email,
-    'telp' => fn() => $this->user->telp,
+    'user' => fn () => Auth()->user(),
+    'name' => fn () => $this->user->name,
+    'email' => fn () => $this->user->email,
+    'telp' => fn () => $this->user->telp,
     'password',
 ]);
 
