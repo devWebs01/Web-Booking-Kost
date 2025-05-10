@@ -18,21 +18,21 @@ name("catalogs.index");
 state([])->url();
 
 $rooms = computed(function () {
-    return Room::get();
+    return Room::where("room_status", "active")->get();
 });
 
 state([
-    "galleries" => fn () => Image::get(),
-    "facilities" => fn () => Facility::get(),
+    "galleries" => fn() => Image::get(),
+    "facilities" => fn() => Facility::get(),
     //
-    "user_id" => fn () => Auth()->user()->id ?? "",
-    "setting" => fn () => Setting::first(),
-    "rooms" => fn () => Room::get(),
+    "user_id" => fn() => Auth()->user()->id ?? "",
+    "setting" => fn() => Setting::first(),
+    "rooms" => fn() => Room::where("room_status", "active")->get(),
     //
 ]);
 
 state([
-    "now" => fn () => Carbon::now()->format("Y-m-d"),
+    "now" => fn() => Carbon::now()->format("Y-m-d"),
     "selectedRooms" => [],
     "booking_type" => "daily",
     "total_price" => 0,
@@ -54,10 +54,10 @@ $selectRoom = function ($roomId) {
 
 on([
     "updateTotalPrice" => function () {
-        if (! $this->check_in_date || ! $this->check_out_date) {
+        if (!$this->check_in_date || !$this->check_out_date) {
             $this->total_price = 0;
             return;
-        } elseif (! Auth()->check()) {
+        } elseif (!Auth()->check()) {
             $this->redirectRoute("login");
             return;
         }
@@ -92,7 +92,7 @@ on([
 
 $submitBooking = function () {
     // Validasi input
-    if (! $this->check_in_date || ! $this->check_out_date || empty($this->selectedRooms)) {
+    if (!$this->check_in_date || !$this->check_out_date || empty($this->selectedRooms)) {
         $this->alert("error", "Silakan lengkapi semua data pemesanan.", [
             "position" => "center",
             "timer" => 2000,
