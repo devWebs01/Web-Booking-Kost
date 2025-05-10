@@ -1,17 +1,16 @@
 <?php
 
-use App\Models\Room;
 use App\Models\Image;
 use App\Models\Setting;
 
-use function Livewire\Volt\{state, rules, computed};
+use function Livewire\Volt\{state};
 use function Laravel\Folio\name;
 
-name('welcome');
+name("welcome");
 
 state([
-    'images' => fn () => Image::limit(4)->get('image_path'),
-    'setting' => fn () => Setting::first(),
+    "images" => fn () => Image::limit(4)->get("image_path"),
+    "setting" => fn () => Setting::first(),
 ]);
 
 ?>
@@ -31,11 +30,12 @@ state([
                         <div class="col-lg-7">
                             <div class="text-center">
                                 <h1 class="display-3 fw-bold">
-                                    Selamat Datang di 
+                                    Selamat Datang di
                                     <span class="text-primary">Kost Syariah Gala
                                         Residence</span>
                                 </h1>
-                                <p class="lead py-3 py-md-4 text-white">Kost syariah yang nyaman dan aman untuk Anda. Nikmati fasilitas
+                                <p class="lead py-3 py-md-4 text-white">Kost syariah yang nyaman dan aman untuk Anda.
+                                    Nikmati fasilitas
                                     lengkap dan lingkungan yang mendukung.</p>
                             </div>
                         </div>
@@ -53,9 +53,11 @@ state([
                     <div class="row gx-4 align-items-center">
                         <div class="col-md-6">
                             <div class="me-md-2 me-lg-5">
-                                <img class="img-fluid rounded-3"
-                                    src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/416419334.jpg?k=98cd936656590d0e21b91de910cdfc28e77ee337768b7b99be056ca1608051c0&o="
-                                    style="object-fit: cover;">
+                                @if ($images->get(0))
+                                    <img class="img-fluid rounded-3" src="{{ Storage::url($images->get(0)->image_path) }}"
+                                        style="object-fit: cover;">
+                                @endif
+
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -65,7 +67,7 @@ state([
                                 <p class="lead">Kami menyediakan tempat tinggal yang nyaman dan sesuai dengan prinsip
                                     syariah. Dengan fasilitas yang lengkap, kami berkomitmen untuk memberikan pengalaman
                                     tinggal yang terbaik.</p>
-                                <a class="btn btn-primary" href="{{ route('catalogs.index') }}">Pesan Sekarang</a>
+                                <a class="btn btn-primary" href="{{ route("catalogs.index") }}">Pesan Sekarang</a>
                             </div>
                         </div>
                     </div>
@@ -105,8 +107,11 @@ state([
                             </div>
                         </div>
                         <div class="col-md-4 pe-lg-5 order-1 order-md-2">
-                            <img class="img rounded" style="width:100%; height:300px; object-fit:cover;"
-                                src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/416419331.jpg?k=f47c9b054754cdc3e991c0d122ce0fd85ed23aa46bf37460d0f0834b0422ad1c&o=&hp=1">
+                            @if ($images->get(1))
+                                <img class="img rounded" style="width:100%; height:300px; object-fit:cover;"
+                                    src="{{ Storage::url($images->get(1)->image_path) }}">
+                            @endif
+
                         </div>
                         <div class="col-md-4 ps-lg-5 order-3 order-md-3">
                             <div class="d-flex mb-4">
@@ -197,7 +202,7 @@ state([
                                     <h2 class=" fw-bold mt-4 text-primary">
                                         {{ formatRupiah($setting->daily_price) }}
                                     </h2>
-                                    <a class="btn btn-primary btn-lg mt-4" href="{{ route('catalogs.index') }}">Pesan</a>
+                                    <a class="btn btn-primary btn-lg mt-4" href="{{ route("catalogs.index") }}">Pesan</a>
                                 </div>
                             </div>
                         </div>
@@ -213,7 +218,7 @@ state([
                                     <h2 class="text-white fw-bold mt-4">
                                         {{ formatRupiah($setting->monthly_price) }}
                                     </h2>
-                                    <a class="btn btn-light btn-lg mt-4" href="{{ route('catalogs.index') }}">Pesan</a>
+                                    <a class="btn btn-light btn-lg mt-4" href="{{ route("catalogs.index") }}">Pesan</a>
                                 </div>
                             </div>
                         </div>

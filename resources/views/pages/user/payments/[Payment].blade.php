@@ -106,7 +106,7 @@ $updateStatus = function () {
         $booking = $this->booking;
         $payment = $this->booking->payment;
 
-        if (!$booking) {
+        if (! $booking) {
             Log::warning("Booking tidak ditemukan untuk order_id: {$response->order_id}");
             return;
         }

@@ -1,11 +1,10 @@
 <?php
 
 use App\Models\Room;
-use App\Models\Setting;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 use function Laravel\Folio\name;
-use function Livewire\Volt\{computed, state, usesPagination, uses, rules};
+use function Livewire\Volt\{computed, state, usesPagination, uses};
 
 uses([LivewireAlert::class]);
 

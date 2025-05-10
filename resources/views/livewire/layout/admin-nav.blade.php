@@ -2,7 +2,7 @@
 
 use App\Models\Setting;
 
-use function Livewire\Volt\{computed, state, on};
+use function Livewire\Volt\{state};
 
 state([
     'setting' => fn () => Setting::first(),
@@ -44,7 +44,7 @@ state([
             </li>
 
             <li class="nav-small-cap">
-               
+
                 <span class="hide-menu">Pengguna</span>
             </li>
 
@@ -95,7 +95,7 @@ state([
                         Pengaturan Kost
                     </span>
                 </a>
-            </li> 
+            </li>
 
             <li>
                 <span class="sidebar-divider lg"></span>

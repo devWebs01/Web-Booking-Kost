@@ -114,7 +114,7 @@
     </div>
     <!-- Navbar & Hero End -->
 
-      @if(session('error'))
+      @if (session('error'))
             <div class="container-fluid my-5">
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

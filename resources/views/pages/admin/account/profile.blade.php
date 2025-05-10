@@ -2,7 +2,6 @@
 
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;

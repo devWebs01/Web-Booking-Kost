@@ -1,7 +1,6 @@
 <?php
 
 use function Laravel\Folio\name;
-use function Livewire\Volt\{state, computed, rules};
 
 name('account.auth');
 

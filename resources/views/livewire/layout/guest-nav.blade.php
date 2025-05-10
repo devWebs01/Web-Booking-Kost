@@ -2,7 +2,7 @@
 
 use App\Models\Booking;
 
-use function Livewire\Volt\{computed, state, on};
+use function Livewire\Volt\{state, on};
 
 $logout = function () {
     Auth::logout();

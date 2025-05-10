@@ -1,11 +1,7 @@
 <?php
 
-use App\Models\Booking;
-use App\Models\BookingTime;
-use App\Models\PaymentRecord;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
-use function Livewire\Volt\{state, computed};
+use function Livewire\Volt\{state};
 
 state([]);
 

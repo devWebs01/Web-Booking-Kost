@@ -1,8 +1,6 @@
 <?php
 
 use App\Models\Room;
-use App\Models\Facility;
-use App\Models\Image;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 use function Livewire\Volt\{state, rules, uses, usesFileUploads};

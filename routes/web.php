@@ -23,6 +23,6 @@ Auth::routes([
     'verify' => 'true',
 ]);
 
-Route::get('/home', [HomeController::class, 'index'])
+Route::get('home', [HomeController::class, 'index'])
     ->middleware(['verified', 'checkRole:developer,admin', 'autoCancel'])
     ->name('home');

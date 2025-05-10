@@ -16,7 +16,7 @@ class ResetPassword extends ResetPasswordNotification
             ['token' => $this->token, 'email' => $notifiable->getEmailForPasswordReset()]
         );
 
-        return (new MailMessage())
+        return (new MailMessage)
             ->view('emails.reset_password', ['url' => $url]);
     }
 }

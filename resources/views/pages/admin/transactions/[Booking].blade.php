@@ -2,7 +2,6 @@
 
 use App\Models\Setting;
 use App\Models\Booking;
-use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 use function Livewire\Volt\{state, uses};
@@ -181,7 +180,7 @@ $completeBooking = function () {
                                 @endforeach
                             </tbody>
                             <tfooter>
-                               
+
                                 <tr>
                                     <td colspan="2" class="fw-bolder">Status</td>
                                     <td class="text-end fw-bolder">{{ __('payment.' . $payment->status) }}</td>

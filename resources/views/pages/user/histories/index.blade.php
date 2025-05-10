@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Booking;
-use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 use function Livewire\Volt\{state, uses};

@@ -42,7 +42,7 @@ name('settings.index');
                             @include('pages.admin.settings.facility&image')
                         </div>
                       </div>
-                    
+
                 </div>
             </div>
         </div>

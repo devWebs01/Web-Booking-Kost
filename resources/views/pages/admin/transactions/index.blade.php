@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Booking;
-use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 use function Laravel\Folio\name;
@@ -134,10 +133,10 @@ $cancelBooking = function (Booking $booking) {
                                                 {{ $booking->user->name }}
                                             </td>
                                             <td>
-                                                {{$booking->items->count() . ' Kamar' ?? '-'}}
+                                                {{ $booking->items->count() . ' Kamar' ?? '-' }}
                                             </td>
                                             <td>
-                                                {{$booking->created_at->format('d M Y')}}
+                                                {{ $booking->created_at->format('d M Y') }}
                                             </td>
                                             <td>
                                                 <button class="btn btn-primary btn-sm">

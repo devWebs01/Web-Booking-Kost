@@ -4,7 +4,7 @@ use App\Models\User;
 use Illuminate\Validation\Rule;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
-use function Livewire\Volt\{state, rules, uses};
+use function Livewire\Volt\{state, uses};
 use function Laravel\Folio\{name, middleware};
 
 uses([LivewireAlert::class]);
@@ -33,7 +33,7 @@ $edit = function () {
     $user = $this->user;
 
     // Jika wire:model password terisi, lakukan update password
-    if (!empty($this->password)) {
+    if (! empty($this->password)) {
         $validateData['password'] = bcrypt($this->password);
     } else {
         // Jika wire:model password tidak terisi, gunakan password yang lama

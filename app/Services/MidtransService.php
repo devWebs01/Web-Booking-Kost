@@ -79,7 +79,7 @@ class MidtransService
     public function handleNotification(): void
     {
         /** @var \Midtrans\Notification $notification */
-        $notification = new Notification();
+        $notification = new Notification;
 
         $orderId = $notification->order_id ?? null;
         $status = $notification->transaction_status ?? null;

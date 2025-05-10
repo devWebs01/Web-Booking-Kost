@@ -12,84 +12,80 @@ use function Laravel\Folio\name;
 use function Laravel\Folio\{middleware};
 
 uses([LivewireAlert::class]);
-middleware(['auth']);
+middleware(["auth"]);
 
-name('histories.show');
+name("histories.show");
 
 state([
-    'setting' => fn () => Setting::first(),
-    'user' => fn () => Auth()->user(),
-    'snapToken' => fn () => $this->booking->snapToken ?? '',
-    'expired_at' => fn () => $this->booking->expired_at ?? '',
-    'payment' => fn () => $this->booking->payment ?? null,
-    'booking',
+    "setting" => fn () => Setting::first(),
+    "user" => fn () => Auth()->user(),
+    "snapToken" => fn () => $this->booking->snapToken ?? "",
+    "expired_at" => fn () => $this->booking->expired_at ?? "",
+    "payment" => fn () => $this->booking->payment ?? null,
+    "booking",
 ]);
 
 on([
-    'updateSnapToken' => function () {
+    "updateSnapToken" => function () {
         $this->snapToken = $this->booking->snapToken;
     },
 ]);
 
 $processPayment = function () {
-    Config::$serverKey = config('midtrans.server_key');
-    Config::$isProduction = config('midtrans.is_production');
+    Config::$serverKey = config("midtrans.server_key");
+    Config::$isProduction = config("midtrans.is_production");
     Config::$isSanitized = true;
     Config::$is3ds = true;
-
 
     try {
         // Data transaksi
 
         if (empty($this->snapToken)) {
             $params = [
-                'transaction_details' => [
-                    'order_id' => $this->booking->order_id,
-                    'gross_amount' => $this->booking->price,
+                "transaction_details" => [
+                    "order_id" => $this->booking->order_id,
+                    "gross_amount" => $this->booking->price,
                 ],
-                'customer_details' => [
-                    'first_name' => $this->user->name,
-                    'email' => $this->user->email,
-                    'phone' => $this->user->telp,
+                "customer_details" => [
+                    "first_name" => $this->user->name,
+                    "email" => $this->user->email,
+                    "phone" => $this->user->telp,
                 ],
-                'expiry' => [
-                    'start_time' => $this->booking->expired_at ? Carbon::parse($this->booking->expired_at)->format('Y-m-d H:i:s O') : Carbon::now()->format('Y-m-d H:i:s O'),
-                    'unit' => 'minutes',
-                    'duration' => $this->booking->expired_at ? Carbon::now()->diffInMinutes(Carbon::parse($this->booking->expired_at)) : 5, // Menghitung durasi kedaluwarsa dalam menit
+                "expiry" => [
+                    "start_time" => $this->booking->expired_at ? Carbon::parse($this->booking->expired_at)->format("Y-m-d H:i:s O") : Carbon::now()->format("Y-m-d H:i:s O"),
+                    "unit" => "minutes",
+                    "duration" => $this->booking->expired_at ? Carbon::now()->diffInMinutes(Carbon::parse($this->booking->expired_at)) : 5, // Menghitung durasi kedaluwarsa dalam menit
                 ],
             ];
 
             $snapToken = Snap::getSnapToken($params);
 
             // Simpan snapToken ke dalam booking
-            $this->booking->update(['snapToken' => $snapToken]);
+            $this->booking->update(["snapToken" => $snapToken]);
 
             // Dispatch event untuk update snapToken di state
-            $this->dispatch('updateSnapToken');
-
+            $this->dispatch("updateSnapToken");
         }
 
-
-        if (!$this->booking->payment) {
+        if (! $this->booking->payment) {
             $payment = Payment::create([
-                'booking_id' => $this->booking->id,
-        ]);
+                "booking_id" => $this->booking->id,
+            ]);
         } else {
             $payment = $this->booking->payment;
         }
 
-
-        $this->redirectRoute('payments.guest', [
-            'payment' => $payment,
+        $this->redirectRoute("payments.guest", [
+            "payment" => $payment,
         ]);
     } catch (\Exception $e) {
-        \Log::error('Payment Error: ' . $e->getMessage());
-        $this->alert('error', 'Proses gagal! Terjadi kesalahan pada sistem.', [
-        'position' => 'center',
-        'timer' => 2000,
-        'toast' => true,
-        'timerProgressBar' => true,
-    ]);
+        \Log::error("Payment Error: " . $e->getMessage());
+        $this->alert("error", "Proses gagal! Terjadi kesalahan pada sistem.", [
+            "position" => "center",
+            "timer" => 2000,
+            "toast" => true,
+            "timerProgressBar" => true,
+        ]);
     }
 };
 
@@ -97,10 +93,10 @@ $cancelBooking = function () {
     $booking = $this->booking;
 
     $booking->update([
-        'status' => 'CANCEL',
+        "status" => "CANCEL",
     ]);
 
-    $this->redirectRoute('histories.index');
+    $this->redirectRoute("histories.index");
 };
 
 $getTimeRemainingAttribute = function () {
@@ -108,7 +104,7 @@ $getTimeRemainingAttribute = function () {
     $expiry = Carbon::parse($this->expired_at);
 
     if ($expiry->isPast()) {
-        return 'Expired';
+        return "Expired";
     }
 
     $diffInSeconds = $expiry->diffInSeconds($now);
@@ -133,7 +129,7 @@ $getTimeRemainingAttribute = function () {
                         <h2 class="fw-bold text-primary text-capitalize">Helo {{ $booking->user->name }}</h2>
                         <p class="fw-bold">
                             Kami dengan senang hati menginformasikan bahwa pesanan kamar Anda pada tanggal
-                            {{ $booking->created_at->format('d M Y') }}
+                            {{ $booking->created_at->format("d M Y") }}
                             telah berhasil dibuat.
                             <br>
                         </p>
@@ -158,8 +154,7 @@ $getTimeRemainingAttribute = function () {
                                 </div>
                             </div>
                             <div class="col text-end">
-                                <button type="button" class="btn btn-dark d-print-none"
-                                    id="printInvoiceBtn">Download
+                                <button type="button" class="btn btn-dark d-print-none" id="printInvoiceBtn">Download
                                     Invoice</button>
 
                                 <script>
@@ -177,13 +172,13 @@ $getTimeRemainingAttribute = function () {
                                     <h6 class="fw-bold">
                                         Checkin
                                     </h6>
-                                    <p>{{ Carbon::parse($booking->check_in_date)->format('d M Y') }}</p>
+                                    <p>{{ Carbon::parse($booking->check_in_date)->format("d M Y") }}</p>
                                 </div>
                                 <div class="col-4">
                                     <h6 class="fw-bold">
                                         Checkin
                                     </h6>
-                                    <p>{{ Carbon::parse($booking->check_out_date)->format('d M Y') }}</p>
+                                    <p>{{ Carbon::parse($booking->check_out_date)->format("d M Y") }}</p>
                                 </div>
                                 <div class="col-4">
                                     <h6 class="fw-bold">
@@ -208,7 +203,7 @@ $getTimeRemainingAttribute = function () {
                                         Tipe Pemesanan
                                     </h6>
                                     <p>
-                                        {{ __('booking.' . $booking->status) }}
+                                        {{ __("booking." . $booking->status) }}
                                     </p>
                                 </div>
 
@@ -217,7 +212,7 @@ $getTimeRemainingAttribute = function () {
                                         Pembayaran
                                     </h6>
                                     <p>
-                                        {{ __('payment.'.$payment->status ?? '-') }}
+                                        {{ __("payment." . $payment->status ?? "-") }}
                                     </p>
                                 </div>
                             </div>
@@ -243,32 +238,32 @@ $getTimeRemainingAttribute = function () {
                                                     Kamar {{ $item->room->number }}
                                                 </td>
                                                 <td class="text-end">
-                                                    {{ $item->room->position === 'up' ? 'Kamar Atas' : 'Kamar Bawah' }}
+                                                    {{ $item->room->position === "up" ? "Kamar Atas" : "Kamar Bawah" }}
                                                 </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                     <tfooter>
-                                       
+
                                         <tr>
                                             <td colspan="2" class="fw-bold">Status</td>
-                                            <td class="text-end fw-bold">{{ __('payment.' . $payment->status) }}</td>
+                                            <td class="text-end fw-bold">{{ __("payment." . $payment->status) }}</td>
                                         </tr>
                                         <tr>
                                             <td colspan="2" class="fw-bold">Waktu pembayaran</td>
-                                            <td class="text-end fw-bold">{{ $payment->payment_time ?? '-' }}</td>
+                                            <td class="text-end fw-bold">{{ $payment->payment_time ?? "-" }}</td>
                                         </tr>
                                         <tr>
                                             <td colspan="2" class="fw-bold">Jenis pembayaran</td>
-                                            <td class="text-end fw-bold">{{ $payment->payment_type ?? '-' }}</td>
+                                            <td class="text-end fw-bold">{{ $payment->payment_type ?? "-" }}</td>
                                         </tr>
                                         <tr>
                                             <td colspan="2" class="fw-bold">Detail pembayaran</td>
-                                            <td class="text-end fw-bold">{{ $payment->payment_detail ?? '-' }}</td>
+                                            <td class="text-end fw-bold">{{ $payment->payment_detail ?? "-" }}</td>
                                         </tr>
                                         <tr>
                                             <td colspan="2" class="fw-bold">Pesan pembayaran</td>
-                                            <td class="text-end fw-bold">{{ $payment->status_message ?? '-' }}</td>
+                                            <td class="text-end fw-bold">{{ $payment->status_message ?? "-" }}</td>
                                         </tr>
 
                                         <tr>
@@ -277,31 +272,35 @@ $getTimeRemainingAttribute = function () {
                                         </tr>
                                         <tr>
                                             <td colspan="2" class="fw-bold">Jumlah yang diterima</td>
-                                            <td class="text-end fw-bold">{{ formatRupiah($payment->gross_amount) ?? '-' }}</td>
+                                            <td class="text-end fw-bold">
+                                                {{ $payment->gross_amount ? formatRupiah($payment->gross_amount) : "-" }}
+                                            </td>
                                         </tr>
+
                                     </tfooter>
                                 </table>
 
                                 <div class="my-5" @if (now()->lessThan(\Carbon\Carbon::parse($expired_at))) wire:poll.5s @endif>
 
-                                    <div
-                                        class="{{ $booking->status !== 'CANCEL' ?: 'd-none' }}">
-                                        <div class="d-flex justify-content-between mb-3 {{ empty($snapToken) ?: 'd-none' }}">
+                                    <div class="{{ $booking->status !== "CANCEL" ?: "d-none" }}">
+                                        <div
+                                            class="d-flex justify-content-between mb-3 {{ empty($snapToken) ?: "d-none" }}">
                                             <button wire:click='cancelBooking'
-                                                class="btn btn-outline-danger {{ empty($snapToken) ?: 'disabled' }}">Batalkan</button>
-                                                <button
-                                                    class="btn btn-outline-success {{ empty($snapToken) ?: 'disabled' }}"
-                                                    wire:click="processPayment">Konfirmasi</button>
+                                                class="btn btn-outline-danger {{ empty($snapToken) ?: "disabled" }}">Batalkan</button>
+                                            <button class="btn btn-outline-success {{ empty($snapToken) ?: "disabled" }}"
+                                                wire:click="processPayment">Konfirmasi</button>
                                         </div>
 
-                                        <div class="col {{ !empty($snapToken) ?: 'd-none' }}">
+                                        <div class="col {{ !empty($snapToken) ?: "d-none" }}">
                                             <div class="d-flex justify-content-between mb-3">
-                                                <a href="{{route('histories.index')}}"
-                                                class="btn btn-outline-dark">Kembali</a>
+                                                <a href="{{ route("histories.index") }}"
+                                                    class="btn btn-outline-dark">Kembali</a>
 
-                                                <a href="{{ route('payments.guest', [
-                                                'payment' => $payment] ) }}"
-                                                    class="btn btn-outline-success {{ $payment->status === 'UNPAID' ? : 'd-none' }}">Lanjut Pembayaran</a>
+                                                <a href="{{ route("payments.guest", [
+                                                    "payment" => $payment,
+                                                ]) }}"
+                                                    class="btn btn-outline-success {{ $payment->status === "UNPAID" ?: "d-none" }}">Lanjut
+                                                    Pembayaran</a>
                                             </div>
 
                                         </div>
@@ -317,6 +316,5 @@ $getTimeRemainingAttribute = function () {
 
         </div>
     @endvolt
-
 
 </x-guest-layout>

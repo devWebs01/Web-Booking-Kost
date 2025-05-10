@@ -1,11 +1,10 @@
 <?php
 
 use App\Models\Booking;
-use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 use function Laravel\Folio\name;
-use function Livewire\Volt\{computed, state, usesPagination, uses};
+use function Livewire\Volt\{state, uses};
 
 uses([LivewireAlert::class]);
 
