@@ -134,10 +134,12 @@ $getTimeRemainingAttribute = function () {
                             <br>
                         </p>
 
-                        <div class="alert alert-warning" role="alert">
+                        @if ($payment->status !== 'PAID' && $payment->status !== 'VERIFICATION')
+                        <div wire:poll.1s class="alert alert-warning" role="alert">
                             Mohon untuk menyelesaikan pembayaran sebelum waktu habis dalam
                             {{ $this->getTimeRemainingAttribute() }}
                         </div>
+                        @endif
 
                     </div>
 
