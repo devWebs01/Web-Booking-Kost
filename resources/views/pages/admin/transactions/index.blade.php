@@ -4,84 +4,74 @@ use App\Models\Booking;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 use function Laravel\Folio\name;
-use function Livewire\Volt\{computed, state, usesPagination, uses};
+use function Livewire\Volt\{computed, uses};
 
 uses([LivewireAlert::class]);
 
-name('transactions.index');
-
-state(['search'])->url();
-usesPagination(theme: 'bootstrap');
+name("transactions.index");
 
 $bookings = computed(function () {
-    if ($this->search == null) {
-        return booking::query()->latest()->paginate(10);
-    } else {
-        return booking::query()
-            ->where(function ($query) {
-                // isi
-                $query->whereAny(['check_in_date', 'check_out_date', 'customer_name', 'status'], 'LIKE', "%{$this->search}%");
-            })
-            ->latest()
-            ->paginate(10);
-    }
+    return booking::query()->latest()->get();
 });
 
 $confirmBooking = function (Booking $booking) {
     try {
         $booking->update([
-            'status' => 'CONFIRM',
+            "status" => "CONFIRM",
         ]);
-        $this->alert('success', 'Pemesanan berhasil dikonfirmasi!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
+        $this->alert("success", "Pemesanan berhasil dikonfirmasi!", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
         ]);
     } catch (\Throwable $th) {
-        $this->alert('error', 'Proses gagal!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
+        $this->alert("error", "Proses gagal!", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
         ]);
     }
+    $this->redirectRoute("transactions.index");
 };
 
 $completeBooking = function (Booking $booking) {
     try {
         $booking->update([
-            'status' => 'COMPLETE',
+            "status" => "COMPLETE",
         ]);
-        $this->alert('success', 'Pemesanan berhasil dikonfirmasi!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
+        $this->alert("success", "Pemesanan berhasil dikonfirmasi!", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
         ]);
     } catch (\Throwable $th) {
-        $this->alert('error', 'Proses gagal!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
+        $this->alert("error", "Proses gagal!", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
         ]);
     }
+    $this->redirectRoute("transactions.index");
 };
 
 $cancelBooking = function (Booking $booking) {
     try {
         $booking->update([
-            'status' => 'CANCEL',
+            "status" => "CANCEL",
         ]);
-        $this->alert('success', 'Pemesanan berhasil dikonfirmasi!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
+        $this->alert("success", "Pemesanan berhasil dikonfirmasi!", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
         ]);
     } catch (\Throwable $th) {
-        $this->alert('error', 'Proses gagal!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
+        $this->alert("error", "Proses gagal!", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
         ]);
     }
+    $this->redirectRoute("transactions.index");
 };
 
 ?>
@@ -92,26 +82,19 @@ $cancelBooking = function (Booking $booking) {
 
         <x-slot name="header">
             <li class="breadcrumb-item">
-                <a href="{{ route('home') }}">Beranda</a>
+                <a href="{{ route("home") }}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">Pemesanan</li>
         </x-slot>
 
+        @include("components.partials.datatables")
 
         @volt
             <div>
                 <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col">
-                                <input wire:model.live="search" type="search" class="form-control" name="search"
-                                    id="search" aria-describedby="searchId"
-                                    placeholder="Masukkan kata kunci pencarian" />
-                            </div>
-                        </div>
-                    </div>
+
                     <div class="card-body">
-                        <div class="table-responsive border rounded">
+                        <div class="table-responsive border rounded p-3">
                             <table class="table table-striped text-center text-nowrap">
                                 <thead>
                                     <tr>
@@ -133,37 +116,37 @@ $cancelBooking = function (Booking $booking) {
                                                 {{ $booking->user->name }}
                                             </td>
                                             <td>
-                                                {{ $booking->items->count() . ' Kamar' ?? '-' }}
+                                                {{ $booking->items->count() . " Kamar" ?? "-" }}
                                             </td>
                                             <td>
-                                                {{ $booking->created_at->format('d M Y') }}
+                                                {{ $booking->created_at->format("d M Y") }}
                                             </td>
                                             <td>
                                                 <button class="btn btn-primary btn-sm">
-                                                    {{ __('booking.' . $booking->status) }}
+                                                    {{ __("booking." . $booking->status) }}
                                                 </button>
                                             </td>
                                             <td>
                                                 <button wire:loading.attr='disabled'
                                                     wire:click='confirmBooking({{ $booking->id }})'
-                                                    class="btn btn-sm btn-dark {{ $booking->status === 'PROCESS' ?: 'd-none' }}">
+                                                    class="btn btn-sm btn-dark {{ $booking->status === "PROCESS" ?: "d-none" }}">
                                                     Konfirmasi
                                                 </button>
 
                                                 <button wire:loading.attr='disabled'
                                                     wire:click='cancelBooking({{ $booking->id }})'
-                                                    class="btn btn-sm btn-danger {{ $booking->status === 'PROCESS' ?: 'd-none' }}">
+                                                    class="btn btn-sm btn-danger {{ $booking->status === "PROCESS" ?: "d-none" }}">
                                                     Tolak
                                                 </button>
 
                                                 <button wire:loading.attr='disabled'
                                                     wire:click='completeBooking({{ $booking->id }})'
-                                                    class="btn btn-sm btn-success {{ $booking->status === 'CONFIRM' ?: 'd-none' }}">
+                                                    class="btn btn-sm btn-success {{ $booking->status === "CONFIRM" ?: "d-none" }}">
                                                     Selesai
                                                 </button>
 
                                                 <a class="btn btn-primary btn-sm"
-                                                    href="{{ route('transactions.show', ['booking' => $booking]) }}">
+                                                    href="{{ route("transactions.show", ["booking" => $booking]) }}">
                                                     Detail
                                                 </a>
                                             </td>
@@ -172,10 +155,6 @@ $cancelBooking = function (Booking $booking) {
 
                                 </tbody>
                             </table>
-
-                            <div class="container d-flex justify-content-center">
-                                {{ $this->bookings->links() }}
-                            </div>
                         </div>
 
                     </div>

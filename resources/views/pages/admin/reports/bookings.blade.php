@@ -8,9 +8,9 @@ use function Livewire\Volt\{state, uses};
 
 uses([LivewireAlert::class]);
 
-name('reports.bookings');
+name("reports.bookings");
 
-state(['reports' => fn () => Booking::get()]);
+state(["reports" => fn() => Booking::get()]);
 
 ?>
 
@@ -20,12 +20,12 @@ state(['reports' => fn () => Booking::get()]);
 
         <x-slot name="header">
             <li class="breadcrumb-item">
-                <a href="{{ route('home') }}">Beranda</a>
+                <a href="{{ route("home") }}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">Laporan Pemesanan</li>
         </x-slot>
 
-        @include('layouts.print')
+        @include("components.partials.print")
         @volt
             <div>
                 <div class="card">
@@ -62,10 +62,10 @@ state(['reports' => fn () => Booking::get()]);
                                                 {{ $report->user->telp }}
                                             </td>
                                             <td>
-                                                {{ Carbon::parse($report->check_in_date)->format('d-m-Y') }}
+                                                {{ Carbon\Carbon::parse($report->check_in_date)->format("d-m-Y") }}
                                             </td>
                                             <td>
-                                                {{ Carbon::parse($report->check_out_date)->format('d-m-Y') }}
+                                                {{ Carbon\Carbon::parse($report->check_out_date)->format("d-m-Y") }}
                                             </td>
                                             <td>
                                                 {{ $report->items->count() }}

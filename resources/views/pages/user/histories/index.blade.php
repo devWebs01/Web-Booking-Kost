@@ -19,7 +19,7 @@ state([
 ?>
 <x-guest-layout>
     <x-slot name="title">Riwayat Pemesanan</x-slot>
-    @include('layouts.datatables')
+    @include('components.partials.datatables')
     @volt
         <div class="container">
             <div class="card">

@@ -10,19 +10,19 @@ usesFileUploads();
 uses([LivewireAlert::class]);
 
 state([
-    'setting' => fn () => Setting::first(),
-    'facilities' => fn () => $this->setting->facilities->pluck('name')->toArray(),
-    'daily_price' => fn () => $this->setting->daily_price,
-    'monthly_price' => fn () => $this->setting->monthly_price,
-    'images' => [],
-    'previmages',
+    "setting" => fn() => Setting::first(),
+    "facilities" => fn() => $this->setting->facilities->pluck("name")->toArray(),
+    "daily_price" => fn() => $this->setting->daily_price,
+    "monthly_price" => fn() => $this->setting->monthly_price,
+    "images" => [],
+    "previmages",
 ]);
 
 rules([
-    'number' => 'required|numeric',
-    'facilities' => 'required',
-    'facilities.*' => 'required|string|min:2',
-    'images.*' => 'image',
+    "number" => "required|numeric",
+    "facilities" => "required",
+    "facilities.*" => "required|string|min:2",
+    "images.*" => "image",
 ]);
 
 $updatingImages = function ($value) {
@@ -48,27 +48,27 @@ $edit = function () {
     try {
         \DB::beginTransaction();
 
-        $facilities = is_array($this->facilities) ? $this->facilities : explode(',', $this->facilities);
+        $facilities = is_array($this->facilities) ? $this->facilities : explode(",", $this->facilities);
 
         $this->validate([
-            'daily_price' => 'required|numeric|min:0',
-            'monthly_price' => 'required|numeric|min:0',
+            "daily_price" => "required|numeric|min:0",
+            "monthly_price" => "required|numeric|min:0",
         ]);
         $setting->update([
-            'daily_price' => $this->daily_price,
-            'monthly_price' => $this->monthly_price,
+            "daily_price" => $this->daily_price,
+            "monthly_price" => $this->monthly_price,
         ]);
 
         $setting->facilities()->delete();
 
         foreach ($facilities as $facility) {
             $setting->facilities()->create([
-                'name' => $facility,
+                "name" => $facility,
             ]);
         }
 
         if (count($this->images) > 0) {
-            $images = Image::where('setting_id', $setting->id)->get();
+            $images = Image::where("setting_id", $setting->id)->get();
 
             if ($images->isNotEmpty()) {
                 foreach ($images as $image) {
@@ -79,10 +79,10 @@ $edit = function () {
             }
 
             foreach ($this->images as $image) {
-                $path = $image->store('settings', 'public');
+                $path = $image->store("settings", "public");
                 Image::create([
-                    'setting_id' => $setting->id,
-                    'image_path' => $path,
+                    "setting_id" => $setting->id,
+                    "image_path" => $path,
                 ]);
 
                 $image->delete();
@@ -91,20 +91,20 @@ $edit = function () {
 
         \DB::commit();
 
-        $this->alert('success', 'Data berhasil diedit!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
+        $this->alert("success", "Data berhasil diedit!", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
         ]);
 
-        $this->redirectRoute('settings.index');
+        $this->redirectRoute("settings.index");
     } catch (\Exception $e) {
         \DB::rollBack();
 
-        $this->alert('error', 'Terjadi kesalahan saat menyimpan data!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
+        $this->alert("error", "Terjadi kesalahan saat menyimpan data!", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
         ]);
     }
 };
@@ -113,7 +113,7 @@ $edit = function () {
 
 @volt
     <div>
-        @include('layouts.tom-select')
+        @include("components.partials.tom-select")
 
         <style>
             #dropZone {
@@ -202,10 +202,10 @@ $edit = function () {
                     </label>
                     <div class="mb-3">
                         <label id="dropZone" for="images" class="form-label">Gambar Kamar</label>
-                        <input type="file" class="d-none form-control @error('images') is-invalid @enderror"
+                        <input type="file" class="d-none form-control @error("images") is-invalid @enderror"
                             wire:model="images" id="images" aria-describedby="imagesId" autocomplete="images"
                             accept="image/*" multiple />
-                        @error('images')
+                        @error("images")
                             <small id="imagesId" class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>
@@ -216,26 +216,25 @@ $edit = function () {
                         <label for="facilities" class="form-label">Fasilitas</label>
                         <div wire:ignore>
                             <input type="text" wire:model="facilities" id="input-tags" aria-describedby="facilitiesId"
-                                autocomplete="facilities" value="{{ implode(',', $facilities) }}" />
+                                autocomplete="facilities" value="{{ implode(",", $facilities) }}" />
                         </div>
-                        @error('facilities')
+                        @error("facilities")
                             <small id="facilitiesId" class="form-text text-danger">{{ $message }}</small>
                         @enderror
                         <br>
-                        @error('facilities.*')
+                        @error("facilities.*")
                             <small id="facilitiesId" class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>
 
-
                 <div class="col-md">
                     <div class="mb-3">
                         <label for="daily_price" class="form-label">Harga Perhari</label>
-                        <input type="text" class="form-control @error('daily_price') is-invalid @enderror"
+                        <input type="text" class="form-control @error("daily_price") is-invalid @enderror"
                             wire:model="daily_price" id="daily_price" aria-describedby="daily_priceId"
                             placeholder="Enter daily_price" />
-                        @error('daily_price')
+                        @error("daily_price")
                             <small id="daily_priceId" class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>
@@ -243,16 +242,15 @@ $edit = function () {
                 <div class="col-md">
                     <div class="mb-3">
                         <label for="monthly_price" class="form-label">Harga Perbulan</label>
-                        <input type="text" class="form-control @error('monthly_price') is-invalid @enderror"
+                        <input type="text" class="form-control @error("monthly_price") is-invalid @enderror"
                             wire:model="monthly_price" id="monthly_price" aria-describedby="monthly_priceId"
                             placeholder="Enter monthly_price" />
-                        @error('monthly_price')
+                        @error("monthly_price")
                             <small id="monthly_priceId" class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>
             </div>
-
 
             <div class="col-12 ">
                 <div class="row mb-3">

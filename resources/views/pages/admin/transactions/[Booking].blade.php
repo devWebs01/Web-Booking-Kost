@@ -9,43 +9,43 @@ use function Laravel\Folio\name;
 
 uses([LivewireAlert::class]);
 
-name('transactions.show');
+name("transactions.show");
 
 state([
-    'setting' => fn () => Setting::first(['name', 'location', 'description']),
-    'payment' => fn () => $this->booking->payment,
-    'user' => fn () => $this->booking->user,
-    'booking',
+    "setting" => fn() => Setting::first(["name", "location", "description"]),
+    "payment" => fn() => $this->booking->payment,
+    "user" => fn() => $this->booking->user,
+    "booking",
 ]);
 
 $confirmBooking = function (Booking $booking) {
     try {
         $booking->update([
-            'status' => 'CONFIRM',
+            "status" => "CONFIRM",
         ]);
-        $this->alert('success', 'Pemesanan berhasil dikonfirmasi!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
+        $this->alert("success", "Pemesanan berhasil dikonfirmasi!", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
         ]);
     } catch (\Throwable $th) {
-        $this->alert('error', 'Proses gagal!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
+        $this->alert("error", "Proses gagal!", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
         ]);
     }
 };
 
 $completeBooking = function () {
     $this->booking->update([
-        'status' => 'COMPLETE',
+        "status" => "COMPLETE",
     ]);
 
-    $this->alert('success', 'Pemesanan telah selesai!', [
-        'position' => 'center',
-        'timer' => 2000,
-        'toast' => true,
+    $this->alert("success", "Pemesanan telah selesai!", [
+        "position" => "center",
+        "timer" => 2000,
+        "toast" => true,
     ]);
 };
 
@@ -56,16 +56,15 @@ $completeBooking = function () {
 
     <x-slot name="header">
         <li class="breadcrumb-item">
-            <a href="{{ route('home') }}">Beranda</a>
+            <a href="{{ route("home") }}">Beranda</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('users.index') }}">Pemesanan</a>
+            <a href="{{ route("users.index") }}">Pemesanan</a>
         </li>
         <li class="breadcrumb-item active">Detail</li>
     </x-slot>
 
-
-    @push('scripts')
+    @push("scripts")
         <script>
             document.getElementById('printInvoiceBtn').addEventListener('click', function() {
                 window.print(); // Fungsi bawaan browser untuk mencetak halaman
@@ -76,7 +75,7 @@ $completeBooking = function () {
     @volt
         <div class="card">
 
-            <div class="card-body px-lg-5 mx-lg-5">
+            <div class="card-body">
 
                 <section class="row align-items-center mb-4 border-bottom pb-3">
                     <div class="col">
@@ -89,8 +88,7 @@ $completeBooking = function () {
                         </div>
                     </div>
                     <div class="col text-end">
-                        <button type="button" class="btn btn-dark d-print-none"
-                            id="printInvoiceBtn">Download
+                        <button type="button" class="btn btn-dark d-print-none" id="printInvoiceBtn">Download
                             Invoice</button>
 
                         <script>
@@ -108,20 +106,20 @@ $completeBooking = function () {
                             <h6 class="fw-bolder">
                                 Checkin
                             </h6>
-                            <p>{{ Carbon::parse($booking->check_in_date)->format('d M Y') }}</p>
+                            <p>{{ Carbon\Carbon::parse($booking->check_in_date)->format("d M Y") }}</p>
                         </div>
                         <div class="col-4">
                             <h6 class="fw-bolder">
                                 Checkin
                             </h6>
-                            <p>{{ Carbon::parse($booking->check_out_date)->format('d M Y') }}</p>
+                            <p>{{ Carbon\Carbon::parse($booking->check_out_date)->format("d M Y") }}</p>
                         </div>
                         <div class="col-4">
                             <h6 class="fw-bolder">
                                 Tipe Pemesanan
                             </h6>
                             <p>
-                                {{ $booking->booking_type }}
+                                {{ __("type." . $booking->booking_type) }}
                             </p>
                         </div>
 
@@ -139,7 +137,7 @@ $completeBooking = function () {
                                 Tipe Pemesanan
                             </h6>
                             <p>
-                                {{ __('booking.' . $booking->status) }}
+                                {{ __("booking." . $booking->status) }}
                             </p>
                         </div>
 
@@ -148,7 +146,7 @@ $completeBooking = function () {
                                 Pembayaran
                             </h6>
                             <p>
-                                {{ __('payment.'.$payment->status ?? '-') }}
+                                {{ __("payment." . $payment->status ?? "-") }}
                             </p>
                         </div>
                     </div>
@@ -174,7 +172,7 @@ $completeBooking = function () {
                                             Kamar {{ $item->room->number }}
                                         </td>
                                         <td class="text-end">
-                                            {{ $item->room->position === 'up' ? 'Kamar Atas' : 'Kamar Bawah' }}
+                                            {{ $item->room->position === "up" ? "Kamar Atas" : "Kamar Bawah" }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -183,23 +181,23 @@ $completeBooking = function () {
 
                                 <tr>
                                     <td colspan="2" class="fw-bolder">Status</td>
-                                    <td class="text-end fw-bolder">{{ __('payment.' . $payment->status) }}</td>
+                                    <td class="text-end fw-bolder">{{ __("payment." . $payment->status) }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="fw-bolder">Waktu pembayaran</td>
-                                    <td class="text-end fw-bolder">{{ $payment->payment_time ?? '-' }}</td>
+                                    <td class="text-end fw-bolder">{{ $payment->payment_time ?? "-" }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="fw-bolder">Jenis pembayaran</td>
-                                    <td class="text-end fw-bolder">{{ $payment->payment_type ?? '-' }}</td>
+                                    <td class="text-end fw-bolder">{{ $payment->payment_type ?? "-" }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="fw-bolder">Detail pembayaran</td>
-                                    <td class="text-end fw-bolder">{{ $payment->payment_detail ?? '-' }}</td>
+                                    <td class="text-end fw-bolder">{{ $payment->payment_detail ?? "-" }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="fw-bolder">Pesan pembayaran</td>
-                                    <td class="text-end fw-bolder">{{ $payment->status_message ?? '-' }}</td>
+                                    <td class="text-end fw-bolder">{{ $payment->status_message ?? "-" }}</td>
                                 </tr>
 
                                 <tr>
@@ -208,7 +206,7 @@ $completeBooking = function () {
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="fw-bolder">Jumlah yang diterima</td>
-                                    <td class="text-end fw-bolder">{{ formatRupiah($payment->gross_amount) ?? '-' }}</td>
+                                    <td class="text-end fw-bolder">{{ formatRupiah($payment->gross_amount) ?? "-" }}</td>
                                 </tr>
                             </tfooter>
                         </table>

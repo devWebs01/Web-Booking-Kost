@@ -187,7 +187,7 @@ $getTimeRemainingAttribute = function () {
                                         Tipe Pemesanan
                                     </h6>
                                     <p>
-                                        {{ $booking->booking_type }}
+                                        {{ __("type." . $booking->booking_type) }}
                                     </p>
                                 </div>
 

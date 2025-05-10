@@ -3,47 +3,16 @@
 use App\Models\User;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
-use function Livewire\Volt\{computed, state, usesPagination, uses};
+use function Livewire\Volt\{computed, uses};
 use function Laravel\Folio\name;
 
 uses([LivewireAlert::class]);
 
-name('customers');
+name("customers");
 
-state(['search'])->url();
-usesPagination(theme: 'bootstrap');
-
-$users = computed(function () {
-    if ($this->search == null) {
-        return User::query()->where('role', 'customer')->latest()->paginate(10);
-    } else {
-        return User::query()
-            ->where('role', 'customer')
-            ->where(function ($query) {
-                // isi
-                $query->whereAny(['name', 'email', 'password', 'telp', 'role'], 'LIKE', "%{$this->search}%");
-            })
-            ->latest()
-            ->paginate(10);
-    }
+$customers = computed(function () {
+    return User::query()->where("role", "customer")->latest()->paginate(10);
 });
-
-$destroy = function (User $user) {
-    try {
-        $user->delete();
-        $this->alert('success', 'Data user berhasil di hapus!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
-        ]);
-    } catch (\Throwable $th) {
-        $this->alert('error', 'Data user gagal di hapus!', [
-            'position' => 'center',
-            'timer' => 3000,
-            'toast' => true,
-        ]);
-    }
-};
 
 ?>
 
@@ -52,25 +21,19 @@ $destroy = function (User $user) {
         <x-slot name="title">Pelanggan</x-slot>
         <x-slot name="header">
             <li class="breadcrumb-item">
-                <a href="{{ route('home') }}">Beranda</a>
+                <a href="{{ route("home") }}">Beranda</a>
             </li>
             <li class="breadcrumb-item active">Pelanggan</li>
         </x-slot>
 
+        @include("components.partials.datatables")
+
         @volt
             <div>
                 <div class="card">
-                    <div class="card-header">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Cari Pelanggan</label>
-                            <input wire:model.live="search" type="search" class="form-control" name="search"
-                                id="search" aria-describedby="helpId"
-                                placeholder="Masukkan nama pengguna / email / telp" />
-                        </div>
-                    </div>
 
                     <div class="card-body">
-                        <div class="table-responsive border rounded">
+                        <div class="table-responsive border rounded p-3 ">
                             <table class="table text-center text-nowrap">
                                 <thead>
                                     <tr>
@@ -78,21 +41,18 @@ $destroy = function (User $user) {
                                         <th>Nama</th>
                                         <th>Email</th>
                                         <th>Telp</th>
-                                        <th>Opsi</th>
+                                        <th>Total Pemesanan</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($this->users as $no => $user)
+                                    @foreach ($this->customers as $no => $customer)
                                         <tr>
                                             <td>{{ ++$no }}</td>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>{{ $user->telp }}</td>
+                                            <td>{{ $customer->name }}</td>
+                                            <td>{{ $customer->email }}</td>
+                                            <td>{{ $customer->telp }}</td>
                                             <td>
-                                                <button wire:loading.attr='disabled'
-                                                    wire:click='destroy({{ $user->id }})' class="btn btn-sm btn-danger">
-                                                    {{ __('Hapus') }}
-                                                </button>
+                                                {{ $customer->bookings->count() }} Booking
                                             </td>
                                         </tr>
                                     @endforeach
@@ -100,9 +60,6 @@ $destroy = function (User $user) {
                                 </tbody>
                             </table>
 
-                            <div class="container d-flex justify-content-center">
-                                {{ $this->users->links() }}
-                            </div>
                         </div>
 
                     </div>
