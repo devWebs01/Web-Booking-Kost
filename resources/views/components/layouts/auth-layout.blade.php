@@ -81,7 +81,42 @@
                         <div class="col-lg-6">
                             <div class="ps-lg-5">
                                 <div class="card shadow-lg border border-primary text-white text-left h-100">
+
                                     <div class="card-body bg-primary p-4 p-xl-5">
+                                        {{-- Alert untuk pesan sukses --}}
+                                        @if (session("success"))
+                                            <div class="alert alert-success alert-dismissible fade show text-white"
+                                                role="alert">
+                                                {{ session("success") }}
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                        @endif
+
+                                        {{-- Alert untuk pesan error umum (bukan dari validasi) --}}
+                                        @if (session("error"))
+                                            <div class="alert alert-danger alert-dismissible fade show text-white"
+                                                role="alert">
+                                                {{ session("error") }}
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                        @endif
+
+                                        {{-- Alert untuk error validasi --}}
+                                        @if ($errors->any())
+                                            <div class="alert alert-danger alert-dismissible fade show text-white"
+                                                role="alert">
+                                                <ul class="mb-0">
+                                                    @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                        @endif
+
                                         {{ $slot }}
                                     </div>
                                 </div>

@@ -1,12 +1,6 @@
 <x-auth-layout>
     <x-slot name="title">Register</x-slot>
 
-    @if (session('success'))
-        <div class="alert alert-light" role="alert">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
