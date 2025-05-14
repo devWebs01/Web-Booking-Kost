@@ -123,6 +123,30 @@ $submitBooking = function () {
         }
     }
 
+    // Cek apakah ada kamar yang sudah dipesan pada tanggal yang sama
+    $overlappingBooking = \App\Models\Booking::whereHas('items', function ($query) {
+        $query->whereIn('room_id', $this->selectedRooms);
+    })
+    ->where(function ($query) use ($checkIn, $checkOut) {
+        $query->whereBetween('check_in_date', [$checkIn->format('Y-m-d'), $checkOut->format('Y-m-d')])
+              ->orWhereBetween('check_out_date', [$checkIn->format('Y-m-d'), $checkOut->format('Y-m-d')])
+              ->orWhere(function ($query) use ($checkIn, $checkOut) {
+                  $query->where('check_in_date', '<=', $checkIn->format('Y-m-d'))
+                        ->where('check_out_date', '>=', $checkOut->format('Y-m-d'));
+              });
+    })
+    ->exists();
+
+    if ($overlappingBooking) {
+        $this->alert("error", "Kamar yang Anda pilih sudah dipesan pada tanggal tersebut. Silakan pilih tanggal atau kamar lain.", [
+            "position" => "center",
+            "timer" => 3000,
+            "toast" => true,
+            "timerProgressBar" => true,
+        ]);
+        return;
+    }
+
     // Buat entri di tabel bookings
     $booking = \App\Models\Booking::create([
         "user_id" => $userId,

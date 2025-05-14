@@ -178,7 +178,7 @@ $getTimeRemainingAttribute = function () {
                                 </div>
                                 <div class="col-4">
                                     <h6 class="fw-bold">
-                                        checkout
+                                        Checkout
                                     </h6>
                                     <p>{{ Carbon::parse($booking->check_out_date)->format("d M Y") }}</p>
                                 </div>
