@@ -85,8 +85,7 @@
                                     <div class="card-body bg-primary p-4 p-xl-5">
                                         {{-- Alert untuk pesan sukses --}}
                                         @if (session("success"))
-                                            <div class="alert alert-success alert-dismissible fade show text-white"
-                                                role="alert">
+                                            <div class="alert alert-light alert-dismissible fade show" role="alert">
                                                 {{ session("success") }}
                                                 <button type="button" class="btn-close" data-bs-dismiss="alert"
                                                     aria-label="Close"></button>
@@ -95,8 +94,7 @@
 
                                         {{-- Alert untuk pesan error umum (bukan dari validasi) --}}
                                         @if (session("error"))
-                                            <div class="alert alert-danger alert-dismissible fade show text-white"
-                                                role="alert">
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                                 {{ session("error") }}
                                                 <button type="button" class="btn-close" data-bs-dismiss="alert"
                                                     aria-label="Close"></button>
@@ -105,9 +103,8 @@
 
                                         {{-- Alert untuk error validasi --}}
                                         @if ($errors->any())
-                                            <div class="alert alert-danger alert-dismissible fade show text-white"
-                                                role="alert">
-                                                <ul class="mb-0">
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                <ul class="mb-0 list-unstyled">
                                                     @foreach ($errors->all() as $error)
                                                         <li>{{ $error }}</li>
                                                     @endforeach
