@@ -1,10 +1,7 @@
 <?php
 
-use App\Models\Image;
-use App\Models\Room;
-use App\Models\Facility;
-use App\Models\Setting;
-use App\Models\Payment;
+use App\Models\{Image, Booking, Room, Facility, Setting, Payment};
+
 use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
@@ -16,22 +13,13 @@ uses([LivewireAlert::class]);
 name("catalogs.index");
 
 state([])->url();
-
-$rooms = computed(function () {
-    return Room::where("room_status", "active")->get();
-});
-
 state([
     "galleries" => fn() => Image::get(),
     "facilities" => fn() => Facility::get(),
     //
     "user_id" => fn() => Auth()->user()->id ?? "",
     "setting" => fn() => Setting::first(),
-    "rooms" => fn() => Room::where("room_status", "active")->get(),
     //
-]);
-
-state([
     "now" => fn() => Carbon::now()->format("Y-m-d"),
     "selectedRooms" => [],
     "booking_type" => "daily",
@@ -39,6 +27,18 @@ state([
     "check_in_date",
     "check_out_date",
 ]);
+
+$rooms = computed(function () {
+    $ci = Carbon::parse($this->check_in_date);
+    $co = Carbon::parse($this->check_out_date);
+
+    // Dapatkan ID kamar tumpang‑tindih
+    $conflicts = Booking::where("check_in_date", "<=", $co)->where("check_out_date", ">=", $ci)->with("items:booking_id,room_id")->get();
+    $conflictIds = $conflicts->pluck("items.*.room_id")->flatten()->unique();
+
+    // Simpan hanya kamar tersedia
+    return Room::where("room_status", "active")->whereNotIn("id", $conflictIds)->get();
+});
 
 $selectRoom = function ($roomId) {
     if (in_array($roomId, $this->selectedRooms)) {
@@ -124,18 +124,14 @@ $submitBooking = function () {
     }
 
     // Cek apakah ada kamar yang sudah dipesan pada tanggal yang sama
-    $overlappingBooking = \App\Models\Booking::whereHas('items', function ($query) {
-        $query->whereIn('room_id', $this->selectedRooms);
-    })
-    ->where(function ($query) use ($checkIn, $checkOut) {
-        $query->whereBetween('check_in_date', [$checkIn->format('Y-m-d'), $checkOut->format('Y-m-d')])
-              ->orWhereBetween('check_out_date', [$checkIn->format('Y-m-d'), $checkOut->format('Y-m-d')])
-              ->orWhere(function ($query) use ($checkIn, $checkOut) {
-                  $query->where('check_in_date', '<=', $checkIn->format('Y-m-d'))
-                        ->where('check_out_date', '>=', $checkOut->format('Y-m-d'));
-              });
-    })
-    ->exists();
+    $overlappingBooking = Booking::whereHas("items", fn($q) => $q->whereIn("room_id", $this->selectedRooms))
+        ->where(
+            fn($q) => $q
+                ->whereBetween("check_in_date", [$checkIn, $checkOut])
+                ->orWhereBetween("check_out_date", [$checkIn, $checkOut])
+                ->orWhere(fn($q2) => $q2->where("check_in_date", "<=", $checkIn)->where("check_out_date", ">=", $checkOut)),
+        )
+        ->exists();
 
     if ($overlappingBooking) {
         $this->alert("error", "Kamar yang Anda pilih sudah dipesan pada tanggal tersebut. Silakan pilih tanggal atau kamar lain.", [
@@ -215,34 +211,41 @@ $submitBooking = function () {
                             @endforeach
                         </ol>
 
-                        <p class="fw-bold">Lantai Atas</p>
-                        <hr>
-                        <div class="row">
-                            @foreach ($rooms->where("position", "up") as $roomUp)
-                                <div class="col-md-3 mb-3">
-                                    <button wire:click="selectRoom({{ $roomUp->id }})"
-                                        class="btn w-100 py-3
+                        @if (isset($check_out_date, $check_in_date))
+                            <p class="fw-bold">Lantai Atas</p>
+                            <hr>
+                            <div class="row">
+                                @foreach ($this->rooms->where("position", "up") as $roomUp)
+                                    <div class="col-md-3 mb-3">
+                                        <button wire:click="selectRoom({{ $roomUp->id }})"
+                                            class="btn w-100 py-3
                                         {{ in_array($roomUp->id, $selectedRooms) ? "btn-danger text-white" : "btn-outline-primary" }}">
-                                        {{ $roomUp->number }}
-                                    </button>
-                                </div>
-                            @endforeach
-                        </div>
+                                            {{ $roomUp->number }}
+                                        </button>
+                                    </div>
+                                @endforeach
+                            </div>
 
-                        <!-- Kamar Lantai Bawah -->
-                        <p class="fw-bold">Lantai Bawah</p>
-                        <hr>
-                        <div class="row">
-                            @foreach ($rooms->where("position", "down") as $roomDown)
-                                <div class="col-md-3 mb-3">
-                                    <button wire:click="selectRoom({{ $roomDown->id }})"
-                                        class="btn w-100 py-3
+                            <!-- Kamar Lantai Bawah -->
+                            <p class="fw-bold">Lantai Bawah</p>
+                            <hr>
+                            <div class="row">
+                                @foreach ($this->rooms->where("position", "down") as $roomDown)
+                                    <div class="col-md-3 mb-3">
+                                        <button wire:click="selectRoom({{ $roomDown->id }})"
+                                            class="btn w-100 py-3
                                         {{ in_array($roomDown->id, $selectedRooms) ? "btn-danger text-white" : "btn-outline-primary" }}">
-                                        {{ $roomDown->number }}
-                                    </button>
-                                </div>
-                            @endforeach
-                        </div>
+                                            {{ $roomDown->number }}
+                                        </button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="alert alert-danger text-center" role="alert">
+                                <small>Silahkan lakukan pemilihan tanggal Check In dan Check Out terlebih dahulu untuk
+                                    memilih kamar yang tersedia!</small>
+                            </div>
+                        @endif
 
                     </div>
                     <div class="col-md-5">
