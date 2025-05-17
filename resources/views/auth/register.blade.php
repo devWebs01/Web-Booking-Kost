@@ -45,7 +45,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="password" class="form-label">{{ __('Kata Sandi') }}</label>
+            <label for="password" class="form-label">{{ __('Password') }}</label>
             <input id="password" type="password"
                 class="form-control border px-2 @error('password') is-invalid @enderror" name="password" required>
 
@@ -58,7 +58,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="password-confirm" class="form-label">{{ __('Ulangi Kata Sandi') }}</label>
+            <label for="password-confirm" class="form-label">{{ __('Ulangi Password') }}</label>
             <input id="password-confirm" type="password" class="form-control border px-2" name="password_confirmation"
                 required autocomplete="new-password">
 

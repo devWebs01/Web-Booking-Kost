@@ -17,7 +17,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="password" class="form-label">{{ __('Kata Sandi') }}</label>
+            <label for="password" class="form-label">{{ __('Password') }}</label>
             <input id="password" type="password"
                 class="form-control border px-2 @error('password') is-invalid @enderror" name="password" required
                 autocomplete="current-password">
